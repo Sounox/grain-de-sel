@@ -208,13 +208,96 @@
       width: 100%; height: 100%;
       pointer-events: none;
     }
-    .hero-overlay {
+
+    /* ── RAYONS SOLAIRES SOUS-MARINS ── */
+    .sun-rays {
       position: absolute; inset: 0;
+      pointer-events: none; z-index: 1;
+      overflow: hidden;
+    }
+    .sun-rays::before {
+      content: '';
+      position: absolute;
+      top: -20%; left: 50%;
+      transform: translateX(-50%);
+      width: 200%; height: 140%;
+      background: conic-gradient(
+        from -90deg at 50% 0%,
+        transparent  0deg,
+        rgba(123,200,255,0.07)  6deg,
+        transparent  10deg,
+        rgba(150,220,255,0.05)  17deg,
+        transparent  22deg,
+        rgba(123,200,255,0.08)  29deg,
+        transparent  34deg,
+        rgba(180,230,255,0.04)  40deg,
+        transparent  46deg,
+        rgba(123,200,255,0.06)  53deg,
+        transparent  58deg,
+        rgba(150,215,255,0.07)  65deg,
+        transparent  70deg,
+        rgba(123,200,255,0.04)  76deg,
+        transparent  82deg,
+        rgba(160,225,255,0.06)  88deg,
+        transparent  94deg,
+        rgba(123,200,255,0.05) 100deg,
+        transparent 106deg,
+        rgba(150,220,255,0.07) 112deg,
+        transparent 118deg,
+        transparent 360deg
+      );
+      animation: raysRotate 22s linear infinite;
+      mix-blend-mode: screen;
+    }
+    .sun-rays::after {
+      content: '';
+      position: absolute;
+      top: -30%; left: 45%;
+      transform: translateX(-50%);
+      width: 180%; height: 130%;
+      background: conic-gradient(
+        from -90deg at 50% 0%,
+        transparent   0deg,
+        rgba(100,180,255,0.05)  8deg,
+        transparent  14deg,
+        rgba(130,210,255,0.06) 23deg,
+        transparent  30deg,
+        rgba(100,180,255,0.04) 41deg,
+        transparent  48deg,
+        rgba(130,210,255,0.07) 57deg,
+        transparent  64deg,
+        rgba(100,180,255,0.05) 74deg,
+        transparent  81deg,
+        rgba(130,210,255,0.06) 91deg,
+        transparent  98deg,
+        transparent 360deg
+      );
+      animation: raysRotate 34s linear infinite reverse;
+      mix-blend-mode: screen;
+    }
+    @keyframes raysRotate {
+      from { transform: translateX(-50%) rotate(0deg); }
+      to   { transform: translateX(-50%) rotate(360deg); }
+    }
+
+    /* Caustiques — taches lumineuses animées sous l'eau */
+    .caustics {
+      position: absolute; inset: 0;
+      pointer-events: none; z-index: 1;
+      overflow: hidden;
+    }
+    .caustics svg {
+      position: absolute; width: 100%; height: 100%;
+      mix-blend-mode: screen; opacity: 0.18;
+    }
+
+    .hero-overlay {
+      position: absolute; inset: 0; z-index: 2;
       background: linear-gradient(
         to bottom,
-        rgba(14,42,92,0.18) 0%,
-        rgba(14,42,92,0.0) 35%,
-        rgba(14,42,92,0.55) 75%,
+        rgba(14,42,92,0.08) 0%,
+        rgba(14,42,92,0.0) 30%,
+        rgba(14,42,92,0.52) 72%,
         rgba(14,42,92,1.0) 100%
       );
       pointer-events: none;
@@ -407,18 +490,19 @@
     }
     @media (max-width: 768px) {
       .annot-card {
-        bottom: 2vh; left: 3vw !important; right: 3vw !important;
-        max-width: none; padding: 10px 14px;
-        display: flex; align-items: center; gap: 10px;
+        bottom: 3vh; left: 4vw !important; right: 4vw !important;
+        max-width: none; padding: 16px 18px;
+        display: block;
       }
+      .annot-card:nth-of-type(2) { left: 4vw !important; right: 4vw !important; }
       .annot-card:nth-of-type(3) {
-        left: 3vw !important;
+        left: 4vw !important;
         transform: translateY(18px) !important;
       }
       .annot-card:nth-of-type(3).show { transform: none !important; }
-      .annot-desc { display: none; }
-      .annot-num  { margin-bottom: 0; font-size: 0.55rem; }
-      .annot-title { font-size: 0.9rem; margin-bottom: 0; }
+      .annot-num   { font-size: 0.56rem; margin-bottom: 6px; }
+      .annot-title { font-size: 1rem; margin-bottom: 6px; }
+      .annot-desc  { display: block; font-size: 0.78rem; line-height: 1.55; }
     }
 
     /* ── ABOUT ───────────────────────────────────────────────── */
@@ -1000,6 +1084,48 @@
 <!-- HERO — THREE.JS OCEAN -->
 <section id="hero">
   <canvas id="oceanCanvas"></canvas>
+
+  <!-- Rayons solaires sous-marins -->
+  <div class="sun-rays"></div>
+
+  <!-- Caustiques animées -->
+  <div class="caustics">
+    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="blur1"><feGaussianBlur stdDeviation="28"/></filter>
+        <filter id="blur2"><feGaussianBlur stdDeviation="18"/></filter>
+      </defs>
+      <!-- taches lumineuses animées -->
+      <ellipse cx="300" cy="180" rx="90" ry="40" fill="rgba(150,220,255,0.55)" filter="url(#blur1)">
+        <animate attributeName="cx" values="300;420;260;380;300" dur="9s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="180;140;220;160;180" dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="90;120;70;110;90"   dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.55;0.8;0.4;0.7;0.55" dur="5s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="750" cy="120" rx="70" ry="28" fill="rgba(120,200,255,0.6)" filter="url(#blur1)">
+        <animate attributeName="cx" values="750;680;800;700;750" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="120;160;90;140;120"  dur="8s"  repeatCount="indefinite"/>
+        <animate attributeName="rx" values="70;100;55;85;70"     dur="7s"  repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.6;0.35;0.75;0.5;0.6" dur="6s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="950" cy="260" rx="55" ry="22" fill="rgba(180,235,255,0.5)" filter="url(#blur2)">
+        <animate attributeName="cx" values="950;1020;880;980;950" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="260;200;290;220;260"  dur="9s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0.75;0.3;0.65;0.5" dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="500" cy="320" rx="40" ry="16" fill="rgba(100,190,255,0.45)" filter="url(#blur2)">
+        <animate attributeName="cx" values="500;560;440;520;500" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="320;270;350;290;320"  dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.45;0.7;0.25;0.6;0.45" dur="5s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="150" cy="350" rx="60" ry="24" fill="rgba(140,215,255,0.5)" filter="url(#blur1)">
+        <animate attributeName="cx" values="150;230;100;200;150" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="350;300;380;320;350"  dur="9s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0.75;0.3;0.65;0.5" dur="7s" repeatCount="indefinite"/>
+      </ellipse>
+    </svg>
+  </div>
+
   <div class="hero-overlay"></div>
 
   <div class="hero-content">
@@ -1454,20 +1580,31 @@
   camera.position.set(0, 22, 46);
   camera.lookAt(0, -1, 0);
 
-  // Lighting
-  scene.add(new THREE.AmbientLight(0x7BA7BC, 0.45));
+  // Lighting — renforcé pour effet sous-marin dramatique
+  scene.add(new THREE.AmbientLight(0x4488bb, 0.55));
 
-  const sun = new THREE.DirectionalLight(0xffffff, 0.8);
-  sun.position.set(18, 28, 12);
+  // Soleil venant du dessus — fort et chaud
+  const sun = new THREE.DirectionalLight(0x90d8ff, 1.4);
+  sun.position.set(8, 40, 10);
   scene.add(sun);
 
-  const rimA = new THREE.PointLight(0x7BA7BC, 1.4, 90);
-  rimA.position.set(-22, 14, 0);
+  // Contre-lumière bleue profonde
+  const deep = new THREE.DirectionalLight(0x0a3a7c, 0.6);
+  deep.position.set(-10, -20, -10);
+  scene.add(deep);
+
+  // Point lights pour simuler les reflets de surface
+  const rimA = new THREE.PointLight(0x7BC8FF, 2.2, 80);
+  rimA.position.set(-18, 20, 8);
   scene.add(rimA);
 
-  const rimB = new THREE.PointLight(0x7BA7BC, 0.3, 70);
-  rimB.position.set(22, 8, -12);
+  const rimB = new THREE.PointLight(0xb0e8ff, 1.2, 60);
+  rimB.position.set(22, 18, -10);
   scene.add(rimB);
+
+  const rimC = new THREE.PointLight(0x5ab4f0, 1.8, 70);
+  rimC.position.set(0, 30, 20);
+  scene.add(rimC);
 
   // Ocean mesh
   const SEGS = 110, SIZE = 110;
@@ -1476,11 +1613,11 @@
   const posAttr = geo.attributes.position;
 
   const mat = new THREE.MeshPhongMaterial({
-    color:      0x0E2A5C,
-    specular:   0x7BA7BC,
-    shininess:  130,
+    color:      0x0a2a5a,
+    specular:   0xaaddff,
+    shininess:  260,
     transparent: true,
-    opacity:    0.96,
+    opacity:    0.97,
     side:       THREE.DoubleSide,
   });
 
@@ -1634,7 +1771,7 @@ const navbar       = document.getElementById('navbar');
 const scrollSec    = document.querySelector('.scroll-section');
 const annotCards   = document.querySelectorAll('.annot-card');
 
-const HOLD = 320;
+const HOLD = 560;
 let snapping = false;
 let snapTimer = null;
 
