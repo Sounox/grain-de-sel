@@ -1027,42 +1027,44 @@
 
   <!-- Rayons solaires sous-marins -->
   <div class="sun-rays">
-    <svg viewBox="0 0 1200 750" preserveAspectRatio="xMidYTop slice" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 1200 750" preserveAspectRatio="xMidYTop slice"
+         xmlns="http://www.w3.org/2000/svg" overflow="visible">
       <defs>
-        <filter id="rf" x="-50%" y="0%" width="200%" height="110%">
-          <feGaussianBlur stdDeviation="18"/>
+        <!-- filtre : region élargie en haut pour éviter le clip du blur -->
+        <filter id="rf" x="-60%" y="-15%" width="220%" height="130%">
+          <feGaussianBlur stdDeviation="16"/>
         </filter>
-        <!-- Gradient transparent en bas pour chaque rayon -->
+        <!-- gradient : transparent au top ET en bas → pas d'arête dure -->
         <linearGradient id="rg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stop-color="#a8e0ff" stop-opacity="1"/>
+          <stop offset="0%"   stop-color="#a8e0ff" stop-opacity="0"/>
+          <stop offset="12%"  stop-color="#a8e0ff" stop-opacity="1"/>
           <stop offset="100%" stop-color="#a8e0ff" stop-opacity="0"/>
         </linearGradient>
       </defs>
-      <!-- Rayons : polygones partant du haut, blur global, animations d'opacité décalées -->
       <g filter="url(#rf)" fill="url(#rg)">
-        <polygon points="540,0 570,0 420,750 390,750" opacity="0.12">
-          <animate attributeName="opacity" values="0.12;0.22;0.08;0.18;0.12" dur="8s"  begin="0s"    repeatCount="indefinite"/>
+        <polygon points="540,-20 570,-20 420,750 390,750" opacity="0.12">
+          <animate attributeName="opacity" values="0.12;0.22;0.08;0.18;0.12" dur="8s"  begin="0s"   repeatCount="indefinite"/>
         </polygon>
-        <polygon points="575,0 595,0 510,750 490,750" opacity="0.18">
-          <animate attributeName="opacity" values="0.18;0.32;0.10;0.26;0.18" dur="11s" begin="1.2s"  repeatCount="indefinite"/>
+        <polygon points="575,-20 595,-20 510,750 490,750" opacity="0.18">
+          <animate attributeName="opacity" values="0.18;0.32;0.10;0.26;0.18" dur="11s" begin="1.2s" repeatCount="indefinite"/>
         </polygon>
-        <polygon points="600,0 615,0 580,750 565,750" opacity="0.22">
-          <animate attributeName="opacity" values="0.22;0.38;0.14;0.30;0.22" dur="9s"  begin="0.5s"  repeatCount="indefinite"/>
+        <polygon points="600,-20 615,-20 580,750 565,750" opacity="0.22">
+          <animate attributeName="opacity" values="0.22;0.38;0.14;0.30;0.22" dur="9s"  begin="0.5s" repeatCount="indefinite"/>
         </polygon>
-        <polygon points="618,0 630,0 640,750 628,750" opacity="0.16">
-          <animate attributeName="opacity" values="0.16;0.28;0.09;0.22;0.16" dur="13s" begin="2s"    repeatCount="indefinite"/>
+        <polygon points="618,-20 630,-20 640,750 628,750" opacity="0.16">
+          <animate attributeName="opacity" values="0.16;0.28;0.09;0.22;0.16" dur="13s" begin="2s"   repeatCount="indefinite"/>
         </polygon>
-        <polygon points="635,0 650,0 720,750 705,750" opacity="0.14">
-          <animate attributeName="opacity" values="0.14;0.24;0.07;0.19;0.14" dur="10s" begin="3.5s"  repeatCount="indefinite"/>
+        <polygon points="635,-20 650,-20 720,750 705,750" opacity="0.14">
+          <animate attributeName="opacity" values="0.14;0.24;0.07;0.19;0.14" dur="10s" begin="3.5s" repeatCount="indefinite"/>
         </polygon>
-        <polygon points="660,0 680,0 810,750 790,750" opacity="0.10">
-          <animate attributeName="opacity" values="0.10;0.20;0.05;0.15;0.10" dur="7s"  begin="1.8s"  repeatCount="indefinite"/>
+        <polygon points="660,-20 680,-20 810,750 790,750" opacity="0.10">
+          <animate attributeName="opacity" values="0.10;0.20;0.05;0.15;0.10" dur="7s"  begin="1.8s" repeatCount="indefinite"/>
         </polygon>
-        <polygon points="520,0 540,0 340,750 315,750" opacity="0.09">
-          <animate attributeName="opacity" values="0.09;0.17;0.05;0.13;0.09" dur="12s" begin="4s"    repeatCount="indefinite"/>
+        <polygon points="520,-20 540,-20 340,750 315,750" opacity="0.09">
+          <animate attributeName="opacity" values="0.09;0.17;0.05;0.13;0.09" dur="12s" begin="4s"   repeatCount="indefinite"/>
         </polygon>
-        <polygon points="690,0 710,0 900,750 880,750" opacity="0.08">
-          <animate attributeName="opacity" values="0.08;0.16;0.04;0.12;0.08" dur="15s" begin="2.8s"  repeatCount="indefinite"/>
+        <polygon points="690,-20 710,-20 900,750 880,750" opacity="0.08">
+          <animate attributeName="opacity" values="0.08;0.16;0.04;0.12;0.08" dur="15s" begin="2.8s" repeatCount="indefinite"/>
         </polygon>
       </g>
     </svg>
@@ -1752,8 +1754,9 @@ const scrollSec    = document.querySelector('.scroll-section');
 const annotCards   = document.querySelectorAll('.annot-card');
 
 const HOLD = 1100;
-let snapping = false;
-let snapTimer = null;
+let snapping      = false;
+let snapTimer     = null;
+let lockedFrame   = -1; // mobile: frame verrouillé pendant le hold
 
 const zones = Array.from(annotCards).map(function(c) {
   return { show: parseFloat(c.dataset.show), hide: parseFloat(c.dataset.hide), snapped: false };
@@ -1764,14 +1767,24 @@ function updateAnnotations(progress) {
     var z = zones[i];
     var visible = progress >= z.show && progress <= z.hide;
     card.classList.toggle('show', visible);
-    // Snap-stop: desktop only — pointer-events:none has no effect on native mobile scroll
-    if (visible && !z.snapped && !snapping && !isMobile) {
+
+    if (visible && !z.snapped && !snapping) {
       z.snapped = true;
       snapping  = true;
-      document.body.style.pointerEvents = 'none';
+
+      if (isMobile) {
+        // Mobile : verrouiller le targetFrameF à sa position actuelle
+        // → la lerp converge vers une cible fixe = gel visuel garanti
+        lockedFrame = displayFrameF;
+      } else {
+        // Desktop : pointer-events bloque la molette
+        document.body.style.pointerEvents = 'none';
+      }
+
       if (snapTimer) clearTimeout(snapTimer);
       snapTimer = setTimeout(function() {
-        document.body.style.pointerEvents = '';
+        lockedFrame = -1;
+        if (!isMobile) document.body.style.pointerEvents = '';
         snapping = false;
       }, HOLD);
     }
@@ -1808,7 +1821,9 @@ window.addEventListener('touchmove', function() {
 // Dedicated RAF loop — decouples draw from scroll/touch events
 (function animLoop() {
   requestAnimationFrame(animLoop);
-  displayFrameF += (targetFrameF - displayFrameF) * LERP;
+  // Sur mobile pendant un snap : lerp vers la frame verrouillée (gel visuel)
+  var target = (lockedFrame >= 0) ? lockedFrame : targetFrameF;
+  displayFrameF += (target - displayFrameF) * LERP;
   var fi = Math.round(displayFrameF);
   if (fi !== curFrame) { curFrame = fi; drawFrame(fi); }
 })();
