@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grain de Sel — Restaurant, La Grande Motte</title>
+  <link rel="icon" href="https://graindesel.astr.studio/wp-content/uploads/2026/04/favicon-150x150.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <style>
+    :root {
+      --bg:            #0E2A5C;
+      --bg-deep:       #081A3C;
+      --ocean:         #7BA7BC;
+      --rose:          #7ba7bc;
+      --text:          rgba(255, 255, 255, 0.92);
+      --text-sec:      rgba(255, 255, 255, 0.42);
+      --border:        rgba(123, 167, 188, 0.11);
+      --glass:         rgba(14, 42, 92, 0.55);
+      --font-disp:     'Cormorant Garamond', Georgia, serif;
+      --font-body:     'Roboto', system-ui, sans-serif;
+      --font-num:      'Cinzel', 'Cormorant Garamond', Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection { background: rgba(123,167,188,0.25); color: var(--text); }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-deep); }
+    ::-webkit-scrollbar-thumb { background: var(--ocean); border-radius: 4px; }
+
+    /* ── LOADER ──────────────────────────────────────────────── */
+    #loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      transition: opacity 0.9s ease;
+    }
+    .loader-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      overflow: hidden; margin-bottom: 28px;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(123,167,188,0.12);
+    }
+    .loader-circle img { width: 100%; height: 100%; object-fit: cover; }
+    .loader-name {
+      font-family: var(--font-disp);
+      font-size: 1.4rem; font-weight: 300;
+      letter-spacing: 0.45em; text-transform: uppercase;
+      color: var(--ocean); margin-bottom: 44px;
+    }
+    .loader-track {
+      width: 180px; height: 1px;
+      background: rgba(123,167,188,0.15); position: relative;
+    }
+    #loaderBar {
+      height: 100%; width: 0%;
+      background: var(--ocean);
+      transition: width 0.25s ease;
+    }
+    .loader-text {
+      margin-top: 14px;
+      font-size: 0.63rem; letter-spacing: 0.32em;
+      text-transform: uppercase; color: var(--text-sec);
+    }
+
+    /* ── SCROLL PROGRESS ─────────────────────────────────────── */
+    #scrollProgress {
+      position: fixed; top: 0; left: 0;
+      height: 1px; width: 0%;
+      background: linear-gradient(90deg, rgba(123,167,188,0.55), var(--ocean), rgba(200,228,240,0.95));
+      z-index: 10000; transition: width 0.08s linear;
+    }
+
+    /* ── NAVBAR ──────────────────────────────────────────────── */
+    #navbar {
+      position: fixed; top: 14px; left: 0; right: 0;
+      z-index: 1000;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 0 36px;
+    }
+    .nav-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #navbar.scrolled .nav-inner {
+      max-width: 860px; margin: 0 auto;
+      background: rgba(14, 42, 92, 0.72);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border-radius: 100px;
+      padding: 11px 26px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 11px;
+      text-decoration: none; color: var(--text);
+    }
+    .nav-logo-img {
+      width: 32px; height: 32px; border-radius: 50%;
+      object-fit: cover; border: 1px solid var(--border);
+    }
+    .nav-logo-name {
+      font-family: var(--font-disp);
+      font-size: 1.05rem; font-weight: 400; letter-spacing: 0.18em;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 30px;
+    }
+    .nav-links a {
+      font-size: 0.72rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-sec);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--ocean); }
+    .nav-cta {
+      border: 1px solid var(--ocean) !important;
+      color: var(--ocean) !important;
+      padding: 8px 22px;
+      border-radius: 100px;
+      transition: all 0.3s ease !important;
+    }
+    .nav-cta:hover {
+      background: var(--ocean) !important;
+      color: var(--bg) !important;
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      #navbar { padding: 0 20px; }
+    }
+
+    /* ── HERO ────────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100dvh;
+      display: flex; align-items: flex-end;
+      overflow: hidden;
+    }
+    #oceanCanvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(14,42,92,0.18) 0%,
+        rgba(14,42,92,0.0) 35%,
+        rgba(14,42,92,0.55) 75%,
+        rgba(14,42,92,1.0) 100%
+      );
+      pointer-events: none;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 0 9vw 10vh;
+      max-width: 1400px;
+    }
+    .hero-eyebrow {
+      font-size: 0.66rem; letter-spacing: 0.38em;
+      text-transform: uppercase; color: var(--ocean);
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block; width: 36px; height: 1px;
+      background: var(--ocean); flex-shrink: 0;
+    }
+    .hero-title {
+      font-family: var(--font-disp);
+      font-size: clamp(3.2rem, 8.5vw, 7.5rem);
+      font-weight: 300; line-height: 0.96;
+      letter-spacing: -0.015em;
+      margin-bottom: 28px; color: var(--text);
+    }
+    .hero-title em { font-style: italic; color: var(--ocean); }
+    .hero-sub {
+      font-size: 0.96rem; font-weight: 300;
+      color: var(--text-sec); max-width: 420px;
+      line-height: 1.78; margin-bottom: 48px;
+    }
+    .hero-actions {
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--rose); color: #fff;
+      padding: 13px 36px; border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 0.77rem; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: pointer;
+      display: inline-block;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 36px rgba(123,167,188,0.32);
+    }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      padding: 13px 36px; border-radius: 100px;
+      font-family: var(--font-body);
+      font-size: 0.77rem; font-weight: 400;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      display: inline-block; cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .btn-ghost:hover {
+      border-color: var(--ocean); color: var(--ocean);
+    }
+
+    .hero-date-badge {
+      position: absolute; top: 50%; right: 9vw;
+      transform: translateY(-50%);
+      text-align: center; z-index: 2;
+    }
+    .hero-date-badge::before {
+      content: '';
+      display: block; width: 1px; height: 56px;
+      background: linear-gradient(to bottom, transparent, var(--ocean));
+      margin: 0 auto 14px;
+    }
+    .hero-date-badge::after {
+      content: '';
+      display: block; width: 1px; height: 56px;
+      background: linear-gradient(to top, transparent, var(--ocean));
+      margin: 14px auto 0;
+    }
+    .badge-label {
+      display: block; font-size: 0.6rem;
+      letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--text-sec); margin-bottom: 8px;
+    }
+    .badge-date {
+      display: block; font-family: var(--font-num);
+      font-size: 2.4rem; font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--ocean); line-height: 1;
+    }
+    .badge-month {
+      display: block; font-family: var(--font-disp);
+      font-size: 0.95rem; font-weight: 300;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-sec); margin-top: 5px;
+    }
+    @media (max-width: 900px) { .hero-date-badge { display: none; } }
+
+    .scroll-cue {
+      position: absolute; bottom: 36px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px; z-index: 2;
+    }
+    .scroll-cue span {
+      font-size: 0.58rem; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--text-sec);
+    }
+    .scroll-cue-line {
+      width: 1px; height: 44px;
+      background: linear-gradient(to bottom, var(--ocean), transparent);
+      animation: cuePulse 2.2s ease-in-out infinite;
+    }
+    @keyframes cuePulse {
+      0%,100% { opacity: 0.25; transform: scaleY(0.7); }
+      55%      { opacity: 1;    transform: scaleY(1);   }
+    }
+
+    /* ── SCROLL VIDEO ────────────────────────────────────────── */
+    .scroll-section {
+      height: 200vh; position: relative;
+    }
+    @media (max-width: 1024px) { .scroll-section { height: 180vh; } }
+    @media (max-width: 768px)  { .scroll-section { height: 160vh; } }
+
+    .scroll-sticky {
+      position: sticky; top: 0;
+      height: 100vh; width: 100%;
+      overflow: hidden;
+    }
+    #frameCanvas {
+      position: absolute; top: 0; left: 0;
+      will-change: contents;
+      transform: translateZ(0);
+      image-rendering: -webkit-optimize-contrast;
+    }
+    .frame-grad {
+      position: absolute; inset: 0; pointer-events: none; z-index: 5;
+      background: linear-gradient(
+        to bottom,
+        rgba(14,42,92,0.6) 0%,
+        rgba(14,42,92,0.0) 35%,
+        rgba(14,42,92,0.0) 65%,
+        rgba(14,42,92,0.65) 100%
+      );
+    }
+
+    .annot-card {
+      position: absolute; bottom: 8vh; left: 6vw;
+      max-width: 340px;
+      background: rgba(14,42,92,0.48);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-radius: 14px; padding: 26px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+      opacity: 0; transform: translateY(14px);
+      transition: opacity 0.38s ease, transform 0.38s ease;
+      will-change: opacity, transform;
+      pointer-events: none; z-index: 10;
+    }
+    .annot-card.show {
+      opacity: 1; transform: translateY(0); pointer-events: auto;
+    }
+    .annot-card:nth-of-type(2) { left: auto; right: 6vw; }
+    .annot-card:nth-of-type(3) {
+      left: 50%;
+      transform: translateX(-50%) translateY(18px);
+    }
+    .annot-card:nth-of-type(3).show {
+      transform: translateX(-50%) translateY(0);
+    }
+    .annot-num {
+      font-size: 0.6rem; letter-spacing: 0.3em;
+      color: var(--ocean); text-transform: uppercase;
+      margin-bottom: 10px; font-weight: 500;
+    }
+    .annot-title {
+      font-family: var(--font-disp);
+      font-size: 1.35rem; font-weight: 400;
+      margin-bottom: 9px; color: var(--text);
+    }
+    .annot-desc {
+      font-size: 0.82rem; color: var(--text-sec); line-height: 1.68;
+    }
+    @media (max-width: 768px) {
+      .annot-card {
+        bottom: 2vh; left: 3vw !important; right: 3vw !important;
+        max-width: none; padding: 12px 16px;
+        display: flex; align-items: center; gap: 12px;
+      }
+      .annot-card:nth-of-type(2) { right: 3vw; }
+      .annot-card:nth-of-type(3) {
+        left: 3vw !important;
+        transform: translateY(18px) !important;
+      }
+      .annot-card:nth-of-type(3).show {
+        transform: none !important;
+      }
+      .annot-desc { display: none; }
+      .annot-num  { margin-bottom: 0; }
+    }
+
+    /* ── ABOUT ───────────────────────────────────────────────── */
+    #about {
+      padding: 140px clamp(24px, 9vw, 160px);
+    }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 90px; align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .eyebrow {
+      font-size: 0.64rem; letter-spacing: 0.4em;
+      text-transform: uppercase; color: var(--ocean);
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: ''; display: block; width: 28px; height: 1px;
+      background: var(--ocean); flex-shrink: 0;
+    }
+    .about-heading {
+      font-family: var(--font-disp);
+      font-size: clamp(2.3rem, 4.5vw, 4rem);
+      font-weight: 300; line-height: 1.12;
+      margin-bottom: 30px;
+    }
+    .about-heading em { font-style: italic; color: var(--ocean); }
+    .about-body {
+      font-size: 0.9rem; font-weight: 300;
+      color: var(--text-sec); line-height: 1.88;
+      max-width: 480px;
+    }
+    .about-body + .about-body { margin-top: 16px; }
+
+    .about-opening {
+      margin-top: 52px; padding-top: 52px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 22px;
+    }
+    .opening-number {
+      font-family: var(--font-num);
+      font-size: 2.8rem; font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--ocean); line-height: 1;
+    }
+    .opening-copy .opening-tag {
+      display: block; font-size: 0.6rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--text-sec); margin-bottom: 4px;
+    }
+    .opening-copy .opening-line {
+      font-size: 0.88rem; font-weight: 300;
+    }
+
+    /* About visual */
+    .about-visual {
+      aspect-ratio: 4/5; position: relative;
+    }
+    .about-visual-inner {
+      width: 100%; height: 100%;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      overflow: hidden; position: relative;
+    }
+    .about-dish-img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
+      filter: brightness(0.82) saturate(1.15) sepia(0.08) contrast(1.06);
+      transition: transform 0.8s cubic-bezier(0.16,1,0.3,1), filter 0.8s ease;
+    }
+    .about-visual-inner:hover .about-dish-img {
+      filter: brightness(0.88) saturate(1.18) sepia(0.04) contrast(1.04);
+    }
+    .about-dish-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        rgba(14,42,92,0.08) 0%,
+        rgba(14,42,92,0.0) 40%,
+        rgba(14,42,92,0.68) 100%
+      );
+    }
+    .about-watermark {
+      font-family: var(--font-disp);
+      font-size: 5.5rem; font-weight: 300;
+      color: rgba(123,167,188,0.08);
+      letter-spacing: -0.04em; line-height: 1;
+      text-align: center; pointer-events: none;
+      user-select: none;
+    }
+    .about-waves { display: none; }
+
+    .about-info-badge {
+      position: absolute; bottom: 28px; left: 28px; right: 28px;
+      background: rgba(14,42,92,0.7);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-radius: 10px; padding: 18px 22px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .badge-title-sm {
+      font-family: var(--font-disp);
+      font-size: 1rem; font-weight: 400;
+      margin-bottom: 4px;
+    }
+    .badge-sub-sm {
+      font-size: 0.72rem; color: var(--ocean);
+      letter-spacing: 0.08em;
+    }
+
+    @media (max-width: 768px) {
+      #about { padding: 80px 24px; }
+      #features { padding: 0 24px 80px; }
+      #specs { padding: 80px 24px; }
+      #menu { padding: 80px 24px; }
+      #reservation { padding: 80px 24px; }
+      footer { padding: 48px 24px 32px; }
+      .about-grid { grid-template-columns: 1fr; gap: 56px; }
+      .about-visual { aspect-ratio: 16/9; }
+    }
+
+    /* ── FEATURES ────────────────────────────────────────────── */
+    #features {
+      padding: 0 clamp(24px, 9vw, 160px) 140px;
+    }
+    .section-head {
+      margin-bottom: 72px;
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .section-heading {
+      font-family: var(--font-disp);
+      font-size: clamp(2.1rem, 4vw, 3.6rem);
+      font-weight: 300; line-height: 1.14;
+      max-width: 680px;
+      text-wrap: balance;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px; max-width: 1200px;
+      margin: 0 auto;
+    }
+    .feat-card {
+      background: rgba(123,167,188,0.03);
+      border: 1px solid var(--border);
+      border-radius: 3px; padding: 38px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .feat-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--ocean), transparent);
+      opacity: 0; transition: opacity 0.4s ease;
+    }
+    .feat-card:hover {
+      border-color: rgba(123,167,188,0.22);
+      transform: translateY(-4px);
+    }
+    .feat-card:hover::after { opacity: 1; }
+    .feat-card { min-height: 280px; }
+
+    .feat-num {
+      font-size: 0.6rem; letter-spacing: 0.28em;
+      color: var(--ocean); text-transform: uppercase;
+      margin-bottom: 20px; font-weight: 500;
+    }
+    .feat-icon {
+      width: 40px; height: 40px; margin-bottom: 22px;
+      color: var(--ocean); opacity: 0.65;
+    }
+    .feat-icon svg { width: 100%; height: 100%; }
+    .feat-title {
+      font-family: var(--font-disp);
+      font-size: 1.45rem; font-weight: 400;
+      margin-bottom: 11px; line-height: 1.2;
+    }
+    .feat-desc {
+      font-size: 0.84rem; color: var(--text-sec);
+      line-height: 1.75; font-weight: 300;
+    }
+    @media (max-width: 768px) {
+      .features-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── SPECS ───────────────────────────────────────────────── */
+    #specs {
+      padding: 100px clamp(24px, 9vw, 160px);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    #specs::before {
+      content: '';
+      position: absolute; top: 50%; left: 0; right: 0; height: 280px;
+      transform: translateY(-50%);
+      background: radial-gradient(ellipse at center,
+        rgba(123,167,188,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .specs-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 40px; max-width: 980px; margin: 0 auto; text-align: center;
+    }
+    .spec-row {
+      display: flex; align-items: baseline;
+      justify-content: center; gap: 3px; line-height: 1;
+    }
+    .spec-number {
+      font-family: var(--font-num);
+      font-size: clamp(2.6rem, 4.8vw, 4.2rem);
+      font-weight: 400; color: var(--ocean);
+      letter-spacing: 0.04em;
+      transition: text-shadow 0.3s ease;
+    }
+    .spec-number.counting {
+      text-shadow: 0 0 40px rgba(123,167,188,0.42);
+    }
+    .spec-suf {
+      font-family: var(--font-num);
+      font-size: clamp(1.3rem, 2.3vw, 2rem);
+      font-weight: 400; color: var(--ocean);
+      letter-spacing: 0.04em;
+    }
+    .spec-label {
+      font-size: 0.68rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--text-sec);
+      margin-top: 10px; display: block;
+    }
+    @media (max-width: 768px) {
+      .specs-grid { grid-template-columns: repeat(2, 1fr); gap: 48px; }
+    }
+
+    /* ── MENU PREVIEW ────────────────────────────────────────── */
+    #menu {
+      padding: 140px clamp(24px, 9vw, 160px);
+    }
+    /* Center direct children in menu section */
+    #menu > .eyebrow,
+    #menu > .section-heading,
+    #menu > .menu-note {
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .menu-note {
+      font-family: var(--font-disp);
+      font-size: 1rem; font-style: italic;
+      color: var(--text-sec); margin-top: 10px; margin-bottom: 56px;
+    }
+    .menu-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .menu-cat {
+      padding: 46px;
+      border: 1px solid var(--border);
+    }
+    .menu-cat:nth-child(2) { border-left: none; }
+    .menu-cat:nth-child(3) { border-top: none; }
+    .menu-cat:nth-child(4) { border-top: none; border-left: none; }
+
+    .menu-cat-label {
+      font-size: 0.62rem; letter-spacing: 0.38em;
+      text-transform: uppercase; color: var(--ocean);
+      margin-bottom: 22px;
+    }
+    .menu-item {
+      display: flex; justify-content: space-between;
+      align-items: baseline;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item-info { flex: 1; min-width: 0; padding-right: 16px; }
+    .menu-item-name {
+      font-family: var(--font-disp);
+      font-size: 1.08rem; font-weight: 400; color: var(--text);
+    }
+    .menu-item-desc {
+      font-size: 0.75rem; color: var(--text-sec);
+      margin-top: 2px; font-weight: 300;
+    }
+    .menu-item-price {
+      font-family: var(--font-num);
+      font-size: 0.88rem; font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--ocean); white-space: nowrap; flex-shrink: 0;
+    }
+    @media (max-width: 768px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      .menu-cat:nth-child(n) { border-left: 1px solid var(--border); }
+      .menu-cat:nth-child(2) { border-top: none; }
+      .menu-cat:nth-child(3) { border-top: none; }
+      .menu-cat:nth-child(4) { border-top: none; }
+    }
+
+    /* ── RESERVATION ─────────────────────────────────────────── */
+    #reservation {
+      padding: 140px clamp(24px, 9vw, 160px);
+      position: relative;
+    }
+    /* Center direct children in reservation section */
+    #reservation > .eyebrow,
+    #reservation > .section-heading {
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .resa-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 100px; align-items: start;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .resa-info-item {
+      display: flex; align-items: flex-start;
+      gap: 18px; padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .resa-info-item:last-child { border-bottom: none; }
+    .resa-icon {
+      width: 18px; height: 18px; flex-shrink: 0;
+      margin-top: 3px; color: var(--ocean); opacity: 0.55;
+    }
+    .resa-icon svg { width: 100%; height: 100%; stroke: currentColor; }
+    .resa-tag {
+      display: block; font-size: 0.6rem;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--text-sec); margin-bottom: 4px;
+    }
+    .resa-val {
+      font-size: 0.88rem; font-weight: 300; line-height: 1.6;
+    }
+
+    .resa-form {
+      background: rgba(123,167,188,0.03);
+      border: 1px solid var(--border);
+      border-radius: 3px; padding: 46px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .form-heading {
+      font-family: var(--font-disp);
+      font-size: 1.75rem; font-weight: 300; margin-bottom: 6px;
+    }
+    .form-subheading {
+      font-size: 0.8rem; color: var(--text-sec);
+      margin-bottom: 28px; font-weight: 300;
+    }
+    .resa-notice {
+      background: rgba(123,167,188,0.08);
+      border: 1px solid rgba(123,167,188,0.2);
+      border-radius: 3px; padding: 10px 14px;
+      font-size: 0.75rem; color: rgba(123,167,188,0.85);
+      text-align: center; margin-bottom: 28px;
+      letter-spacing: 0.04em; line-height: 1.5;
+    }
+    .form-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 14px; margin-bottom: 14px;
+    }
+    .form-group {
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .form-group label {
+      font-size: 0.62rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--text-sec);
+      font-weight: 500;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: 3px; padding: 11px 14px;
+      font-family: var(--font-body);
+      font-size: 0.85rem; font-weight: 300;
+      color: var(--text); outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: rgba(123,167,188,0.45);
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--text-sec);
+    }
+    .form-group select { appearance: none; cursor: pointer; }
+    .form-group select option { background: #0E2A5C; color: #fff; }
+    .form-group textarea { resize: none; height: 76px; }
+    .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(0.6); cursor: pointer;
+    }
+    .form-submit { width: 100%; margin-top: 10px; }
+
+    @media (max-width: 768px) {
+      .resa-grid { grid-template-columns: 1fr; gap: 60px; }
+      .form-row { grid-template-columns: 1fr; }
+      .resa-form { padding: 28px 22px; }
+    }
+
+    /* ── FOOTER ──────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 56px clamp(24px, 9vw, 160px) 38px;
+    }
+    .footer-inner {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 28px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 11px;
+    }
+    .footer-logo {
+      width: 36px; height: 36px; border-radius: 50%;
+      object-fit: cover; border: 1px solid var(--border);
+    }
+    .footer-brand-name {
+      font-family: var(--font-disp);
+      font-size: 1.05rem; font-weight: 400;
+      letter-spacing: 0.15em;
+    }
+    .footer-links {
+      display: flex; gap: 28px; flex-wrap: wrap;
+    }
+    .footer-links a {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      color: var(--text-sec); text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--ocean); }
+    .footer-copy {
+      font-size: 0.68rem; color: var(--text-sec);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── POWERED BY ──────────────────────────────────────── */
+    .powered-by {
+      border-top: 1px solid var(--border);
+      padding: 14px clamp(24px, 9vw, 160px);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .powered-by-label {
+      font-size: 0.7rem; letter-spacing: 0.04em;
+      color: var(--text-sec);
+      white-space: nowrap;
+    }
+    .powered-by-logo {
+      display: inline-flex; align-items: center;
+      text-decoration: none;
+      transition: opacity 0.3s ease;
+    }
+    .powered-by-logo:hover { opacity: 0.65; }
+    .powered-by-logo img {
+      height: 16px; width: auto;
+      display: block;
+      filter: brightness(0) invert(1);
+      opacity: 0.75;
+    }
+
+    /* ── FADE-IN ─────────────────────────────────────────────── */
+    .fi {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1),
+                  transform 0.85s cubic-bezier(0.16,1,0.3,1);
+    }
+    .fi.d1 { transition-delay: 0.1s; }
+    .fi.d2 { transition-delay: 0.2s; }
+    .fi.d3 { transition-delay: 0.3s; }
+    .fi.d4 { transition-delay: 0.4s; }
+    .fi.vis { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-circle">
+    <img src="https://graindesel.astr.studio/wp-content/uploads/2026/04/favicon.jpg" alt="Grain de Sel">
+  </div>
+  <div class="loader-name">Grain de Sel</div>
+  <div class="loader-track"><div id="loaderBar"></div></div>
+  <p class="loader-text">Chargement</p>
+</div>
+
+<!-- SCROLL PROGRESS -->
+<div id="scrollProgress"></div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <img class="nav-logo-img"
+           src="https://graindesel.astr.studio/wp-content/uploads/2026/04/favicon.jpg"
+           alt="Grain de Sel">
+      <span class="nav-logo-name">Grain de Sel</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about">Le Restaurant</a>
+      <a href="#menu">La Carte</a>
+      <a href="#reservation" class="nav-cta">Réserver</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO — THREE.JS OCEAN -->
+<section id="hero">
+  <canvas id="oceanCanvas"></canvas>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Restaurant Semi-Gastronomique · La Grande Motte</div>
+    <h1 class="hero-title">
+      L'Océan<br>dans <em>l'assiette</em>
+    </h1>
+    <p class="hero-sub">
+      Cuisine ancrée dans les saveurs de la Méditerranée.
+      Sur le port de La Grande Motte, Hérault.
+    </p>
+    <div class="hero-actions">
+      <a href="#reservation" class="btn-primary">Réserver une table</a>
+      <a href="#about" class="btn-ghost">Découvrir</a>
+    </div>
+  </div>
+
+  <div class="hero-date-badge">
+    <span class="badge-label">Ouverture officielle</span>
+    <span class="badge-date">18</span>
+    <span class="badge-month">Avril 2026</span>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Défiler</span>
+    <div class="scroll-cue-line"></div>
+  </div>
+</section>
+
+<!-- SCROLL VIDEO -->
+<section class="scroll-section">
+  <div class="scroll-sticky">
+    <canvas id="frameCanvas"></canvas>
+    <div class="frame-grad"></div>
+
+    <div class="annot-card" data-show="0.08" data-hide="0.38">
+      <div class="annot-num">01 — L'Essence</div>
+      <h3 class="annot-title">Le sel, âme de l'océan</h3>
+      <p class="annot-desc">Chaque grain raconte une histoire. Celle d'une mer généreuse, d'un territoire unique. La matière première de notre cuisine.</p>
+    </div>
+
+    <div class="annot-card" data-show="0.42" data-hide="0.70">
+      <div class="annot-num">02 — Le Lieu</div>
+      <h3 class="annot-title">Port de La Grande Motte</h3>
+      <p class="annot-desc">Entre les eaux turquoise de la Méditerranée et l'architecture singulière des années 70 — un écrin contemporain pour une cuisine authentique.</p>
+    </div>
+
+    <div class="annot-card" data-show="0.74" data-hide="0.94">
+      <div class="annot-num">03 — L'Ouverture</div>
+      <h3 class="annot-title">18 Avril 2026</h3>
+      <p class="annot-desc">Le premier service approche. Réservez dès maintenant pour vivre l'expérience Grain de Sel dès l'ouverture officielle.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div>
+      <div class="eyebrow fi">Le Restaurant</div>
+      <h2 class="about-heading fi d1">
+        Une cuisine ancrée<br>dans <em>l'honnêteté</em><br>du produit
+      </h2>
+      <p class="about-body fi d2">
+        Grain de Sel est né d'une conviction simple : les meilleurs plats sont ceux où le produit parle de lui-même. Poissons de la Méditerranée, coquillages pêchés localement, herbes du littoral — notre carte évolue au rythme des saisons et des arrivages.
+      </p>
+      <p class="about-body fi d3">
+        Installés sur le port de La Grande Motte, nous cultivons une cuisine semi-gastronomique accessible, généreuse, et résolument moderne — sans excès, sans compromis.
+      </p>
+      <div class="about-opening fi d4">
+        <div class="opening-number">18.04</div>
+        <div class="opening-copy">
+          <span class="opening-tag">Ouverture officielle</span>
+          <span class="opening-line">Premier service — Avril 2026</span>
+        </div>
+      </div>
+    </div>
+    <div class="about-visual fi d2">
+      <div class="about-visual-inner">
+        <img
+          class="about-dish-img"
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=90&fit=crop&crop=center"
+          alt="Dressage gastronomique méditerranéen — Grain de Sel, La Grande Motte"
+          loading="lazy"
+        >
+        <div class="about-dish-overlay"></div>
+        <div class="about-info-badge">
+          <div class="badge-title-sm">Port de La Grande Motte</div>
+          <div class="badge-sub-sm">Cuisine de la mer · Hérault · France</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-head">
+    <div class="eyebrow fi">L'Expérience</div>
+    <h2 class="section-heading fi d1">Ce qui fait la singularité<br>de Grain de Sel</h2>
+  </div>
+  <div class="features-grid">
+
+    <div class="feat-card fi">
+      <div class="feat-num">01</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="22" cy="22" r="16"/>
+          <path d="M8 22c4-7 8-10 14-10s10 3 14 10c-4 7-8 10-14 10S12 29 8 22z"/>
+          <circle cx="22" cy="22" r="4"/>
+        </svg>
+      </div>
+      <h3 class="feat-title">Produits de la mer en direct</h3>
+      <p class="feat-desc">Approvisionnement quotidien auprès des pêcheurs locaux du port. Chaque matin, la carte s'adapte aux arrivages de la Méditerranée.</p>
+    </div>
+
+    <div class="feat-card fi d1">
+      <div class="feat-num">02</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M22 6l4 10h10l-8 7 3 10-9-6-9 6 3-10-8-7h10z"/>
+        </svg>
+      </div>
+      <h3 class="feat-title">Cuisine semi-gastronomique</h3>
+      <p class="feat-desc">Techniques de haute cuisine, accessibilité du bistrot. Une expérience gustative exigeante sans rigidité inutile.</p>
+    </div>
+
+    <div class="feat-card fi d2">
+      <div class="feat-num">03</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M6 34l8-14 8 8 8-12 8 4"/>
+          <path d="M6 26h32" opacity="0.25"/>
+          <path d="M14 10 L14 6 M22 8 L22 4 M30 10 L30 6" stroke-width="0.8"/>
+        </svg>
+      </div>
+      <h3 class="feat-title">Vue imprenable sur le port</h3>
+      <p class="feat-desc">Une salle conçue pour mettre en valeur le panorama. Dîner face aux bateaux, dans la lumière dorée de la Méditerranée en fin de journée. L'architecture iconique de La Grande Motte comme toile de fond — un paysage qui fait partie intégrante du repas.</p>
+    </div>
+
+    <div class="feat-card fi d1">
+      <div class="feat-num">04</div>
+      <div class="feat-icon">
+        <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M22 6v6M22 32v6M6 22h6M32 22h6M11 11l4 4M29 29l4 4M29 11l4-4M11 29l-4 4"/>
+          <circle cx="22" cy="22" r="8"/>
+        </svg>
+      </div>
+      <h3 class="feat-title">12 producteurs locaux partenaires</h3>
+      <p class="feat-desc">Huîtres de Bouzigues, sel de Camargue, légumes du Gard — une filière courte construite avec soin.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- SPECS -->
+<section id="specs">
+  <div class="specs-grid">
+    <div class="spec-item">
+      <div class="spec-row">
+        <span class="spec-number" data-target="18">0</span>
+        <span class="spec-suf">&nbsp;Avril</span>
+      </div>
+      <span class="spec-label">Date d'ouverture</span>
+    </div>
+    <div class="spec-item">
+      <div class="spec-row">
+        <span class="spec-number" data-target="100">0</span>
+        <span class="spec-suf">%</span>
+      </div>
+      <span class="spec-label">Produits de saison</span>
+    </div>
+    <div class="spec-item">
+      <div class="spec-row">
+        <span class="spec-number" data-target="12">0</span>
+        <span class="spec-suf">+</span>
+      </div>
+      <span class="spec-label">Producteurs locaux</span>
+    </div>
+    <div class="spec-item">
+      <div class="spec-row">
+        <span class="spec-number" data-target="1">0</span>
+      </div>
+      <span class="spec-label">Vue sur le port</span>
+    </div>
+  </div>
+</section>
+
+<!-- MENU PREVIEW -->
+<section id="menu">
+  <div class="eyebrow fi">La Carte</div>
+  <h2 class="section-heading fi d1">Suggestions de saison</h2>
+  <p class="menu-note fi d2">La carte évolue au fil des arrivages — aperçu indicatif.</p>
+  <div class="menu-grid">
+    <div class="menu-cat fi">
+      <div class="menu-cat-label">Entrées</div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Tartare de daurade</div>
+          <div class="menu-item-desc">citron vert, yuzu, huile d'olive de Baux</div>
+        </div>
+        <div class="menu-item-price">18 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Huîtres de Bouzigues</div>
+          <div class="menu-item-desc">mignonette au champagne, pain de seigle</div>
+        </div>
+        <div class="menu-item-price">22 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Velouté de rouille</div>
+          <div class="menu-item-desc">croutons maison, safran de Camargue</div>
+        </div>
+        <div class="menu-item-price">14 €</div>
+      </div>
+    </div>
+
+    <div class="menu-cat fi d1">
+      <div class="menu-cat-label">Plats</div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Loup de Méditerranée</div>
+          <div class="menu-item-desc">fenouil confit, beurre blanc au pastis</div>
+        </div>
+        <div class="menu-item-price">38 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Saint-Pierre en croûte d'herbes</div>
+          <div class="menu-item-desc">purée de chou-fleur, jus iodé réduit</div>
+        </div>
+        <div class="menu-item-price">42 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Risotto aux tellines</div>
+          <div class="menu-item-desc">parmesan 24 mois, persil plat</div>
+        </div>
+        <div class="menu-item-price">29 €</div>
+      </div>
+    </div>
+
+    <div class="menu-cat fi d2">
+      <div class="menu-cat-label">Desserts</div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Tarte au citron de Menton</div>
+          <div class="menu-item-desc">meringue soufflée, fleur de sel</div>
+        </div>
+        <div class="menu-item-price">12 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Panna cotta à la vanille</div>
+          <div class="menu-item-desc">coulis passion, tuile cacao amer</div>
+        </div>
+        <div class="menu-item-price">11 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Soufflé au Grand Marnier</div>
+          <div class="menu-item-desc">crème anglaise légère</div>
+        </div>
+        <div class="menu-item-price">14 €</div>
+      </div>
+    </div>
+
+    <div class="menu-cat fi d3">
+      <div class="menu-cat-label">Accords Vins</div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Picpoul de Pinet</div>
+          <div class="menu-item-desc">Domaine Gaujal — Blanc sec 2024</div>
+        </div>
+        <div class="menu-item-price">8 € / verre</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Languedoc Rosé</div>
+          <div class="menu-item-desc">Château La Négly — Rosé 2024</div>
+        </div>
+        <div class="menu-item-price">7 € / verre</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Faugères Rouge</div>
+          <div class="menu-item-desc">Domaine des Estanilles — 2022</div>
+        </div>
+        <div class="menu-item-price">9 € / verre</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATION -->
+<section id="reservation">
+  <div class="eyebrow fi">Réservation</div>
+  <h2 class="section-heading fi d1" style="margin-bottom:72px;">Réservez votre table</h2>
+  <div class="resa-grid">
+
+    <div class="fi d2">
+      <div class="resa-info-item">
+        <div class="resa-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke-width="1.2">
+            <path d="M9 2C6.24 2 4 4.24 4 7c0 4.5 5 9 5 9s5-4.5 5-9c0-2.76-2.24-5-5-5z"/>
+            <circle cx="9" cy="7" r="1.8"/>
+          </svg>
+        </div>
+        <div>
+          <span class="resa-tag">Adresse</span>
+          <span class="resa-val">Port de La Grande Motte<br>34280 La Grande Motte, Hérault</span>
+        </div>
+      </div>
+      <div class="resa-info-item">
+        <div class="resa-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke-width="1.2">
+            <circle cx="9" cy="9" r="7"/>
+            <path d="M9 5.5v3.5l2.5 2.5"/>
+          </svg>
+        </div>
+        <div>
+          <span class="resa-tag">Horaires</span>
+          <span class="resa-val">Mardi – Dimanche<br>Déjeuner 12h00 – 14h30<br>Dîner 19h30 – 22h00</span>
+        </div>
+      </div>
+      <div class="resa-info-item">
+        <div class="resa-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke-width="1.2">
+            <rect x="2" y="3" width="14" height="13" rx="1.5"/>
+            <path d="M6 2v2M12 2v2M2 7h14"/>
+          </svg>
+        </div>
+        <div>
+          <span class="resa-tag">Ouverture</span>
+          <span class="resa-val">18 Avril 2026<br>Premier service midi</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="resa-form fi d3">
+      <h3 class="form-heading">Votre réservation</h3>
+      <p class="form-subheading">Toutes les demandes seront confirmées par email sous 24h</p>
+      <div class="resa-notice">
+        Ouverture 18 Avril 2026 · Les réservations seront traitées prochainement
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" placeholder="Votre prénom">
+        </div>
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" placeholder="Votre nom">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="votre@email.fr">
+        </div>
+        <div class="form-group">
+          <label>Téléphone</label>
+          <input type="tel" placeholder="+33 6 XX XX XX XX">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date souhaitée</label>
+          <input type="date" min="2026-04-18">
+        </div>
+        <div class="form-group">
+          <label>Service</label>
+          <select>
+            <option value="">Choisir un service</option>
+            <option>Déjeuner (12h00)</option>
+            <option>Dîner (19h30)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Nombre de couverts</label>
+        <select>
+          <option>1 personne</option>
+          <option selected>2 personnes</option>
+          <option>3 personnes</option>
+          <option>4 personnes</option>
+          <option>5 personnes</option>
+          <option>6 personnes</option>
+          <option>7+ personnes — nous contacter</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label>Message (optionnel)</label>
+        <textarea placeholder="Allergie, occasion spéciale, préférence de table..."></textarea>
+      </div>
+
+      <button class="btn-primary form-submit">Envoyer la demande</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img class="footer-logo"
+           src="https://graindesel.astr.studio/wp-content/uploads/2026/04/favicon.jpg"
+           alt="Grain de Sel">
+      <span class="footer-brand-name">Grain de Sel</span>
+    </div>
+    <div class="footer-links">
+      <a href="#about">Le Restaurant</a>
+      <a href="#menu">La Carte</a>
+      <a href="#reservation">Réserver</a>
+      <a href="#">Mentions légales</a>
+    </div>
+    <p class="footer-copy">© 2026 Grain de Sel — La Grande Motte, Hérault</p>
+  </div>
+</footer>
+
+<div class="powered-by">
+  <span class="powered-by-label">Fièrement propulsé par</span>
+  <a class="powered-by-logo" href="https://astr.studio" target="_blank" rel="noopener" aria-label="ASTR.STUDIO">
+    <img src="https://astr.studio/wp-content/uploads/2025/08/astr-logo-bg-white.svg" alt="ASTR.STUDIO">
+  </a>
+</div>
+
+<!-- ═══════════════════════════════════════════ SCRIPTS ══ -->
+<script>
+'use strict';
+
+// ────────────────────────────────────────────────────────
+// THREE.JS OCEAN — HERO
+// ────────────────────────────────────────────────────────
+(function () {
+  const canvas   = document.getElementById('oceanCanvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  const scene  = new THREE.Scene();
+  scene.fog    = new THREE.FogExp2(0x0E2A5C, 0.028);
+
+  const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 600);
+  camera.position.set(0, 22, 46);
+  camera.lookAt(0, -1, 0);
+
+  // Lighting
+  scene.add(new THREE.AmbientLight(0x7BA7BC, 0.45));
+
+  const sun = new THREE.DirectionalLight(0xffffff, 0.8);
+  sun.position.set(18, 28, 12);
+  scene.add(sun);
+
+  const rimA = new THREE.PointLight(0x7BA7BC, 1.4, 90);
+  rimA.position.set(-22, 14, 0);
+  scene.add(rimA);
+
+  const rimB = new THREE.PointLight(0x7BA7BC, 0.3, 70);
+  rimB.position.set(22, 8, -12);
+  scene.add(rimB);
+
+  // Ocean mesh
+  const SEGS = 110, SIZE = 110;
+  const geo  = new THREE.PlaneGeometry(SIZE, SIZE, SEGS, SEGS);
+  geo.rotateX(-Math.PI / 2);
+  const posAttr = geo.attributes.position;
+
+  const mat = new THREE.MeshPhongMaterial({
+    color:      0x0E2A5C,
+    specular:   0x7BA7BC,
+    shininess:  130,
+    transparent: true,
+    opacity:    0.96,
+    side:       THREE.DoubleSide,
+  });
+
+  scene.add(new THREE.Mesh(geo, mat));
+
+  // Foam particles
+  const N_PART = 360;
+  const pGeo   = new THREE.BufferGeometry();
+  const pPos   = new Float32Array(N_PART * 3);
+  for (let i = 0; i < N_PART; i++) {
+    pPos[i * 3]     = (Math.random() - 0.5) * SIZE;
+    pPos[i * 3 + 1] = Math.random() * 2;
+    pPos[i * 3 + 2] = (Math.random() - 0.5) * SIZE;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+  const pMat  = new THREE.PointsMaterial({ color: 0xb0d8ef, size: 0.13, transparent: true, opacity: 0.38 });
+  const foamPts = new THREE.Points(pGeo, pMat);
+  scene.add(foamPts);
+
+  function resize() {
+    const hero = document.getElementById('hero');
+    const w = hero.clientWidth, h = hero.clientHeight;
+    renderer.setSize(w, h);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let t = 0;
+  let running = true;
+  const heroEl = document.getElementById('hero');
+  new IntersectionObserver(([e]) => { running = e.isIntersecting; }).observe(heroEl);
+
+  (function tick() {
+    requestAnimationFrame(tick);
+    if (!running) return;
+    t += 0.007;
+
+    for (let i = 0; i < posAttr.count; i++) {
+      const x = posAttr.getX(i);
+      const z = posAttr.getZ(i);
+      const y =
+        Math.sin(x * 0.14 + t)         * 1.3 +
+        Math.sin(z * 0.11 + t * 0.72)  * 1.1 +
+        Math.sin((x + z) * 0.07 + t * 1.18) * 0.65 +
+        Math.cos(x * 0.19 - t * 0.52)  * 0.42;
+      posAttr.setY(i, y);
+    }
+    posAttr.needsUpdate = true;
+    geo.computeVertexNormals();
+
+    // Sync foam with waves
+    const fp = foamPts.geometry.attributes.position;
+    for (let i = 0; i < N_PART; i++) {
+      const px = fp.getX(i), pz = fp.getZ(i);
+      const wy =
+        Math.sin(px * 0.14 + t)         * 1.3 +
+        Math.sin(pz * 0.11 + t * 0.72)  * 1.1 +
+        Math.sin((px + pz) * 0.07 + t * 1.18) * 0.65 + 0.4;
+      fp.setY(i, wy + Math.sin(t * 2.2 + i * 0.3) * 0.08);
+    }
+    fp.needsUpdate = true;
+
+    camera.position.y = 22 + Math.sin(t * 0.38) * 0.42;
+    renderer.render(scene, camera);
+  })();
+})();
+
+// ────────────────────────────────────────────────────────
+// SCROLL VIDEO — 120 FRAMES
+// ────────────────────────────────────────────────────────
+const FRAME_COUNT = 120;
+const frames = [];
+let loadedCount = 0;
+
+const loaderBar  = document.getElementById('loaderBar');
+const loaderEl   = document.getElementById('loader');
+
+for (let i = 1; i <= FRAME_COUNT; i++) {
+  const img = new Image();
+  img.src = 'frames/frame_' + String(i).padStart(4, '0') + '.jpg';
+  (function(image) {
+    function done() {
+      loadedCount++;
+      loaderBar.style.width = (loadedCount / FRAME_COUNT * 100) + '%';
+      if (loadedCount === FRAME_COUNT) {
+        setTimeout(function() {
+          loaderEl.style.opacity = '0';
+          setTimeout(function() { loaderEl.style.display = 'none'; }, 900);
+        }, 260);
+        drawFrame(0);
+      }
+    }
+    image.onload  = done;
+    image.onerror = done;
+  })(img);
+  frames.push(img);
+}
+
+const fCanvas = document.getElementById('frameCanvas');
+const fCtx    = fCanvas.getContext('2d');
+let curFrame  = -1;
+
+function resizeFCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  fCanvas.width  = window.innerWidth  * dpr;
+  fCanvas.height = window.innerHeight * dpr;
+  fCanvas.style.width  = window.innerWidth  + 'px';
+  fCanvas.style.height = window.innerHeight + 'px';
+  if (curFrame >= 0) drawFrame(curFrame);
+}
+
+function drawFrame(idx) {
+  const img = frames[idx];
+  if (!img || !img.complete || !img.naturalWidth) return;
+  const cw = fCanvas.width, ch = fCanvas.height;
+  fCtx.imageSmoothingEnabled = true;
+  fCtx.imageSmoothingQuality = 'high';
+  fCtx.clearRect(0, 0, cw, ch);
+  const ir = img.naturalWidth / img.naturalHeight;
+  const cr = cw / ch;
+  let dw, dh, dx, dy;
+  if (window.innerWidth > 768) {
+    if (cr > ir) { dw = cw; dh = cw / ir; }
+    else          { dh = ch; dw = ch * ir; }
+  } else {
+    const z = 1.14;
+    if (cr > ir) { dh = ch * z; dw = dh * ir; }
+    else          { dw = cw * z; dh = dw / ir; }
+  }
+  dx = (cw - dw) / 2;
+  dy = (ch - dh) / 2;
+  fCtx.drawImage(img, dx, dy, dw, dh);
+}
+
+window.addEventListener('resize', resizeFCanvas);
+resizeFCanvas();
+
+// ────────────────────────────────────────────────────────
+// SCROLL ENGINE
+// ────────────────────────────────────────────────────────
+const progressBar  = document.getElementById('scrollProgress');
+const navbar       = document.getElementById('navbar');
+const scrollSec    = document.querySelector('.scroll-section');
+const annotCards   = document.querySelectorAll('.annot-card');
+
+const HOLD = 320;
+let snapping = false;
+let snapTimer = null;
+
+const zones = Array.from(annotCards).map(function(c) {
+  return { show: parseFloat(c.dataset.show), hide: parseFloat(c.dataset.hide), snapped: false };
+});
+
+function updateAnnotations(progress) {
+  annotCards.forEach(function(card, i) {
+    const z = zones[i];
+    const visible = progress >= z.show && progress <= z.hide;
+    card.classList.toggle('show', visible);
+    if (visible && !z.snapped && !snapping) {
+      z.snapped = true;
+      snapping  = true;
+      // Use pointer-events:none + slight scroll deceleration instead of hard overflow:hidden
+      document.body.style.pointerEvents = 'none';
+      if (snapTimer) clearTimeout(snapTimer);
+      snapTimer = setTimeout(function() {
+        document.body.style.pointerEvents = '';
+        snapping = false;
+      }, HOLD);
+    }
+    if (!visible) z.snapped = false;
+  });
+}
+
+// Lerp-smoothed playhead for cinematic feel
+let targetFrameF  = 0;   // raw target (float)
+let displayFrameF = 0;   // smoothed display (float)
+const LERP = 0.14;       // inertia — lower = more lag (0.10 silky, 0.20 snappy)
+
+window.addEventListener('scroll', function() {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  progressBar.style.width = pct + '%';
+  navbar.classList.toggle('scrolled', window.scrollY > 80);
+
+  if (scrollSec) {
+    const rect    = scrollSec.getBoundingClientRect();
+    const scrollH = scrollSec.offsetHeight - window.innerHeight;
+    const progress = Math.min(1, Math.max(0, -rect.top / scrollH));
+    targetFrameF   = progress * (FRAME_COUNT - 1);
+    updateAnnotations(progress);
+  }
+}, { passive: true });
+
+// Dedicated RAF loop — decouples draw from scroll events
+(function animLoop() {
+  requestAnimationFrame(animLoop);
+  displayFrameF += (targetFrameF - displayFrameF) * LERP;
+  const fi = Math.round(displayFrameF);
+  if (fi !== curFrame) { curFrame = fi; drawFrame(fi); }
+})();
+
+// ────────────────────────────────────────────────────────
+// SPECS COUNT-UP
+// ────────────────────────────────────────────────────────
+function easeOutExpo(t) {
+  return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+}
+
+function countUp(el, target) {
+  const start = performance.now();
+  el.classList.add('counting');
+  (function update(now) {
+    const p = Math.min((now - start) / 1900, 1);
+    const e = easeOutExpo(p);
+    el.textContent = target % 1 === 0
+      ? Math.floor(e * target)
+      : (e * target).toFixed(1);
+    if (p < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = target;
+      el.classList.remove('counting');
+    }
+  })(start);
+}
+
+new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.spec-number').forEach(function(el, i) {
+        setTimeout(function() { countUp(el, parseFloat(el.dataset.target)); }, i * 240);
+      });
+    }
+  });
+}, { threshold: 0.3 }).observe(document.getElementById('specs'));
+
+// ────────────────────────────────────────────────────────
+// FADE-IN OBSERVER
+// ────────────────────────────────────────────────────────
+new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) e.target.classList.add('vis');
+  });
+}, { threshold: 0.12 }).observe(document.body);
+
+// Observe each .fi element individually
+document.querySelectorAll('.fi').forEach(function(el) {
+  new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('vis'); }
+    });
+  }, { threshold: 0.12 }).observe(el);
+});
+
+// ────────────────────────────────────────────────────────
+// SMOOTH ANCHOR NAVIGATION
+// ────────────────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    const id = this.getAttribute('href');
+    if (id === '#') return;
+    const target = document.querySelector(id);
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
