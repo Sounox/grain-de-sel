@@ -876,12 +876,13 @@
     @media (max-width: 768px) {
 
       /* ── HERO ── */
-      .hero-content { padding: 0 22px 72px; width: 100%; }
+      .hero-content { padding: 0 22px 90px; width: 100%; }
       .hero-eyebrow { font-size: 0.58rem; letter-spacing: 0.22em; gap: 10px; }
       .hero-eyebrow::before { width: 22px; }
-      .hero-sub { max-width: 100%; font-size: 0.88rem; margin-bottom: 36px; }
+      .hero-sub { max-width: 100%; font-size: 0.88rem; margin-bottom: 32px; }
       .hero-actions { flex-direction: column; align-items: stretch; gap: 12px; }
       .btn-primary, .btn-ghost { text-align: center; padding: 15px 24px; font-size: 0.72rem; }
+      .scroll-cue { display: none; } /* masqué — les boutons empilés chevauchaient */
 
       /* ── ABOUT ── */
       #about { padding: 72px 22px; }
@@ -1584,39 +1585,45 @@ const fCanvas = document.getElementById('frameCanvas');
 const fCtx    = fCanvas.getContext('2d');
 let curFrame  = -1;
 
+// Mobile detection — cap DPR to 1 to avoid memory overload with 120 large frames
+var isMobile = window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 function resizeFCanvas() {
-  const dpr = window.devicePixelRatio || 1;
-  fCanvas.width  = window.innerWidth  * dpr;
-  fCanvas.height = window.innerHeight * dpr;
-  fCanvas.style.width  = window.innerWidth  + 'px';
-  fCanvas.style.height = window.innerHeight + 'px';
+  var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+  var vw  = window.innerWidth;
+  var vh  = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+  fCanvas.width  = vw * dpr;
+  fCanvas.height = vh * dpr;
+  fCanvas.style.width  = vw + 'px';
+  fCanvas.style.height = vh + 'px';
   if (curFrame >= 0) drawFrame(curFrame);
 }
 
 function drawFrame(idx) {
-  const img = frames[idx];
+  var img = frames[idx];
   if (!img || !img.complete || !img.naturalWidth) return;
-  const cw = fCanvas.width, ch = fCanvas.height;
+  var cw = fCanvas.width, ch = fCanvas.height;
   fCtx.imageSmoothingEnabled = true;
-  fCtx.imageSmoothingQuality = 'high';
+  fCtx.imageSmoothingQuality = isMobile ? 'medium' : 'high';
   fCtx.clearRect(0, 0, cw, ch);
-  const ir = img.naturalWidth / img.naturalHeight;
-  const cr = cw / ch;
-  let dw, dh, dx, dy;
-  if (window.innerWidth > 768) {
-    if (cr > ir) { dw = cw; dh = cw / ir; }
-    else          { dh = ch; dw = ch * ir; }
-  } else {
-    const z = 1.14;
-    if (cr > ir) { dh = ch * z; dw = dh * ir; }
-    else          { dw = cw * z; dh = dw / ir; }
-  }
+  var ir = img.naturalWidth / img.naturalHeight;
+  var cr = cw / ch;
+  var dw, dh, dx, dy;
+  // cover-fit: always fill the canvas
+  if (cr > ir) { dw = cw; dh = cw / ir; }
+  else          { dh = ch; dw = ch * ir; }
   dx = (cw - dw) / 2;
   dy = (ch - dh) / 2;
   fCtx.drawImage(img, dx, dy, dw, dh);
 }
 
-window.addEventListener('resize', resizeFCanvas);
+window.addEventListener('resize', function() {
+  isMobile = window.innerWidth <= 768;
+  resizeFCanvas();
+});
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', resizeFCanvas);
+}
 resizeFCanvas();
 
 // ────────────────────────────────────────────────────────
@@ -1637,13 +1644,13 @@ const zones = Array.from(annotCards).map(function(c) {
 
 function updateAnnotations(progress) {
   annotCards.forEach(function(card, i) {
-    const z = zones[i];
-    const visible = progress >= z.show && progress <= z.hide;
+    var z = zones[i];
+    var visible = progress >= z.show && progress <= z.hide;
     card.classList.toggle('show', visible);
-    if (visible && !z.snapped && !snapping) {
+    // Snap-stop: desktop only — pointer-events:none has no effect on native mobile scroll
+    if (visible && !z.snapped && !snapping && !isMobile) {
       z.snapped = true;
       snapping  = true;
-      // Use pointer-events:none + slight scroll deceleration instead of hard overflow:hidden
       document.body.style.pointerEvents = 'none';
       if (snapTimer) clearTimeout(snapTimer);
       snapTimer = setTimeout(function() {
@@ -1655,30 +1662,37 @@ function updateAnnotations(progress) {
   });
 }
 
-// Lerp-smoothed playhead for cinematic feel
-let targetFrameF  = 0;   // raw target (float)
-let displayFrameF = 0;   // smoothed display (float)
-const LERP = 0.14;       // inertia — lower = more lag (0.10 silky, 0.20 snappy)
+// Lerp: more reactive on mobile (less inertia)
+var targetFrameF  = 0;
+var displayFrameF = 0;
+var LERP = isMobile ? 0.28 : 0.14;
+
+function computeScrollProgress() {
+  if (!scrollSec) return;
+  var rect    = scrollSec.getBoundingClientRect();
+  var scrollH = scrollSec.offsetHeight - window.innerHeight;
+  var progress = Math.min(1, Math.max(0, -rect.top / scrollH));
+  targetFrameF = progress * (FRAME_COUNT - 1);
+  updateAnnotations(progress);
+}
 
 window.addEventListener('scroll', function() {
-  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  var pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
   progressBar.style.width = pct + '%';
   navbar.classList.toggle('scrolled', window.scrollY > 80);
-
-  if (scrollSec) {
-    const rect    = scrollSec.getBoundingClientRect();
-    const scrollH = scrollSec.offsetHeight - window.innerHeight;
-    const progress = Math.min(1, Math.max(0, -rect.top / scrollH));
-    targetFrameF   = progress * (FRAME_COUNT - 1);
-    updateAnnotations(progress);
-  }
+  computeScrollProgress();
 }, { passive: true });
 
-// Dedicated RAF loop — decouples draw from scroll events
+// iOS Safari: touchmove fires more reliably than scroll inside sticky contexts
+window.addEventListener('touchmove', function() {
+  computeScrollProgress();
+}, { passive: true });
+
+// Dedicated RAF loop — decouples draw from scroll/touch events
 (function animLoop() {
   requestAnimationFrame(animLoop);
   displayFrameF += (targetFrameF - displayFrameF) * LERP;
-  const fi = Math.round(displayFrameF);
+  var fi = Math.round(displayFrameF);
   if (fi !== curFrame) { curFrame = fi; drawFrame(fi); }
 })();
 
