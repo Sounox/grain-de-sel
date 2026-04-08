@@ -215,69 +215,9 @@
       pointer-events: none; z-index: 1;
       overflow: hidden;
     }
-    .sun-rays::before {
-      content: '';
-      position: absolute;
-      top: -20%; left: 50%;
-      transform: translateX(-50%);
-      width: 200%; height: 140%;
-      background: conic-gradient(
-        from -90deg at 50% 0%,
-        transparent  0deg,
-        rgba(123,200,255,0.07)  6deg,
-        transparent  10deg,
-        rgba(150,220,255,0.05)  17deg,
-        transparent  22deg,
-        rgba(123,200,255,0.08)  29deg,
-        transparent  34deg,
-        rgba(180,230,255,0.04)  40deg,
-        transparent  46deg,
-        rgba(123,200,255,0.06)  53deg,
-        transparent  58deg,
-        rgba(150,215,255,0.07)  65deg,
-        transparent  70deg,
-        rgba(123,200,255,0.04)  76deg,
-        transparent  82deg,
-        rgba(160,225,255,0.06)  88deg,
-        transparent  94deg,
-        rgba(123,200,255,0.05) 100deg,
-        transparent 106deg,
-        rgba(150,220,255,0.07) 112deg,
-        transparent 118deg,
-        transparent 360deg
-      );
-      animation: raysRotate 22s linear infinite;
+    .sun-rays svg {
+      position: absolute; width: 100%; height: 100%;
       mix-blend-mode: screen;
-    }
-    .sun-rays::after {
-      content: '';
-      position: absolute;
-      top: -30%; left: 45%;
-      transform: translateX(-50%);
-      width: 180%; height: 130%;
-      background: conic-gradient(
-        from -90deg at 50% 0%,
-        transparent   0deg,
-        rgba(100,180,255,0.05)  8deg,
-        transparent  14deg,
-        rgba(130,210,255,0.06) 23deg,
-        transparent  30deg,
-        rgba(100,180,255,0.04) 41deg,
-        transparent  48deg,
-        rgba(130,210,255,0.07) 57deg,
-        transparent  64deg,
-        rgba(100,180,255,0.05) 74deg,
-        transparent  81deg,
-        rgba(130,210,255,0.06) 91deg,
-        transparent  98deg,
-        transparent 360deg
-      );
-      animation: raysRotate 34s linear infinite reverse;
-      mix-blend-mode: screen;
-    }
-    @keyframes raysRotate {
-      from { transform: translateX(-50%) rotate(0deg); }
-      to   { transform: translateX(-50%) rotate(360deg); }
     }
 
     /* Caustiques — taches lumineuses animées sous l'eau */
@@ -288,7 +228,7 @@
     }
     .caustics svg {
       position: absolute; width: 100%; height: 100%;
-      mix-blend-mode: screen; opacity: 0.18;
+      mix-blend-mode: screen; opacity: 0.22;
     }
 
     .hero-overlay {
@@ -1086,42 +1026,82 @@
   <canvas id="oceanCanvas"></canvas>
 
   <!-- Rayons solaires sous-marins -->
-  <div class="sun-rays"></div>
+  <div class="sun-rays">
+    <svg viewBox="0 0 1200 750" preserveAspectRatio="xMidYTop slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="rf" x="-50%" y="0%" width="200%" height="110%">
+          <feGaussianBlur stdDeviation="18"/>
+        </filter>
+        <!-- Gradient transparent en bas pour chaque rayon -->
+        <linearGradient id="rg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#a8e0ff" stop-opacity="1"/>
+          <stop offset="100%" stop-color="#a8e0ff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- Rayons : polygones partant du haut, blur global, animations d'opacité décalées -->
+      <g filter="url(#rf)" fill="url(#rg)">
+        <polygon points="540,0 570,0 420,750 390,750" opacity="0.12">
+          <animate attributeName="opacity" values="0.12;0.22;0.08;0.18;0.12" dur="8s"  begin="0s"    repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="575,0 595,0 510,750 490,750" opacity="0.18">
+          <animate attributeName="opacity" values="0.18;0.32;0.10;0.26;0.18" dur="11s" begin="1.2s"  repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="600,0 615,0 580,750 565,750" opacity="0.22">
+          <animate attributeName="opacity" values="0.22;0.38;0.14;0.30;0.22" dur="9s"  begin="0.5s"  repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="618,0 630,0 640,750 628,750" opacity="0.16">
+          <animate attributeName="opacity" values="0.16;0.28;0.09;0.22;0.16" dur="13s" begin="2s"    repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="635,0 650,0 720,750 705,750" opacity="0.14">
+          <animate attributeName="opacity" values="0.14;0.24;0.07;0.19;0.14" dur="10s" begin="3.5s"  repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="660,0 680,0 810,750 790,750" opacity="0.10">
+          <animate attributeName="opacity" values="0.10;0.20;0.05;0.15;0.10" dur="7s"  begin="1.8s"  repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="520,0 540,0 340,750 315,750" opacity="0.09">
+          <animate attributeName="opacity" values="0.09;0.17;0.05;0.13;0.09" dur="12s" begin="4s"    repeatCount="indefinite"/>
+        </polygon>
+        <polygon points="690,0 710,0 900,750 880,750" opacity="0.08">
+          <animate attributeName="opacity" values="0.08;0.16;0.04;0.12;0.08" dur="15s" begin="2.8s"  repeatCount="indefinite"/>
+        </polygon>
+      </g>
+    </svg>
+  </div>
 
   <!-- Caustiques animées -->
   <div class="caustics">
     <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <filter id="blur1"><feGaussianBlur stdDeviation="28"/></filter>
-        <filter id="blur2"><feGaussianBlur stdDeviation="18"/></filter>
+        <filter id="blur1"><feGaussianBlur stdDeviation="36"/></filter>
+        <filter id="blur2"><feGaussianBlur stdDeviation="24"/></filter>
       </defs>
-      <!-- taches lumineuses animées -->
-      <ellipse cx="300" cy="180" rx="90" ry="40" fill="rgba(150,220,255,0.55)" filter="url(#blur1)">
-        <animate attributeName="cx" values="300;420;260;380;300" dur="9s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="180;140;220;160;180" dur="7s" repeatCount="indefinite"/>
-        <animate attributeName="rx" values="90;120;70;110;90"   dur="6s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.55;0.8;0.4;0.7;0.55" dur="5s" repeatCount="indefinite"/>
+      <!-- taches lumineuses animées — amplitudes douces, durées longues -->
+      <ellipse cx="310" cy="160" rx="100" ry="44" fill="rgba(150,220,255,0.6)" filter="url(#blur1)">
+        <animate attributeName="cx" values="310;390;270;360;310" dur="14s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="160;130;195;145;160" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="100;125;80;112;100" dur="9s"  repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.6;0.75;0.45;0.68;0.6" dur="8s" repeatCount="indefinite"/>
       </ellipse>
-      <ellipse cx="750" cy="120" rx="70" ry="28" fill="rgba(120,200,255,0.6)" filter="url(#blur1)">
-        <animate attributeName="cx" values="750;680;800;700;750" dur="11s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="120;160;90;140;120"  dur="8s"  repeatCount="indefinite"/>
-        <animate attributeName="rx" values="70;100;55;85;70"     dur="7s"  repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.6;0.35;0.75;0.5;0.6" dur="6s" repeatCount="indefinite"/>
+      <ellipse cx="760" cy="110" rx="75" ry="30" fill="rgba(120,200,255,0.55)" filter="url(#blur1)">
+        <animate attributeName="cx" values="760;700;810;720;760" dur="16s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="110;145;88;128;110"  dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="75;98;60;88;75"      dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.55;0.70;0.38;0.62;0.55" dur="9s" repeatCount="indefinite"/>
       </ellipse>
-      <ellipse cx="950" cy="260" rx="55" ry="22" fill="rgba(180,235,255,0.5)" filter="url(#blur2)">
-        <animate attributeName="cx" values="950;1020;880;980;950" dur="8s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="260;200;290;220;260"  dur="9s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.5;0.75;0.3;0.65;0.5" dur="4s" repeatCount="indefinite"/>
+      <ellipse cx="960" cy="240" rx="60" ry="25" fill="rgba(180,235,255,0.45)" filter="url(#blur2)">
+        <animate attributeName="cx" values="960;1020;895;980;960" dur="13s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="240;195;270;215;240"  dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.45;0.62;0.30;0.55;0.45" dur="7s" repeatCount="indefinite"/>
       </ellipse>
-      <ellipse cx="500" cy="320" rx="40" ry="16" fill="rgba(100,190,255,0.45)" filter="url(#blur2)">
-        <animate attributeName="cx" values="500;560;440;520;500" dur="10s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="320;270;350;290;320"  dur="7s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.45;0.7;0.25;0.6;0.45" dur="5s" repeatCount="indefinite"/>
+      <ellipse cx="510" cy="300" rx="45" ry="18" fill="rgba(100,190,255,0.4)" filter="url(#blur2)">
+        <animate attributeName="cx" values="510;570;450;530;510" dur="17s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="300;260;330;278;300"  dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.40;0.58;0.24;0.50;0.40" dur="10s" repeatCount="indefinite"/>
       </ellipse>
-      <ellipse cx="150" cy="350" rx="60" ry="24" fill="rgba(140,215,255,0.5)" filter="url(#blur1)">
-        <animate attributeName="cx" values="150;230;100;200;150" dur="12s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="350;300;380;320;350"  dur="9s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.5;0.75;0.3;0.65;0.5" dur="7s" repeatCount="indefinite"/>
+      <ellipse cx="160" cy="330" rx="65" ry="27" fill="rgba(140,215,255,0.45)" filter="url(#blur1)">
+        <animate attributeName="cx" values="160;235;108;205;160" dur="18s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="330;290;358;308;330"  dur="13s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.45;0.62;0.28;0.55;0.45" dur="11s" repeatCount="indefinite"/>
       </ellipse>
     </svg>
   </div>
@@ -1771,7 +1751,7 @@ const navbar       = document.getElementById('navbar');
 const scrollSec    = document.querySelector('.scroll-section');
 const annotCards   = document.querySelectorAll('.annot-card');
 
-const HOLD = 560;
+const HOLD = 1100;
 let snapping = false;
 let snapTimer = null;
 
