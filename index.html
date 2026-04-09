@@ -215,18 +215,7 @@
       pointer-events: none; z-index: 1;
       /* PAS d'overflow:hidden — le clip est géré par #hero */
     }
-    .sr-ray {
-      position: absolute;
-      top: -5%; left: 50%;
-      height: 115%;
-      transform-origin: 50% 0%;
-      mix-blend-mode: screen;
-      animation: rayPulse var(--dur) ease-in-out infinite var(--del);
-    }
-    @keyframes rayPulse {
-      0%, 100% { opacity: var(--lo); }
-      50%       { opacity: var(--hi); }
-    }
+    /* rayons générés en JS inline — pas de classe partagée */
 
     /* Caustiques */
     .caustics {
@@ -1614,24 +1603,34 @@
     { rot:  36, w: 240, dur: 10, del: 3.5,  lo: 0.03, hi: 0.09 },
     { rot: -50, w: 220, dur: 13, del: 5.0,  lo: 0.03, hi: 0.08 },
   ];
-  rayData.forEach(function(r) {
+  rayData.forEach(function(r, i) {
+    // Keyframe propre par rayon — évite le bug des CSS custom props sur refresh
+    var kfName = 'rayPulse' + i;
+    var s = document.createElement('style');
+    s.textContent = '@keyframes ' + kfName + '{' +
+      '0%,100%{opacity:' + r.lo + '}' +
+      '50%{opacity:' + r.hi + '}' +
+    '}';
+    document.head.appendChild(s);
+
     var d = document.createElement('div');
-    d.className = 'sr-ray';
-    // Gradient plus étalé : opaque center → transparent sur tous les bords
-    // Plus de diffusion horizontale pour éviter l'effet "faisceau laser"
     d.style.cssText = [
+      'position:absolute',
+      'top:-5%',
+      'left:50%',
+      'height:115%',
+      'transform-origin:50% 0%',
+      'mix-blend-mode:screen',
       'width:' + r.w + 'px',
       'margin-left:' + (-r.w / 2) + 'px',
       'transform:rotate(' + r.rot + 'deg)',
-      '--dur:' + r.dur + 's',
-      '--del:' + r.del + 's',
-      '--lo:' + r.lo,
-      '--hi:' + r.hi,
+      'animation:' + kfName + ' ' + r.dur + 's ease-in-out ' + r.del + 's infinite',
       'background:radial-gradient(ellipse 50% 55% at 50% 5%,' +
-        'rgba(160,225,255,0.70) 0%,' +
-        'rgba(140,210,255,0.18) 25%,' +
-        'rgba(120,195,255,0.04) 55%,' +
+        'rgba(160,225,255,0.72) 0%,' +
+        'rgba(140,210,255,0.16) 22%,' +
+        'rgba(120,195,255,0.03) 52%,' +
         'transparent 100%)',
+      'pointer-events:none',
     ].join(';');
     raysEl.appendChild(d);
   });
@@ -1760,10 +1759,10 @@ const navbar       = document.getElementById('navbar');
 const scrollSec    = document.querySelector('.scroll-section');
 const annotCards   = document.querySelectorAll('.annot-card');
 
-const HOLD = 1100;
+const HOLD = 2000;
 let snapping      = false;
 let snapTimer     = null;
-let lockedFrame   = -1; // mobile: frame verrouillé pendant le hold
+let lockedFrame   = -1; // frame verrouillée pendant le hold
 
 const zones = Array.from(annotCards).map(function(c) {
   return { show: parseFloat(c.dataset.show), hide: parseFloat(c.dataset.hide), snapped: false };
@@ -1780,9 +1779,9 @@ function updateAnnotations(progress) {
       snapping  = true;
 
       if (isMobile) {
-        // Mobile : verrouiller le targetFrameF à sa position actuelle
-        // → la lerp converge vers une cible fixe = gel visuel garanti
-        lockedFrame = displayFrameF;
+        // Locker targetFrameF (pas displayFrameF qui est encore en lerp)
+        // → la cible est gelée, displayFrameF converge et reste dessus
+        lockedFrame = targetFrameF;
       } else {
         // Desktop : pointer-events bloque la molette
         document.body.style.pointerEvents = 'none';
