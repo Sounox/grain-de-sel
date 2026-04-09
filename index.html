@@ -213,8 +213,10 @@
     .sun-rays {
       position: absolute; inset: 0;
       pointer-events: none; z-index: 1;
-      /* PAS d'overflow:hidden — le clip est géré par #hero */
+      opacity: 0;
+      transition: opacity 1.8s ease;
     }
+    .sun-rays.ready { opacity: 1; }
     /* rayons générés en JS inline — pas de classe partagée */
 
     /* Caustiques */
@@ -358,10 +360,10 @@
 
     /* ── SCROLL VIDEO ────────────────────────────────────────── */
     .scroll-section {
-      height: 200vh; position: relative;
+      height: 320vh; position: relative;
     }
-    @media (max-width: 1024px) { .scroll-section { height: 180vh; } }
-    @media (max-width: 768px)  { .scroll-section { height: 140vh; } }
+    @media (max-width: 1024px) { .scroll-section { height: 280vh; } }
+    @media (max-width: 768px)  { .scroll-section { height: 240vh; } }
 
     .scroll-sticky {
       position: sticky; top: 0;
@@ -424,9 +426,13 @@
     }
     @media (max-width: 768px) {
       .annot-card {
-        bottom: 3vh; left: 4vw !important; right: 4vw !important;
-        max-width: none; padding: 16px 18px;
+        bottom: 4vh; left: 4vw !important; right: 4vw !important;
+        max-width: none; padding: 22px 20px;
         display: block;
+        background: rgba(8, 22, 60, 0.72);
+        backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+        border-color: rgba(123,167,188,0.22);
+        border-radius: 16px;
       }
       .annot-card:nth-of-type(2) { left: 4vw !important; right: 4vw !important; }
       .annot-card:nth-of-type(3) {
@@ -434,9 +440,9 @@
         transform: translateY(18px) !important;
       }
       .annot-card:nth-of-type(3).show { transform: none !important; }
-      .annot-num   { font-size: 0.56rem; margin-bottom: 6px; }
-      .annot-title { font-size: 1rem; margin-bottom: 6px; }
-      .annot-desc  { display: block; font-size: 0.78rem; line-height: 1.55; }
+      .annot-num   { font-size: 0.6rem; margin-bottom: 8px; letter-spacing: 0.26em; }
+      .annot-title { font-size: 1.2rem; margin-bottom: 10px; line-height: 1.25; }
+      .annot-desc  { display: block; font-size: 0.82rem; line-height: 1.62; color: rgba(255,255,255,0.6); }
     }
 
     /* ── ABOUT ───────────────────────────────────────────────── */
@@ -1695,7 +1701,12 @@ for (let i = 1; i <= FRAME_COUNT; i++) {
       if (loadedCount === FRAME_COUNT) {
         setTimeout(function() {
           loaderEl.style.opacity = '0';
-          setTimeout(function() { loaderEl.style.display = 'none'; }, 900);
+          setTimeout(function() {
+            loaderEl.style.display = 'none';
+            // Activer les rayons après que le loader a disparu → zéro flash
+            var rays = document.getElementById('sunRays');
+            if (rays) rays.classList.add('ready');
+          }, 900);
         }, 260);
         drawFrame(0);
       }
