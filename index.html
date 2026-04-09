@@ -234,10 +234,7 @@
       pointer-events: none; z-index: 1;
       /* PAS d'overflow:hidden */
     }
-    .caustics svg {
-      position: absolute; width: 100%; height: 100%;
-      mix-blend-mode: screen; opacity: 0.18;
-    }
+    .caustics { opacity: 0.85; }
 
     .hero-overlay {
       position: absolute; inset: 0; z-index: 2;
@@ -1620,7 +1617,8 @@
   rayData.forEach(function(r) {
     var d = document.createElement('div');
     d.className = 'sr-ray';
-    // Gradient radial allongé : s'estompe sur tous les bords naturellement
+    // Gradient plus étalé : opaque center → transparent sur tous les bords
+    // Plus de diffusion horizontale pour éviter l'effet "faisceau laser"
     d.style.cssText = [
       'width:' + r.w + 'px',
       'margin-left:' + (-r.w / 2) + 'px',
@@ -1629,45 +1627,47 @@
       '--del:' + r.del + 's',
       '--lo:' + r.lo,
       '--hi:' + r.hi,
-      'background:radial-gradient(ellipse ' + (r.w * 0.5) + 'px 55% at 50% 18%,' +
-        'rgba(145,215,255,0.9) 0%,' +
-        'rgba(130,200,255,0.45) 35%,' +
-        'rgba(110,185,255,0.12) 65%,' +
+      'background:radial-gradient(ellipse 50% 60% at 50% 8%,' +
+        'rgba(160,225,255,0.85) 0%,' +
+        'rgba(140,210,255,0.30) 30%,' +
+        'rgba(120,195,255,0.08) 60%,' +
         'transparent 100%)',
     ].join(';');
     raysEl.appendChild(d);
   });
 
-  // ── CAUSTIQUES ──────────────────────────────────────
+  // ── CAUSTIQUES — radial-gradient pur, zéro filter, zéro artefact ──
   var caustEl = document.getElementById('caustics');
   var blobs = [
-    { x: 28, y: 16, rx: 14, ry: 6,  blur: 38, op: 0.28, dur: 13, del: 0   },
-    { x: 62, y: 11, rx: 11, ry: 4,  blur: 28, op: 0.22, dur: 16, del: 2.4 },
-    { x: 80, y: 26, rx:  9, ry: 3,  blur: 22, op: 0.18, dur: 11, del: 1.1 },
-    { x: 44, y: 32, rx:  7, ry: 3,  blur: 20, op: 0.16, dur: 18, del: 3.6 },
-    { x: 14, y: 34, rx: 10, ry: 4,  blur: 32, op: 0.20, dur: 14, del: 5.2 },
+    { x: 22, y: 14, w: 38, h: 22, op: 0.55, dur: 13, del: 0   },
+    { x: 58, y:  9, w: 30, h: 18, op: 0.45, dur: 16, del: 2.4 },
+    { x: 76, y: 24, w: 26, h: 16, op: 0.38, dur: 11, del: 1.1 },
+    { x: 40, y: 30, w: 22, h: 14, op: 0.35, dur: 18, del: 3.6 },
+    { x: 10, y: 32, w: 28, h: 18, op: 0.42, dur: 14, del: 5.2 },
   ];
+  var dxs = [4, -3, 5, -4, 3];
+  var dys = [2, -3, 2, -2, 3];
   blobs.forEach(function(b, i) {
     var d = document.createElement('div');
     var kf = 'causticMove' + i;
-    // Injection keyframe dans <style> pour animer la position
     var style = document.createElement('style');
-    var dx = (Math.random() * 6 - 3).toFixed(1);
-    var dy = (Math.random() * 4 - 2).toFixed(1);
     style.textContent = '@keyframes ' + kf + '{' +
       '0%,100%{transform:translate(0,0) scale(1)}' +
-      '33%{transform:translate(' + dx + '%,' + dy + '%) scale(1.15)}' +
-      '66%{transform:translate(' + (-dx) + '%,' + (-dy) + '%) scale(0.88)}' +
+      '40%{transform:translate(' + dxs[i] + '%,' + dys[i] + '%) scale(1.18)}' +
+      '70%{transform:translate(' + (-dxs[i]*0.6).toFixed(1) + '%,' + (-dys[i]*0.7).toFixed(1) + '%) scale(0.85)}' +
       '}';
     document.head.appendChild(style);
-
+    // radial-gradient ellipse → fondu naturel vers transparent sur tous les bords
     d.style.cssText = [
       'position:absolute',
-      'left:' + b.x + '%', 'top:' + b.y + '%',
-      'width:' + b.rx + '%', 'height:' + b.ry * 2 + 'vh',
-      'border-radius:50%',
-      'background:rgba(145,218,255,' + b.op + ')',
-      'filter:blur(' + b.blur + 'px)',
+      'left:' + b.x + '%',
+      'top:'  + b.y + '%',
+      'width:'  + b.w + '%',
+      'height:' + b.h + 'vh',
+      'background:radial-gradient(ellipse 50% 50% at 50% 50%,' +
+        'rgba(148,220,255,' + b.op + ') 0%,' +
+        'rgba(120,200,255,' + (b.op * 0.4).toFixed(2) + ') 45%,' +
+        'transparent 100%)',
       'mix-blend-mode:screen',
       'animation:' + kf + ' ' + b.dur + 's ease-in-out ' + b.del + 's infinite',
       'pointer-events:none',
