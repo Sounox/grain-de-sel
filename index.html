@@ -209,26 +209,34 @@
       pointer-events: none;
     }
 
-    /* ── RAYONS SOLAIRES SOUS-MARINS ── */
+    /* ── RAYONS SOLAIRES SOUS-MARINS ── approche CSS pure, zéro SVG filter */
     .sun-rays {
       position: absolute; inset: 0;
       pointer-events: none; z-index: 1;
-      overflow: hidden;
+      /* PAS d'overflow:hidden — le clip est géré par #hero */
     }
-    .sun-rays svg {
-      position: absolute; width: 100%; height: 100%;
+    .sr-ray {
+      position: absolute;
+      top: -8%; left: 50%;
+      height: 115%;
+      transform-origin: 50% 0%;
       mix-blend-mode: screen;
+      animation: rayPulse var(--dur) ease-in-out infinite var(--del);
+    }
+    @keyframes rayPulse {
+      0%, 100% { opacity: var(--lo); }
+      50%       { opacity: var(--hi); }
     }
 
-    /* Caustiques — taches lumineuses animées sous l'eau */
+    /* Caustiques */
     .caustics {
       position: absolute; inset: 0;
       pointer-events: none; z-index: 1;
-      overflow: hidden;
+      /* PAS d'overflow:hidden */
     }
     .caustics svg {
       position: absolute; width: 100%; height: 100%;
-      mix-blend-mode: screen; opacity: 0.22;
+      mix-blend-mode: screen; opacity: 0.18;
     }
 
     .hero-overlay {
@@ -1025,88 +1033,11 @@
 <section id="hero">
   <canvas id="oceanCanvas"></canvas>
 
-  <!-- Rayons solaires sous-marins -->
-  <div class="sun-rays">
-    <svg viewBox="0 0 1200 750" preserveAspectRatio="xMidYTop slice"
-         xmlns="http://www.w3.org/2000/svg" overflow="visible">
-      <defs>
-        <!-- filtre : region élargie en haut pour éviter le clip du blur -->
-        <filter id="rf" x="-60%" y="-15%" width="220%" height="130%">
-          <feGaussianBlur stdDeviation="16"/>
-        </filter>
-        <!-- gradient : transparent au top ET en bas → pas d'arête dure -->
-        <linearGradient id="rg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stop-color="#a8e0ff" stop-opacity="0"/>
-          <stop offset="12%"  stop-color="#a8e0ff" stop-opacity="1"/>
-          <stop offset="100%" stop-color="#a8e0ff" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <g filter="url(#rf)" fill="url(#rg)">
-        <polygon points="540,-20 570,-20 420,750 390,750" opacity="0.12">
-          <animate attributeName="opacity" values="0.12;0.22;0.08;0.18;0.12" dur="8s"  begin="0s"   repeatCount="indefinite"/>
-        </polygon>
-        <polygon points="575,-20 595,-20 510,750 490,750" opacity="0.18">
-          <animate attributeName="opacity" values="0.18;0.32;0.10;0.26;0.18" dur="11s" begin="1.2s" repeatCount="indefinite"/>
-        </polygon>
-        <polygon points="600,-20 615,-20 580,750 565,750" opacity="0.22">
-          <animate attributeName="opacity" values="0.22;0.38;0.14;0.30;0.22" dur="9s"  begin="0.5s" repeatCount="indefinite"/>
-        </polygon>
-        <polygon points="618,-20 630,-20 640,750 628,750" opacity="0.16">
-          <animate attributeName="opacity" values="0.16;0.28;0.09;0.22;0.16" dur="13s" begin="2s"   repeatCount="indefinite"/>
-        </polygon>
-        <polygon points="635,-20 650,-20 720,750 705,750" opacity="0.14">
-          <animate attributeName="opacity" values="0.14;0.24;0.07;0.19;0.14" dur="10s" begin="3.5s" repeatCount="indefinite"/>
-        </polygon>
-        <polygon points="660,-20 680,-20 810,750 790,750" opacity="0.10">
-          <animate attributeName="opacity" values="0.10;0.20;0.05;0.15;0.10" dur="7s"  begin="1.8s" repeatCount="indefinite"/>
-        </polygon>
-        <polygon points="520,-20 540,-20 340,750 315,750" opacity="0.09">
-          <animate attributeName="opacity" values="0.09;0.17;0.05;0.13;0.09" dur="12s" begin="4s"   repeatCount="indefinite"/>
-        </polygon>
-        <polygon points="690,-20 710,-20 900,750 880,750" opacity="0.08">
-          <animate attributeName="opacity" values="0.08;0.16;0.04;0.12;0.08" dur="15s" begin="2.8s" repeatCount="indefinite"/>
-        </polygon>
-      </g>
-    </svg>
-  </div>
+  <!-- Rayons solaires sous-marins — CSS pur, zéro SVG filter, zéro artefact -->
+  <div class="sun-rays" id="sunRays"></div>
 
-  <!-- Caustiques animées -->
-  <div class="caustics">
-    <svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="blur1"><feGaussianBlur stdDeviation="36"/></filter>
-        <filter id="blur2"><feGaussianBlur stdDeviation="24"/></filter>
-      </defs>
-      <!-- taches lumineuses animées — amplitudes douces, durées longues -->
-      <ellipse cx="310" cy="160" rx="100" ry="44" fill="rgba(150,220,255,0.6)" filter="url(#blur1)">
-        <animate attributeName="cx" values="310;390;270;360;310" dur="14s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="160;130;195;145;160" dur="11s" repeatCount="indefinite"/>
-        <animate attributeName="rx" values="100;125;80;112;100" dur="9s"  repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.6;0.75;0.45;0.68;0.6" dur="8s" repeatCount="indefinite"/>
-      </ellipse>
-      <ellipse cx="760" cy="110" rx="75" ry="30" fill="rgba(120,200,255,0.55)" filter="url(#blur1)">
-        <animate attributeName="cx" values="760;700;810;720;760" dur="16s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="110;145;88;128;110"  dur="12s" repeatCount="indefinite"/>
-        <animate attributeName="rx" values="75;98;60;88;75"      dur="10s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.55;0.70;0.38;0.62;0.55" dur="9s" repeatCount="indefinite"/>
-      </ellipse>
-      <ellipse cx="960" cy="240" rx="60" ry="25" fill="rgba(180,235,255,0.45)" filter="url(#blur2)">
-        <animate attributeName="cx" values="960;1020;895;980;960" dur="13s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="240;195;270;215;240"  dur="15s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.45;0.62;0.30;0.55;0.45" dur="7s" repeatCount="indefinite"/>
-      </ellipse>
-      <ellipse cx="510" cy="300" rx="45" ry="18" fill="rgba(100,190,255,0.4)" filter="url(#blur2)">
-        <animate attributeName="cx" values="510;570;450;530;510" dur="17s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="300;260;330;278;300"  dur="11s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.40;0.58;0.24;0.50;0.40" dur="10s" repeatCount="indefinite"/>
-      </ellipse>
-      <ellipse cx="160" cy="330" rx="65" ry="27" fill="rgba(140,215,255,0.45)" filter="url(#blur1)">
-        <animate attributeName="cx" values="160;235;108;205;160" dur="18s" repeatCount="indefinite"/>
-        <animate attributeName="cy" values="330;290;358;308;330"  dur="13s" repeatCount="indefinite"/>
-        <animate attributeName="opacity" values="0.45;0.62;0.28;0.55;0.45" dur="11s" repeatCount="indefinite"/>
-      </ellipse>
-    </svg>
-  </div>
+  <!-- Caustiques — blobs CSS, pas de SVG filter -->
+  <div class="caustics" id="caustics"></div>
 
   <div class="hero-overlay"></div>
 
@@ -1667,6 +1598,82 @@
     camera.position.y = 22 + Math.sin(t * 0.38) * 0.42;
     renderer.render(scene, camera);
   })();
+})();
+
+// ────────────────────────────────────────────────────────
+// HERO UNDERWATER FX — rayons CSS + caustiques CSS
+// Approche sans SVG filter → zéro artefact rectangulaire
+// ────────────────────────────────────────────────────────
+(function() {
+  // ── RAYONS ──────────────────────────────────────────
+  var raysEl = document.getElementById('sunRays');
+  var rayData = [
+    { rot: -22, w: 110, dur: 9,  del: 0,    lo: 0.08, hi: 0.20 },
+    { rot: -13, w:  80, dur: 12, del: 1.4,  lo: 0.12, hi: 0.28 },
+    { rot:  -5, w: 100, dur: 8,  del: 0.6,  lo: 0.15, hi: 0.32 },
+    { rot:   2, w:  60, dur: 14, del: 2.2,  lo: 0.10, hi: 0.24 },
+    { rot:  10, w:  90, dur: 10, del: 3.8,  lo: 0.12, hi: 0.26 },
+    { rot:  18, w:  70, dur: 7,  del: 1.9,  lo: 0.07, hi: 0.18 },
+    { rot:  28, w:  50, dur: 11, del: 4.5,  lo: 0.06, hi: 0.16 },
+    { rot: -30, w:  55, dur: 13, del: 3.1,  lo: 0.05, hi: 0.14 },
+  ];
+  rayData.forEach(function(r) {
+    var d = document.createElement('div');
+    d.className = 'sr-ray';
+    // Gradient radial allongé : s'estompe sur tous les bords naturellement
+    d.style.cssText = [
+      'width:' + r.w + 'px',
+      'margin-left:' + (-r.w / 2) + 'px',
+      'transform:rotate(' + r.rot + 'deg)',
+      '--dur:' + r.dur + 's',
+      '--del:' + r.del + 's',
+      '--lo:' + r.lo,
+      '--hi:' + r.hi,
+      'background:radial-gradient(ellipse ' + (r.w * 0.5) + 'px 55% at 50% 18%,' +
+        'rgba(145,215,255,0.9) 0%,' +
+        'rgba(130,200,255,0.45) 35%,' +
+        'rgba(110,185,255,0.12) 65%,' +
+        'transparent 100%)',
+    ].join(';');
+    raysEl.appendChild(d);
+  });
+
+  // ── CAUSTIQUES ──────────────────────────────────────
+  var caustEl = document.getElementById('caustics');
+  var blobs = [
+    { x: 28, y: 16, rx: 14, ry: 6,  blur: 38, op: 0.28, dur: 13, del: 0   },
+    { x: 62, y: 11, rx: 11, ry: 4,  blur: 28, op: 0.22, dur: 16, del: 2.4 },
+    { x: 80, y: 26, rx:  9, ry: 3,  blur: 22, op: 0.18, dur: 11, del: 1.1 },
+    { x: 44, y: 32, rx:  7, ry: 3,  blur: 20, op: 0.16, dur: 18, del: 3.6 },
+    { x: 14, y: 34, rx: 10, ry: 4,  blur: 32, op: 0.20, dur: 14, del: 5.2 },
+  ];
+  blobs.forEach(function(b, i) {
+    var d = document.createElement('div');
+    var kf = 'causticMove' + i;
+    // Injection keyframe dans <style> pour animer la position
+    var style = document.createElement('style');
+    var dx = (Math.random() * 6 - 3).toFixed(1);
+    var dy = (Math.random() * 4 - 2).toFixed(1);
+    style.textContent = '@keyframes ' + kf + '{' +
+      '0%,100%{transform:translate(0,0) scale(1)}' +
+      '33%{transform:translate(' + dx + '%,' + dy + '%) scale(1.15)}' +
+      '66%{transform:translate(' + (-dx) + '%,' + (-dy) + '%) scale(0.88)}' +
+      '}';
+    document.head.appendChild(style);
+
+    d.style.cssText = [
+      'position:absolute',
+      'left:' + b.x + '%', 'top:' + b.y + '%',
+      'width:' + b.rx + '%', 'height:' + b.ry * 2 + 'vh',
+      'border-radius:50%',
+      'background:rgba(145,218,255,' + b.op + ')',
+      'filter:blur(' + b.blur + 'px)',
+      'mix-blend-mode:screen',
+      'animation:' + kf + ' ' + b.dur + 's ease-in-out ' + b.del + 's infinite',
+      'pointer-events:none',
+    ].join(';');
+    caustEl.appendChild(d);
+  });
 })();
 
 // ────────────────────────────────────────────────────────
