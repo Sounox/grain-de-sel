@@ -1599,18 +1599,20 @@
 (function() {
   // ── RAYONS ──────────────────────────────────────────
   var raysEl = document.getElementById('sunRays');
+  // Chaque rayon a son propre point d'origine en X (réparti sur toute la largeur)
+  // ox = position X en % du hero, rot = inclinaison naturelle depuis ce point
   var rayData = [
-    { rot: -38, w: 280, dur: 11, del: 0,    lo: 0.04, hi: 0.11 },
-    { rot: -22, w: 320, dur: 14, del: 1.6,  lo: 0.06, hi: 0.14 },
-    { rot: -10, w: 360, dur: 9,  del: 0.4,  lo: 0.07, hi: 0.16 },
-    { rot:   0, w: 340, dur: 12, del: 2.8,  lo: 0.05, hi: 0.13 },
-    { rot:  12, w: 300, dur: 8,  del: 4.0,  lo: 0.06, hi: 0.15 },
-    { rot:  24, w: 280, dur: 15, del: 1.2,  lo: 0.04, hi: 0.11 },
-    { rot:  36, w: 240, dur: 10, del: 3.5,  lo: 0.03, hi: 0.09 },
-    { rot: -50, w: 220, dur: 13, del: 5.0,  lo: 0.03, hi: 0.08 },
+    { ox:  4, w: 220, rot:  -8, dur: 13, del: 0.0, lo: 0.03, hi: 0.09 },
+    { ox: 14, w: 260, rot:  -4, dur: 10, del: 2.3, lo: 0.04, hi: 0.11 },
+    { ox: 26, w: 300, rot:  -2, dur: 14, del: 0.8, lo: 0.05, hi: 0.13 },
+    { ox: 38, w: 340, rot:   1, dur:  9, del: 3.6, lo: 0.06, hi: 0.15 },
+    { ox: 50, w: 360, rot:   0, dur: 12, del: 1.4, lo: 0.07, hi: 0.16 },
+    { ox: 62, w: 340, rot:  -1, dur: 11, del: 4.2, lo: 0.06, hi: 0.14 },
+    { ox: 74, w: 300, rot:   2, dur: 15, del: 0.5, lo: 0.05, hi: 0.12 },
+    { ox: 86, w: 260, rot:   5, dur:  8, del: 2.9, lo: 0.04, hi: 0.10 },
+    { ox: 96, w: 220, rot:   8, dur: 13, del: 5.1, lo: 0.03, hi: 0.08 },
   ];
   rayData.forEach(function(r, i) {
-    // Keyframe propre par rayon — évite le bug des CSS custom props sur refresh
     var kfName = 'rayPulse' + i;
     var s = document.createElement('style');
     s.textContent = '@keyframes ' + kfName + '{' +
@@ -1623,8 +1625,10 @@
     d.style.cssText = [
       'position:absolute',
       'top:-5%',
-      'left:50%',
+      // Point d'origine X propre à chaque rayon
+      'left:' + r.ox + '%',
       'height:115%',
+      // transform-origin centré en X → la rotation s'applique depuis ce point
       'transform-origin:50% 0%',
       'mix-blend-mode:screen',
       'width:' + r.w + 'px',
