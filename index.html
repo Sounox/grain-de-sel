@@ -217,7 +217,7 @@
     }
     .sr-ray {
       position: absolute;
-      top: -8%; left: 50%;
+      top: -5%; left: 50%;
       height: 115%;
       transform-origin: 50% 0%;
       mix-blend-mode: screen;
@@ -1605,14 +1605,14 @@
   // ── RAYONS ──────────────────────────────────────────
   var raysEl = document.getElementById('sunRays');
   var rayData = [
-    { rot: -22, w: 110, dur: 9,  del: 0,    lo: 0.08, hi: 0.20 },
-    { rot: -13, w:  80, dur: 12, del: 1.4,  lo: 0.12, hi: 0.28 },
-    { rot:  -5, w: 100, dur: 8,  del: 0.6,  lo: 0.15, hi: 0.32 },
-    { rot:   2, w:  60, dur: 14, del: 2.2,  lo: 0.10, hi: 0.24 },
-    { rot:  10, w:  90, dur: 10, del: 3.8,  lo: 0.12, hi: 0.26 },
-    { rot:  18, w:  70, dur: 7,  del: 1.9,  lo: 0.07, hi: 0.18 },
-    { rot:  28, w:  50, dur: 11, del: 4.5,  lo: 0.06, hi: 0.16 },
-    { rot: -30, w:  55, dur: 13, del: 3.1,  lo: 0.05, hi: 0.14 },
+    { rot: -38, w: 280, dur: 11, del: 0,    lo: 0.04, hi: 0.11 },
+    { rot: -22, w: 320, dur: 14, del: 1.6,  lo: 0.06, hi: 0.14 },
+    { rot: -10, w: 360, dur: 9,  del: 0.4,  lo: 0.07, hi: 0.16 },
+    { rot:   0, w: 340, dur: 12, del: 2.8,  lo: 0.05, hi: 0.13 },
+    { rot:  12, w: 300, dur: 8,  del: 4.0,  lo: 0.06, hi: 0.15 },
+    { rot:  24, w: 280, dur: 15, del: 1.2,  lo: 0.04, hi: 0.11 },
+    { rot:  36, w: 240, dur: 10, del: 3.5,  lo: 0.03, hi: 0.09 },
+    { rot: -50, w: 220, dur: 13, del: 5.0,  lo: 0.03, hi: 0.08 },
   ];
   rayData.forEach(function(r) {
     var d = document.createElement('div');
@@ -1627,10 +1627,10 @@
       '--del:' + r.del + 's',
       '--lo:' + r.lo,
       '--hi:' + r.hi,
-      'background:radial-gradient(ellipse 50% 60% at 50% 8%,' +
-        'rgba(160,225,255,0.85) 0%,' +
-        'rgba(140,210,255,0.30) 30%,' +
-        'rgba(120,195,255,0.08) 60%,' +
+      'background:radial-gradient(ellipse 50% 55% at 50% 5%,' +
+        'rgba(160,225,255,0.70) 0%,' +
+        'rgba(140,210,255,0.18) 25%,' +
+        'rgba(120,195,255,0.04) 55%,' +
         'transparent 100%)',
     ].join(';');
     raysEl.appendChild(d);
