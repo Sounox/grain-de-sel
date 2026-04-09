@@ -1759,14 +1759,37 @@ const navbar       = document.getElementById('navbar');
 const scrollSec    = document.querySelector('.scroll-section');
 const annotCards   = document.querySelectorAll('.annot-card');
 
-const HOLD = 2000;
-let snapping      = false;
-let snapTimer     = null;
-let lockedFrame   = -1; // frame verrouillée pendant le hold
+// ── Snap config ─────────────────────────────────────────
+// LERP ralenti pendant le snap (mobile) : la vidéo traîne imperceptiblement
+// → aucun saut au déblocage car on n'a jamais gelé une cible fixe
+var LERP_NORMAL = isMobile ? 0.22 : 0.14;
+var LERP_SNAP   = 0.012;   // quasi-immobile pendant le hold
+var lerpCurrent = LERP_NORMAL;
 
-const zones = Array.from(annotCards).map(function(c) {
+var HOLD      = isMobile ? 2200 : 1100;
+var snapping  = false;
+var snapTimer = null;
+
+var targetFrameF  = 0;
+var displayFrameF = 0;
+
+var zones = Array.from(annotCards).map(function(c) {
   return { show: parseFloat(c.dataset.show), hide: parseFloat(c.dataset.hide), snapped: false };
 });
+
+function releaseLerp() {
+  // Transition douce de LERP_SNAP → LERP_NORMAL sur 600ms pour éviter le saut
+  var steps = 30;
+  var step  = 0;
+  var iv = setInterval(function() {
+    step++;
+    lerpCurrent = LERP_SNAP + (LERP_NORMAL - LERP_SNAP) * (step / steps);
+    if (step >= steps) {
+      lerpCurrent = LERP_NORMAL;
+      clearInterval(iv);
+    }
+  }, 600 / steps);
+}
 
 function updateAnnotations(progress) {
   annotCards.forEach(function(card, i) {
@@ -1775,38 +1798,29 @@ function updateAnnotations(progress) {
     card.classList.toggle('show', visible);
 
     if (visible && !z.snapped && !snapping) {
-      z.snapped = true;
-      snapping  = true;
+      z.snapped    = true;
+      snapping     = true;
+      lerpCurrent  = LERP_SNAP; // ralentir le playhead visuellement
 
-      if (isMobile) {
-        // Locker targetFrameF (pas displayFrameF qui est encore en lerp)
-        // → la cible est gelée, displayFrameF converge et reste dessus
-        lockedFrame = targetFrameF;
-      } else {
-        // Desktop : pointer-events bloque la molette
+      if (!isMobile) {
         document.body.style.pointerEvents = 'none';
       }
 
       if (snapTimer) clearTimeout(snapTimer);
       snapTimer = setTimeout(function() {
-        lockedFrame = -1;
         if (!isMobile) document.body.style.pointerEvents = '';
         snapping = false;
+        releaseLerp(); // remontée douce
       }, HOLD);
     }
     if (!visible) z.snapped = false;
   });
 }
 
-// Lerp: more reactive on mobile (less inertia)
-var targetFrameF  = 0;
-var displayFrameF = 0;
-var LERP = isMobile ? 0.28 : 0.14;
-
 function computeScrollProgress() {
   if (!scrollSec) return;
-  var rect    = scrollSec.getBoundingClientRect();
-  var scrollH = scrollSec.offsetHeight - window.innerHeight;
+  var rect     = scrollSec.getBoundingClientRect();
+  var scrollH  = scrollSec.offsetHeight - window.innerHeight;
   var progress = Math.min(1, Math.max(0, -rect.top / scrollH));
   targetFrameF = progress * (FRAME_COUNT - 1);
   updateAnnotations(progress);
@@ -1819,17 +1833,15 @@ window.addEventListener('scroll', function() {
   computeScrollProgress();
 }, { passive: true });
 
-// iOS Safari: touchmove fires more reliably than scroll inside sticky contexts
+// touchmove : plus fiable que scroll sur iOS Safari en sticky context
 window.addEventListener('touchmove', function() {
   computeScrollProgress();
 }, { passive: true });
 
-// Dedicated RAF loop — decouples draw from scroll/touch events
+// RAF loop — lerp coefficient variable pour le snap
 (function animLoop() {
   requestAnimationFrame(animLoop);
-  // Sur mobile pendant un snap : lerp vers la frame verrouillée (gel visuel)
-  var target = (lockedFrame >= 0) ? lockedFrame : targetFrameF;
-  displayFrameF += (target - displayFrameF) * LERP;
+  displayFrameF += (targetFrameF - displayFrameF) * lerpCurrent;
   var fi = Math.round(displayFrameF);
   if (fi !== curFrame) { curFrame = fi; drawFrame(fi); }
 })();
