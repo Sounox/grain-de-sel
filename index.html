@@ -213,10 +213,7 @@
     .sun-rays {
       position: absolute; inset: 0;
       pointer-events: none; z-index: 1;
-      opacity: 0;
-      transition: opacity 1.8s ease;
     }
-    .sun-rays.ready { opacity: 1; }
     /* rayons générés en JS inline — pas de classe partagée */
 
     /* Caustiques */
@@ -1634,7 +1631,8 @@
       'width:' + r.w + 'px',
       'margin-left:' + (-r.w / 2) + 'px',
       'transform:rotate(' + r.rot + 'deg)',
-      'animation:' + kfName + ' ' + r.dur + 's ease-in-out ' + r.del + 's infinite',
+      'opacity:' + r.lo,
+      'animation:' + kfName + ' ' + r.dur + 's ease-in-out ' + r.del + 's infinite both',
       'background:radial-gradient(ellipse 50% 55% at 50% 5%,' +
         'rgba(160,225,255,0.72) 0%,' +
         'rgba(140,210,255,0.16) 22%,' +
@@ -1707,9 +1705,6 @@ for (let i = 1; i <= FRAME_COUNT; i++) {
           loaderEl.style.opacity = '0';
           setTimeout(function() {
             loaderEl.style.display = 'none';
-            // Activer les rayons après que le loader a disparu → zéro flash
-            var rays = document.getElementById('sunRays');
-            if (rays) rays.classList.add('ready');
           }, 900);
         }, 260);
         drawFrame(0);
