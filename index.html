@@ -755,6 +755,16 @@
       font-size: 1rem; font-style: italic;
       color: var(--text-sec); margin-top: 10px; margin-bottom: 56px;
     }
+    .menu-note--legal {
+      max-width: 1100px;
+      margin: 32px auto 0;
+      font-family: var(--font-body);
+      font-size: 0.68rem;
+      font-style: normal;
+      letter-spacing: 0.14em;
+      text-align: center;
+      text-transform: uppercase;
+    }
     .menu-grid {
       display: grid; grid-template-columns: 1fr 1fr;
       max-width: 1100px;
@@ -764,9 +774,8 @@
       padding: 46px;
       border: 1px solid var(--border);
     }
-    .menu-cat:nth-child(2) { border-left: none; }
-    .menu-cat:nth-child(3) { border-top: none; }
-    .menu-cat:nth-child(4) { border-top: none; border-left: none; }
+    .menu-cat:nth-child(even) { border-left: none; }
+    .menu-cat:nth-child(n+3) { border-top: none; }
 
     .menu-cat-label {
       font-size: 0.62rem; letter-spacing: 0.38em;
@@ -1329,56 +1338,151 @@
 <!-- MENU PREVIEW -->
 <section id="menu">
   <div class="eyebrow fi">La Carte</div>
-  <h2 class="section-heading fi d1">Suggestions de saison</h2>
-  <p class="menu-note fi d2">La carte évolue au fil des arrivages — aperçu indicatif.</p>
+  <h2 class="section-heading fi d1">Menu du restaurant</h2>
+  <p class="menu-note fi d2">Carte transmise par le restaurant — avril 2026.</p>
   <div class="menu-grid">
     <div class="menu-cat fi">
-      <div class="menu-cat-label">Entrées</div>
+      <div class="menu-cat-label">Apéritifs</div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Tartare de daurade</div>
-          <div class="menu-item-desc">citron vert, yuzu, huile d'olive de Baux</div>
+          <div class="menu-item-name">Tarama d’œuf de poisson fumé</div>
+          <div class="menu-item-desc">150 g</div>
         </div>
-        <div class="menu-item-price">18 €</div>
+        <div class="menu-item-price">8 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Huîtres de Bouzigues</div>
-          <div class="menu-item-desc">mignonette au champagne, pain de seigle</div>
+          <div class="menu-item-name">Assiette de panisse et aïoli</div>
         </div>
-        <div class="menu-item-price">22 €</div>
+        <div class="menu-item-price">8 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Velouté de rouille</div>
-          <div class="menu-item-desc">croutons maison, safran de Camargue</div>
+          <div class="menu-item-name">Moule à l’escabèche</div>
         </div>
-        <div class="menu-item-price">14 €</div>
+        <div class="menu-item-price">6 €</div>
       </div>
     </div>
 
     <div class="menu-cat fi d1">
+      <div class="menu-cat-label">Coquillages</div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Bulots</div>
+        </div>
+        <div class="menu-item-price">6 / 12</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Crevettes</div>
+        </div>
+        <div class="menu-item-price">6 / 12</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Gambas</div>
+        </div>
+        <div class="menu-item-price">6 / 12</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Huîtres de Camargue</div>
+        </div>
+        <div class="menu-item-price">6 / 12</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Huîtres Utah Beach</div>
+        </div>
+        <div class="menu-item-price">6 / 12</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Plateau iodé</div>
+          <div class="menu-item-desc">12 huîtres de Camargue, 12 crevettes, 6 gambas, 6 bulots</div>
+        </div>
+        <div class="menu-item-price">—</div>
+      </div>
+    </div>
+
+    <div class="menu-cat fi d2">
+      <div class="menu-cat-label">Entrées</div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Tartare de muge de la criée</div>
+          <div class="menu-item-desc">Pickles de concombres, salade d’herbes et mayonnaise fumée</div>
+        </div>
+        <div class="menu-item-price">14 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Saint-Jacques</div>
+          <div class="menu-item-desc">Asperges blanches et sauce XO</div>
+        </div>
+        <div class="menu-item-price">16 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Ris de veau</div>
+          <div class="menu-item-desc">Jus de volaille à l’anguille fumée et sucrine braisée</div>
+        </div>
+        <div class="menu-item-price">16 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Riz de Camargue servi froid</div>
+          <div class="menu-item-desc">Kimshi de fenouil et sauce rouille</div>
+        </div>
+        <div class="menu-item-price">12 €</div>
+      </div>
+    </div>
+
+    <div class="menu-cat fi d3">
       <div class="menu-cat-label">Plats</div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Loup de Méditerranée</div>
-          <div class="menu-item-desc">fenouil confit, beurre blanc au pastis</div>
+          <div class="menu-item-name">Selle d’agneau des Alpilles</div>
+          <div class="menu-item-desc">Basse température, jus de viande et betterave, siphon pomme de terre et céleris raves confits</div>
         </div>
-        <div class="menu-item-price">38 €</div>
+        <div class="menu-item-price">32 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Saint-Pierre en croûte d'herbes</div>
-          <div class="menu-item-desc">purée de chou-fleur, jus iodé réduit</div>
+          <div class="menu-item-name">Choux raves farcis</div>
+          <div class="menu-item-desc">Farce fine d’asperges et purée de persil</div>
         </div>
-        <div class="menu-item-price">42 €</div>
+        <div class="menu-item-price">23 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Risotto aux tellines</div>
-          <div class="menu-item-desc">parmesan 24 mois, persil plat</div>
+          <div class="menu-item-name">Aïoli du Grain de Sel</div>
+          <div class="menu-item-desc">Maigre, jardinière de légumes printaniers</div>
         </div>
-        <div class="menu-item-price">29 €</div>
+        <div class="menu-item-price">28 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Blanc de turbot maturé</div>
+          <div class="menu-item-desc">Lard de Colonnata, sauce pil-pil, salicorne, poireaux confits et pommes de terre vapeur</div>
+        </div>
+        <div class="menu-item-price">32 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Pêche du jour</div>
+        </div>
+        <div class="menu-item-price">Prix au 100 g</div>
+      </div>
+    </div>
+
+    <div class="menu-cat fi d1">
+      <div class="menu-cat-label">Menu enfant</div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Menu enfant</div>
+          <div class="menu-item-desc">Velouté de carottes · Pavé de poisson ou suprême de volaille, pomme purée · Mousse au chocolat</div>
+        </div>
+        <div class="menu-item-price">15 €</div>
       </div>
     </div>
 
@@ -1386,52 +1490,33 @@
       <div class="menu-cat-label">Desserts</div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Tarte au citron de Menton</div>
-          <div class="menu-item-desc">meringue soufflée, fleur de sel</div>
+          <div class="menu-item-name">Plateau de fromage</div>
+          <div class="menu-item-desc">Sélection Xavier Thuret</div>
         </div>
-        <div class="menu-item-price">12 €</div>
+        <div class="menu-item-price">9 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Panna cotta à la vanille</div>
-          <div class="menu-item-desc">coulis passion, tuile cacao amer</div>
+          <div class="menu-item-name">Chocolat</div>
+          <div class="menu-item-desc">Fleur de sel, huile d’olive</div>
         </div>
-        <div class="menu-item-price">11 €</div>
+        <div class="menu-item-price">9 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Soufflé au Grand Marnier</div>
-          <div class="menu-item-desc">crème anglaise légère</div>
+          <div class="menu-item-name">Paris-Brest</div>
         </div>
-        <div class="menu-item-price">14 €</div>
-      </div>
-    </div>
-
-    <div class="menu-cat fi d3">
-      <div class="menu-cat-label">Accords Vins</div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Picpoul de Pinet</div>
-          <div class="menu-item-desc">Domaine Gaujal — Blanc sec 2024</div>
-        </div>
-        <div class="menu-item-price">8 € / verre</div>
+        <div class="menu-item-price">9 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Languedoc Rosé</div>
-          <div class="menu-item-desc">Château La Négly — Rosé 2024</div>
+          <div class="menu-item-name">Gros macaron fraise et rhubarbe</div>
         </div>
-        <div class="menu-item-price">7 € / verre</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Faugères Rouge</div>
-          <div class="menu-item-desc">Domaine des Estanilles — 2022</div>
-        </div>
-        <div class="menu-item-price">9 € / verre</div>
+        <div class="menu-item-price">9 €</div>
       </div>
     </div>
   </div>
+  <p class="menu-note menu-note--legal fi d3">Prix et service compris — hors boisson — carte des allergènes disponible à la demande.</p>
 </section>
 
 <!-- RESERVATION -->
