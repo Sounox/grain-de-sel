@@ -7,9 +7,11 @@
   <meta name="theme-color" content="#0E2A5C">
   <meta property="og:title" content="Grain de Sel — Restaurant, La Grande Motte">
   <meta property="og:description" content="Cuisine méditerranéenne semi-gastronomique sur le port de La Grande Motte.">
+  <meta property="og:url" content="https://legraindesel-lgm.com/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
   <title>Grain de Sel — Restaurant, La Grande Motte</title>
+  <link rel="canonical" href="https://legraindesel-lgm.com/">
   <link rel="icon" type="image/png" href="assets/flavico-transparent.png?v=20260411-1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -190,6 +192,12 @@
       transition: color 0.3s ease;
     }
     .nav-links a:hover { color: var(--ocean); }
+    .nav-phone {
+      color: rgba(255,255,255,0.86) !important;
+      font-family: var(--font-num);
+      letter-spacing: 0.08em !important;
+      white-space: nowrap;
+    }
     .nav-cta {
       border: 1px solid var(--ocean) !important;
       color: var(--ocean) !important;
@@ -243,6 +251,12 @@
       font-family: var(--font-body);
       font-size: 0.8rem !important; letter-spacing: 0.18em;
       padding: 16px 44px !important;
+    }
+    #mobileMenu .mobile-phone {
+      font-family: var(--font-num);
+      font-size: 1.05rem !important;
+      letter-spacing: 0.12em;
+      color: var(--ocean);
     }
     #mobileMenu .mobile-divider {
       width: 40px; height: 1px;
@@ -370,6 +384,10 @@
     }
     .btn-ghost:hover {
       border-color: var(--ocean); color: var(--ocean);
+    }
+    .hero-phone-link {
+      color: var(--ocean);
+      border-color: rgba(123,167,188,0.48);
     }
 
     .hero-date-badge {
@@ -847,6 +865,12 @@
     .resa-val {
       font-size: 0.88rem; font-weight: 300; line-height: 1.6;
     }
+    .resa-val a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .resa-val a:hover { color: var(--ocean); }
 
     .resa-form {
       background: rgba(123,167,188,0.03);
@@ -909,6 +933,12 @@
       filter: invert(0.6); cursor: pointer;
     }
     .form-submit { width: 100%; margin-top: 10px; }
+    .form-submit[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
 
     /* Reservation mobile handled in main block below */
 
@@ -950,6 +980,43 @@
       font-size: 0.68rem; color: var(--text-sec);
       letter-spacing: 0.06em;
     }
+
+    #legal {
+      padding: 88px clamp(24px, 9vw, 160px);
+      border-top: 1px solid var(--border);
+      background: rgba(8,26,60,0.16);
+    }
+    .legal-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .legal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 34px;
+    }
+    .legal-card {
+      border: 1px solid var(--border);
+      background: rgba(123,167,188,0.025);
+      padding: 26px;
+    }
+    .legal-card h3 {
+      font-family: var(--font-disp);
+      font-size: 1.35rem;
+      font-weight: 400;
+      margin-bottom: 14px;
+    }
+    .legal-card p {
+      color: var(--text-sec);
+      font-size: 0.82rem;
+      line-height: 1.72;
+    }
+    .legal-card a {
+      color: var(--text);
+      text-decoration: none;
+    }
+    .legal-card a:hover { color: var(--ocean); }
 
     /* ── POWERED BY ──────────────────────────────────────── */
     .powered-by {
@@ -1053,6 +1120,7 @@
       .menu-cat:nth-child(n) { border-left: none; border-right: none; }
       .menu-item-name { font-size: 1rem; }
       .menu-note { font-size: 0.88rem; }
+      .legal-grid { grid-template-columns: 1fr; }
 
       /* ── RESERVATION ── */
       #reservation { padding: 72px 22px; }
@@ -1117,6 +1185,7 @@
     <div class="nav-links">
       <a href="#about">Le Restaurant</a>
       <a href="#menu">La Carte</a>
+      <a href="tel:+33499533373" class="nav-phone">04 99 53 33 73</a>
       <a href="#reservation" class="nav-cta">Réserver</a>
     </div>
     <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-controls="mobileMenu" aria-expanded="false" type="button">
@@ -1130,6 +1199,8 @@
   <a href="#about" class="mobile-link">Le Restaurant</a>
   <div class="mobile-divider"></div>
   <a href="#menu" class="mobile-link">La Carte</a>
+  <div class="mobile-divider"></div>
+  <a href="tel:+33499533373" class="mobile-link mobile-phone">04 99 53 33 73</a>
   <div class="mobile-divider"></div>
   <a href="#reservation" class="mobile-link mobile-cta">Réserver</a>
 </div>
@@ -1158,6 +1229,7 @@
     </p>
     <div class="hero-actions">
       <a href="#reservation" class="btn-primary">Réserver une table</a>
+      <a href="tel:+33499533373" class="btn-ghost hero-phone-link">04 99 53 33 73</a>
       <a href="#about" class="btn-ghost">Découvrir</a>
     </div>
   </div>
@@ -1395,7 +1467,7 @@
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Huîtres Utah Beach</div>
+          <div class="menu-item-name">Huîtres Gillardeau</div>
         </div>
         <div class="menu-item-price">6 / 12</div>
       </div>
@@ -1538,7 +1610,7 @@
         </div>
         <div>
           <span class="resa-tag">Adresse</span>
-          <span class="resa-val">Port de La Grande Motte<br>34280 La Grande Motte, Hérault</span>
+          <span class="resa-val">107 quai d’Honneur<br>34280 La Grande-Motte, Hérault</span>
         </div>
       </div>
       <div class="resa-info-item">
@@ -1565,13 +1637,24 @@
           <span class="resa-val">18 Avril 2026<br>Premier service midi</span>
         </div>
       </div>
+      <div class="resa-info-item">
+        <div class="resa-icon">
+          <svg viewBox="0 0 18 18" fill="none" stroke-width="1.2">
+            <path d="M5 3.5h2l1 3-1.4.9a9 9 0 0 0 4 4L11.5 10l3 1v2a1.5 1.5 0 0 1-1.6 1.5C7.6 14.2 3.8 10.4 3.5 5.1A1.5 1.5 0 0 1 5 3.5z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="resa-tag">Contact</span>
+          <span class="resa-val"><a href="tel:+33499533373">04 99 53 33 73</a><br><a href="mailto:contact@legraindesel-lgm.fr">contact@legraindesel-lgm.fr</a></span>
+        </div>
+      </div>
     </div>
 
       <div class="resa-form fi d3">
         <h3 class="form-heading">Votre réservation</h3>
-        <p class="form-subheading">Toutes les demandes seront confirmées par email sous 24h</p>
+        <p class="form-subheading">Votre demande sera envoyée par email au restaurant.</p>
       <div class="resa-notice" id="reservationNotice">
-        Ouverture 18 Avril 2026 · Les réservations seront traitées prochainement
+        Réponse par email ou téléphone dès validation de la demande.
       </div>
 
       <div class="form-row">
@@ -1605,8 +1688,8 @@
           <label for="resa-service">Service</label>
           <select id="resa-service" name="service">
             <option value="">Choisir un service</option>
-            <option>Déjeuner (12h00)</option>
-            <option>Dîner (19h30)</option>
+            <option>Déjeuner (12h00 – 14h30)</option>
+            <option>Dîner (19h30 – 22h00)</option>
           </select>
         </div>
       </div>
@@ -1637,6 +1720,37 @@
 
 </main>
 
+<!-- LEGAL -->
+<section id="legal" aria-labelledby="legal-title">
+  <div class="legal-inner">
+    <div class="eyebrow fi">Informations légales</div>
+    <h2 class="section-heading fi d1" id="legal-title">Mentions légales</h2>
+    <div class="legal-grid">
+      <div class="legal-card fi d2">
+        <h3>Éditeur du site</h3>
+        <p>
+          MB PARTNERS, SARL au capital social de 1 000 €<br>
+          SIREN : 994 516 706 · SIRET : 994 516 706 00011<br>
+          RCS Montpellier · TVA intracommunautaire : FR74 994 516 706<br>
+          Gérance : Baptiste Alberola et Matthis Ducros<br>
+          Siège social : 7 allée des Flamants Roses, 34280 La Grande-Motte<br>
+          Établissement : 107 quai d’Honneur, 34280 La Grande-Motte
+        </p>
+      </div>
+      <div class="legal-card fi d3">
+        <h3>Contact et hébergement</h3>
+        <p>
+          Téléphone : <a href="tel:+33499533373">04 99 53 33 73</a><br>
+          Email : <a href="mailto:contact@legraindesel-lgm.fr">contact@legraindesel-lgm.fr</a><br>
+          Responsable de publication : MB PARTNERS<br>
+          Hébergement : Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis<br>
+          Conception : <a href="https://astr.studio" target="_blank" rel="noopener noreferrer">ASTR.STUDIO</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
@@ -1648,7 +1762,10 @@
       <a href="#about">Le Restaurant</a>
       <a href="#menu">La Carte</a>
       <a href="#reservation">Réserver</a>
-      <span class="footer-link-disabled" aria-disabled="true">Mentions légales</span>
+      <a href="tel:+33499533373">04 99 53 33 73</a>
+      <a href="mailto:contact@legraindesel-lgm.fr">Email</a>
+      <a href="https://www.instagram.com/grain.de.sel_" target="_blank" rel="noopener noreferrer">Instagram</a>
+      <a href="#legal">Mentions légales</a>
     </div>
     <p class="footer-copy">© 2026 Grain de Sel — La Grande Motte, Hérault</p>
   </div>
@@ -2261,6 +2378,57 @@ var fadeObserver = new IntersectionObserver(function(entries) {
 document.querySelectorAll('.fi').forEach(function(el) {
   fadeObserver.observe(el);
 });
+
+// Reservation form: simple mail redirection
+(function() {
+  const destinationEmail = 'contact@legraindesel-lgm.fr';
+  const notice = document.getElementById('reservationNotice');
+  const submit = document.querySelector('.form-submit');
+  if (!submit) return;
+
+  function getValue(id) {
+    return (document.getElementById(id)?.value || '').trim();
+  }
+
+  submit.addEventListener('click', function() {
+    const firstName = getValue('resa-firstname');
+    const lastName = getValue('resa-lastname');
+    const email = getValue('resa-email');
+    const phone = getValue('resa-phone');
+    const date = getValue('resa-date');
+    const service = getValue('resa-service');
+    const guests = getValue('resa-guests');
+    const message = getValue('resa-message');
+
+    if (!firstName || !lastName || (!email && !phone) || !date || !service) {
+      notice.textContent = 'Merci de renseigner prénom, nom, email ou téléphone, date et service souhaité.';
+      return;
+    }
+
+    const subject = 'Demande de réservation - Grain de Sel';
+    const body = [
+      'Bonjour,',
+      '',
+      'Nouvelle demande de réservation depuis le site legraindesel-lgm.com :',
+      '',
+      'Prénom : ' + firstName,
+      'Nom : ' + lastName,
+      'Email : ' + (email || 'Non renseigné'),
+      'Téléphone : ' + (phone || 'Non renseigné'),
+      'Date souhaitée : ' + date,
+      'Service : ' + service,
+      'Nombre de couverts : ' + guests,
+      'Message : ' + (message || 'Aucun message'),
+      '',
+      'Merci de confirmer la réservation directement au client.'
+    ].join('\n');
+
+    notice.textContent = 'Votre application email va s’ouvrir pour envoyer la demande au restaurant.';
+    window.location.href = 'mailto:' + destinationEmail +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+  });
+})();
 
 // ────────────────────────────────────────────────────────
 // SMOOTH ANCHOR NAVIGATION
