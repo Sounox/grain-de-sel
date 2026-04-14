@@ -13,11 +13,8 @@
   <link rel="icon" type="image/png" href="assets/flavico-transparent.png?v=20260411-1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-  <link rel="preconnect" href="https://images.unsplash.com">
-  <link rel="preload" as="image" href="frames-webp/frame_0001.webp" fetchpriority="high">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"></noscript>
 
   <style>
     :root {
@@ -265,6 +262,9 @@
       min-height: 100dvh;
       display: flex; align-items: flex-end;
       overflow: hidden;
+      background:
+        radial-gradient(ellipse at 52% 18%, rgba(123,167,188,0.22) 0%, rgba(123,167,188,0.08) 32%, transparent 62%),
+        linear-gradient(180deg, #0f3169 0%, var(--bg) 56%, var(--bg-deep) 100%);
     }
     #about,
     #menu,
@@ -275,7 +275,10 @@
       position: absolute; inset: 0;
       width: 100%; height: 100%;
       pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
     }
+    #oceanCanvas.is-ready { opacity: 1; }
 
     /* ── RAYONS SOLAIRES SOUS-MARINS ── approche CSS pure, zéro SVG filter */
     .sun-rays {
@@ -1132,7 +1135,7 @@
 </div>
 
 <main id="main">
-<!-- HERO — THREE.JS OCEAN -->
+<!-- HERO — LIGHTWEIGHT OCEAN CANVAS -->
 <section id="hero">
   <canvas id="oceanCanvas" aria-hidden="true"></canvas>
 
@@ -1671,150 +1674,113 @@ const prefersReducedData = !!(
 const useLiteMotion = prefersReducedMotion || prefersReducedData;
 let isMobile = window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+function scheduleIdle(fn, timeout) {
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(fn, { timeout: timeout || 1200 });
+    return;
+  }
+  requestAnimationFrame(function() {
+    setTimeout(fn, Math.min(timeout || 0, 300));
+  });
+}
+
 // ────────────────────────────────────────────────────────
-// THREE.JS OCEAN — HERO
+// LIGHTWEIGHT OCEAN CANVAS — HERO
 // ────────────────────────────────────────────────────────
 (function () {
   const canvas = document.getElementById('oceanCanvas');
-  const oceanDetail = useLiteMotion
-    ? { pixelRatio: 1, segments: 44, particles: 0, antialias: false }
-    : isMobile
-      ? { pixelRatio: 1.25, segments: 72, particles: 180, antialias: false }
-      : { pixelRatio: 2, segments: 110, particles: 360, antialias: true };
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return;
 
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: oceanDetail.antialias,
-    alpha: true,
-    powerPreference: 'high-performance'
-  });
+  const waves = [
+    { y: 0.24, amp: 0.032, speed: 0.00022, freq: 2.1, color: 'rgba(7, 24, 58, 0.42)' },
+    { y: 0.34, amp: 0.026, speed: 0.00016, freq: 2.8, color: 'rgba(6, 22, 52, 0.34)' },
+    { y: 0.50, amp: 0.02, speed: 0.00012, freq: 3.4, color: 'rgba(7, 31, 76, 0.28)' }
+  ];
+  const glows = [
+    { x: 0.36, y: 0.8, r: 0.24, a: 0.22 },
+    { x: 0.73, y: 0.58, r: 0.08, a: 0.32 },
+    { x: 0.58, y: 0.94, r: 0.13, a: 0.16 }
+  ];
 
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x0E2A5C, 0.028);
-
-  const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 600);
-  camera.position.set(0, 22, 46);
-  camera.lookAt(0, -1, 0);
-
-  scene.add(new THREE.AmbientLight(0x4488bb, 0.55));
-
-  const sun = new THREE.DirectionalLight(0x90d8ff, 1.4);
-  sun.position.set(8, 40, 10);
-  scene.add(sun);
-
-  const deep = new THREE.DirectionalLight(0x0a3a7c, 0.6);
-  deep.position.set(-10, -20, -10);
-  scene.add(deep);
-
-  const rimA = new THREE.PointLight(0x7BC8FF, 2.2, 80);
-  rimA.position.set(-18, 20, 8);
-  scene.add(rimA);
-
-  const rimB = new THREE.PointLight(0xb0e8ff, 1.2, 60);
-  rimB.position.set(22, 18, -10);
-  scene.add(rimB);
-
-  const rimC = new THREE.PointLight(0x5ab4f0, 1.8, 70);
-  rimC.position.set(0, 30, 20);
-  scene.add(rimC);
-
-  const SIZE = 110;
-  const geo = new THREE.PlaneGeometry(SIZE, SIZE, oceanDetail.segments, oceanDetail.segments);
-  geo.rotateX(-Math.PI / 2);
-  const posAttr = geo.attributes.position;
-
-  const mat = new THREE.MeshPhongMaterial({
-    color: 0x0a2a5a,
-    specular: 0xaaddff,
-    shininess: 260,
-    transparent: true,
-    opacity: 0.97,
-    side: THREE.DoubleSide,
-  });
-
-  scene.add(new THREE.Mesh(geo, mat));
-
-  const N_PART = oceanDetail.particles;
-  let foamPts = null;
-
-  if (N_PART > 0) {
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(N_PART * 3);
-    for (let i = 0; i < N_PART; i++) {
-      pPos[i * 3] = (Math.random() - 0.5) * SIZE;
-      pPos[i * 3 + 1] = Math.random() * 2;
-      pPos[i * 3 + 2] = (Math.random() - 0.5) * SIZE;
-    }
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({ color: 0xb0d8ef, size: 0.13, transparent: true, opacity: 0.38 });
-    foamPts = new THREE.Points(pGeo, pMat);
-    scene.add(foamPts);
-  }
-
-  function resize() {
-    const hero = document.getElementById('hero');
-    const w = hero.clientWidth;
-    const h = hero.clientHeight;
-    const dprCap = useLiteMotion ? 1 : (isMobile ? 1.25 : oceanDetail.pixelRatio);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
-    renderer.setSize(w, h);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-
-  window.addEventListener('resize', resize);
-  resize();
-
-  let t = 0;
+  let width = 0;
+  let height = 0;
   let running = true;
   const heroEl = document.getElementById('hero');
+
+  function resizeOcean() {
+    const dpr = useLiteMotion ? 1 : Math.min(window.devicePixelRatio || 1, isMobile ? 1.15 : 1.35);
+    width = Math.max(1, heroEl.clientWidth);
+    height = Math.max(1, heroEl.clientHeight);
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function drawGlow(g, time) {
+    const pulse = 1 + Math.sin(time * 0.0012 + g.x * 9) * 0.08;
+    const grd = ctx.createRadialGradient(width * g.x, height * g.y, 0, width * g.x, height * g.y, width * g.r * pulse);
+    grd.addColorStop(0, 'rgba(175, 226, 238,' + g.a + ')');
+    grd.addColorStop(0.42, 'rgba(123, 167, 188,' + (g.a * 0.45) + ')');
+    grd.addColorStop(1, 'rgba(123, 167, 188, 0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function drawWave(wave, time) {
+    const base = height * wave.y;
+    const amp = height * wave.amp;
+    const step = isMobile ? 8 : 14;
+    ctx.beginPath();
+    ctx.moveTo(0, height);
+    for (let x = 0; x <= width + step; x += step) {
+      const p = x / width;
+      const y = base +
+        Math.sin(p * Math.PI * 2 * wave.freq + time * wave.speed) * amp +
+        Math.sin(p * Math.PI * 3.1 + time * wave.speed * 0.72) * amp * 0.42;
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(width, height);
+    ctx.closePath();
+    ctx.fillStyle = wave.color;
+    ctx.fill();
+  }
+
+  function drawOcean(time) {
+    const bg = ctx.createLinearGradient(0, 0, 0, height);
+    bg.addColorStop(0, '#163f77');
+    bg.addColorStop(0.5, '#0e2f68');
+    bg.addColorStop(1, '#0e2a5c');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, width, height);
+    glows.forEach(function(g) { drawGlow(g, time); });
+    waves.forEach(function(w) { drawWave(w, time); });
+    canvas.classList.add('is-ready');
+  }
+
+  function resizeAndDraw() {
+    resizeOcean();
+    drawOcean(performance.now());
+  }
+
+  window.addEventListener('resize', resizeAndDraw);
+  resizeAndDraw();
+
   new IntersectionObserver(function(entries) {
     running = entries[0].isIntersecting;
   }).observe(heroEl);
 
-  function renderScene() {
-    renderer.render(scene, camera);
-  }
-
   if (useLiteMotion) {
-    renderScene();
     return;
   }
 
-  (function tick() {
+  (function tick(now) {
     requestAnimationFrame(tick);
     if (!running) return;
-    t += isMobile ? 0.0055 : 0.007;
-
-    for (let i = 0; i < posAttr.count; i++) {
-      const x = posAttr.getX(i);
-      const z = posAttr.getZ(i);
-      const y =
-        Math.sin(x * 0.14 + t) * 1.3 +
-        Math.sin(z * 0.11 + t * 0.72) * 1.1 +
-        Math.sin((x + z) * 0.07 + t * 1.18) * 0.65 +
-        Math.cos(x * 0.19 - t * 0.52) * 0.42;
-      posAttr.setY(i, y);
-    }
-    posAttr.needsUpdate = true;
-    geo.computeVertexNormals();
-
-    if (foamPts) {
-      const fp = foamPts.geometry.attributes.position;
-      for (let i = 0; i < N_PART; i++) {
-        const px = fp.getX(i);
-        const pz = fp.getZ(i);
-        const wy =
-          Math.sin(px * 0.14 + t) * 1.3 +
-          Math.sin(pz * 0.11 + t * 0.72) * 1.1 +
-          Math.sin((px + pz) * 0.07 + t * 1.18) * 0.65 + 0.4;
-        fp.setY(i, wy + Math.sin(t * 2.2 + i * 0.3) * 0.08);
-      }
-      fp.needsUpdate = true;
-    }
-
-    camera.position.y = 22 + Math.sin(t * 0.38) * 0.42;
-    renderScene();
+    drawOcean(now || performance.now());
   })();
 })();
 
@@ -1922,16 +1888,17 @@ let isMobile = window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navi
 const FRAME_COUNT = 120;
 const FRAME_FOLDER = 'frames-webp';
 const FRAME_EXT = 'webp';
-const READY_FRAME_COUNT = useLiteMotion ? 1 : (isMobile ? 10 : 18);
-const FRAME_CONCURRENCY = useLiteMotion ? 1 : (isMobile ? 3 : 5);
+const READY_FRAME_COUNT = 1;
+const FRAME_CONCURRENCY = useLiteMotion ? 1 : (isMobile ? 2 : 4);
 const PRIORITY_FRAME_INDEXES = useLiteMotion
   ? [0]
-  : [0, 1, 2, 3, 4, 5, 8, 12, 16, 24, 32, 40, 48, 54, 64, 72, 80, 95, 110, 119];
+  : [0, 8, 24, 40, 54, 72, 95, 110, 119];
 const PRIORITY_FRAME_SET = new Set(PRIORITY_FRAME_INDEXES);
 const frames = new Array(FRAME_COUNT);
 let loadedCount = 0;
 let activeFrameLoads = 0;
 let siteReady = false;
+let frameLoadingStarted = false;
 
 const loaderBar = document.getElementById('loaderBar');
 const loaderEl = document.getElementById('loader');
@@ -1973,7 +1940,7 @@ function revealSite() {
 }
 
 function updateLoaderProgress() {
-  loaderBar.style.width = (loadedCount / FRAME_COUNT * 100) + '%';
+  loaderBar.style.width = Math.min(92, loadedCount / READY_FRAME_COUNT * 92) + '%';
   if (!siteReady && isFrameLoaded(0) && loadedCount >= READY_FRAME_COUNT) {
     revealSite();
   }
@@ -2000,6 +1967,12 @@ function buildFrameQueue() {
 
 const frameQueue = buildFrameQueue();
 
+function startFrameLoading() {
+  if (frameLoadingStarted) return;
+  frameLoadingStarted = true;
+  pumpFrameQueue();
+}
+
 function pumpFrameQueue() {
   while (activeFrameLoads < FRAME_CONCURRENCY && frameQueue.length) {
     loadFrame(frameQueue.shift());
@@ -2025,7 +1998,7 @@ function loadFrame(index) {
       drawFrame(0);
     }
     updateLoaderProgress();
-    pumpFrameQueue();
+    if (frameLoadingStarted) pumpFrameQueue();
   }
 
   img.onload = function() {
@@ -2087,7 +2060,25 @@ if (window.visualViewport) {
 }
 
 resizeFCanvas();
-pumpFrameQueue();
+requestAnimationFrame(function() {
+  setTimeout(revealSite, 260);
+});
+
+const scrollVideoSectionForFrames = document.querySelector('.scroll-section');
+if ('IntersectionObserver' in window && scrollVideoSectionForFrames) {
+  const frameObserver = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      startFrameLoading();
+      frameObserver.disconnect();
+    }
+  }, { rootMargin: isMobile ? '900px 0px' : '1400px 0px' });
+  frameObserver.observe(scrollVideoSectionForFrames);
+} else {
+  scheduleIdle(startFrameLoading, 2500);
+}
+window.addEventListener('scroll', startFrameLoading, { passive: true, once: true });
+window.addEventListener('touchstart', startFrameLoading, { passive: true, once: true });
+window.addEventListener('pointerdown', startFrameLoading, { passive: true, once: true });
 
 // ────────────────────────────────────────────────────────
 // SCROLL ENGINE
