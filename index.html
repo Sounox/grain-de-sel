@@ -441,10 +441,9 @@
       height: 100vh; width: 100%;
       overflow: hidden;
     }
-    #scrollStopVideo {
-      position: absolute; inset: 0;
+    #frameCanvas {
+      position: absolute; top: 0; left: 0;
       width: 100%; height: 100%;
-      object-fit: cover;
       background: var(--bg-deep);
       transform: translateZ(0);
     }
@@ -1229,7 +1228,7 @@
 <!-- SCROLL VIDEO -->
 <section class="scroll-section">
   <div class="scroll-sticky">
-    <video id="scrollStopVideo" aria-hidden="true" muted playsinline preload="none" poster="assets/scroll-stop-poster.webp" width="1280" height="720" data-src-mobile="assets/scroll-stop-mobile.mp4" data-src-desktop="assets/scroll-stop-desktop.mp4"></video>
+    <canvas id="frameCanvas" aria-hidden="true"></canvas>
     <div class="frame-grad"></div>
 
     <div class="annot-card" data-show="0.07" data-hide="0.30" data-show-mobile="0.02" data-hide-mobile="0.38">
@@ -1979,136 +1978,120 @@ function scheduleIdle(fn, timeout) {
 })();
 
 // ────────────────────────────────────────────────────────
-// SCROLL VIDEO - SCRUBBED MP4
+// CANVAS FRAME SCROLL STOP
 // ────────────────────────────────────────────────────────
-const SCROLL_FRAME_COUNT = 151;
-const SCROLL_VIDEO_FALLBACK_DURATION = 10.054;
-let siteReady = false;
-let scrollVideoLoadingStarted = false;
-let scrollVideoReady = false;
-let scrollVideoDuration = SCROLL_VIDEO_FALLBACK_DURATION;
-let curFrame = -1;
+var FRAME_COUNT   = 151;
+var scrollFrames  = new Array(FRAME_COUNT);
+var framesLoaded  = 0;
+var framesReady   = false;
+var siteRevealed  = false;
+var currentFrame  = -1;
 
-const loaderBar = document.getElementById('loaderBar');
-const loaderEl = document.getElementById('loader');
-const scrollVideo = document.getElementById('scrollStopVideo');
+var loaderBar = document.getElementById('loaderBar');
+var loaderEl  = document.getElementById('loader');
+var fCanvas   = document.getElementById('frameCanvas');
+var fCtx      = fCanvas ? fCanvas.getContext('2d') : null;
 
 function revealSite() {
-  if (siteReady) return;
-  siteReady = true;
+  if (siteRevealed) return;
+  siteRevealed = true;
   if (loaderBar) loaderBar.style.width = '100%';
   setTimeout(function() {
     if (!loaderEl) return;
     loaderEl.style.opacity = '0';
     loaderEl.style.pointerEvents = 'none';
-    setTimeout(function() {
-      loaderEl.style.display = 'none';
-    }, 900);
+    setTimeout(function() { loaderEl.style.display = 'none'; }, 900);
   }, 180);
 }
+setTimeout(revealSite, 3500); // fallback
 
-function startScrollVideoLoading() {
-  if (scrollVideoLoadingStarted || !scrollVideo || useLiteMotion) return;
-  scrollVideoLoadingStarted = true;
-  var src = isMobile ? scrollVideo.dataset.srcMobile : scrollVideo.dataset.srcDesktop;
-  if (src && scrollVideo.getAttribute('src') !== src) {
-    scrollVideo.src = src;
-  }
-  scrollVideo.preload = 'auto';
-  scrollVideo.load();
+// Préchargement des frames JPEG
+for (var _i = 0; _i < FRAME_COUNT; _i++) {
+  (function(idx) {
+    var img = new Image();
+    img.onload = function() {
+      framesLoaded++;
+      if (loaderBar && !siteRevealed) {
+        loaderBar.style.width = Math.round(framesLoaded / FRAME_COUNT * 90) + '%';
+      }
+      if (idx === 0) { framesReady = true; revealSite(); drawFrameCanvas(0); }
+      else if (framesLoaded === FRAME_COUNT) { framesReady = true; }
+    };
+    img.onerror = function() { framesLoaded++; };
+    img.src = 'frames/frame_' + ('000' + (idx + 1)).slice(-4) + '.jpg';
+    scrollFrames[idx] = img;
+  })(_i);
 }
 
-function setScrollVideoDuration() {
-  if (!scrollVideo) return;
-  if (Number.isFinite(scrollVideo.duration) && scrollVideo.duration > 0) {
-    scrollVideoDuration = scrollVideo.duration;
-  }
+// Resize canvas (DPR-aware, visualViewport on mobile)
+function resizeFCanvas() {
+  if (!fCanvas) return;
+  var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+  var vw  = window.innerWidth;
+  var vh  = isMobile && window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  fCanvas.width  = vw * dpr;
+  fCanvas.height = vh * dpr;
+  fCanvas.style.width  = vw + 'px';
+  fCanvas.style.height = vh + 'px';
+  if (currentFrame >= 0) drawFrameCanvas(currentFrame);
 }
-
-function onScrollVideoReady() {
-  setScrollVideoDuration();
-  scrollVideoReady = true;
-  seekScrollVideoFrame(curFrame >= 0 ? curFrame : 0, true);
-}
-
-function seekScrollVideoFrame(frameIndex, force) {
-  if (!scrollVideo || !scrollVideoReady || useLiteMotion) return;
-  var duration = Math.max(0.001, scrollVideoDuration);
-  var clampedFrame = Math.max(0, Math.min(SCROLL_FRAME_COUNT - 1, frameIndex));
-  var nextTime = (clampedFrame / (SCROLL_FRAME_COUNT - 1)) * duration;
-  nextTime = Math.min(Math.max(0.001, nextTime), Math.max(0.001, duration - 0.02));
-  if (force || Math.abs(scrollVideo.currentTime - nextTime) > 0.035) {
-    try {
-      scrollVideo.currentTime = nextTime;
-    } catch (err) {}
-  }
-}
-
-if (scrollVideo) {
-  scrollVideo.addEventListener('loadedmetadata', setScrollVideoDuration, { once: true });
-  scrollVideo.addEventListener('loadeddata', onScrollVideoReady, { once: true });
-  scrollVideo.addEventListener('error', revealSite, { once: true });
-}
-
 window.addEventListener('resize', function() {
   isMobile = window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  resizeFCanvas();
 });
+resizeFCanvas();
 
-requestAnimationFrame(function() {
-  setTimeout(revealSite, 260);
-});
-
-const scrollVideoSectionForMedia = document.querySelector('.scroll-section');
-if ('IntersectionObserver' in window && scrollVideoSectionForMedia) {
-  const mediaObserver = new IntersectionObserver(function(entries) {
-    if (entries[0].isIntersecting) {
-      startScrollVideoLoading();
-      mediaObserver.disconnect();
-    }
-  }, { rootMargin: isMobile ? '900px 0px' : '1400px 0px' });
-  mediaObserver.observe(scrollVideoSectionForMedia);
-} else {
-  scheduleIdle(startScrollVideoLoading, 2500);
+// Dessin cover-fit desktop / contain-zoom mobile
+function drawFrameCanvas(index) {
+  if (!fCtx) return;
+  var img = scrollFrames[index];
+  if (!img || !img.complete || !img.naturalWidth) return;
+  var cw = fCanvas.width, ch = fCanvas.height;
+  var iw = img.naturalWidth, ih = img.naturalHeight;
+  var ir = iw / ih, cr = cw / ch;
+  var dw, dh, dx, dy;
+  if (!isMobile) {
+    // Cover-fit
+    if (cr > ir) { dw = cw; dh = cw / ir; }
+    else         { dh = ch; dw = ch * ir; }
+  } else {
+    // Contain zoomé ×1.1
+    var zoom = 1.1;
+    if (cr > ir) { dh = ch * zoom; dw = dh * ir; }
+    else         { dw = cw * zoom; dh = dw / ir; }
+  }
+  dx = (cw - dw) / 2; dy = (ch - dh) / 2;
+  fCtx.clearRect(0, 0, cw, ch);
+  fCtx.drawImage(img, dx, dy, dw, dh);
 }
-window.addEventListener('scroll', startScrollVideoLoading, { passive: true, once: true });
-window.addEventListener('touchstart', startScrollVideoLoading, { passive: true, once: true });
-window.addEventListener('pointerdown', startScrollVideoLoading, { passive: true, once: true });
 
 // ────────────────────────────────────────────────────────
 // SCROLL ENGINE
 // ────────────────────────────────────────────────────────
-const progressBar  = document.getElementById('scrollProgress');
-const navbar       = document.getElementById('navbar');
-const scrollSec    = document.querySelector('.scroll-section');
-const annotCards   = document.querySelectorAll('.annot-card');
+var progressBar = document.getElementById('scrollProgress');
+var navbar      = document.getElementById('navbar');
+var scrollSec   = document.querySelector('.scroll-section');
+var annotCards  = document.querySelectorAll('.annot-card');
 
-// ── Piecewise progress → frame mapping ──────────────────
-// Desktop : zones plates = la vidéo se fige pendant le scroll (wheel bloqué).
-// Mobile  : mapping linéaire, bulles visibles plus longtemps.
-
+// Keypoints desktop (pauses) / mobile (linéaire)
 var KEYPOINTS_DESKTOP = [
   [0.00,   0],
-  [0.05,  10],   // entrée pause 1
-  [0.22,  10],   // sortie  pause 1
+  [0.05,  10],
+  [0.22,  10],
   [0.37,  68],
-  [0.40,  68],   // entrée pause 2
-  [0.58,  68],   // sortie  pause 2
+  [0.40,  68],
+  [0.58,  68],
   [0.70, 120],
-  [0.72, 120],   // entrée pause 3
-  [0.90, 120],   // sortie  pause 3
+  [0.72, 120],
+  [0.90, 120],
   [1.00, 150],
 ];
-
-var KEYPOINTS_MOBILE = [
-  [0.00,   0],
-  [1.00, 150],
-];
-
+var KEYPOINTS_MOBILE = [[0.00, 0], [1.00, 150]];
 var KEYPOINTS = isMobile ? KEYPOINTS_MOBILE : KEYPOINTS_DESKTOP;
 
 function progressToFrame(p) {
   for (var i = 0; i < KEYPOINTS.length - 1; i++) {
-    var p0 = KEYPOINTS[i][0],   f0 = KEYPOINTS[i][1];
+    var p0 = KEYPOINTS[i][0], f0 = KEYPOINTS[i][1];
     var p1 = KEYPOINTS[i+1][0], f1 = KEYPOINTS[i+1][1];
     if (p <= p1) {
       var t = (p1 === p0) ? 0 : (p - p0) / (p1 - p0);
@@ -2118,13 +2101,14 @@ function progressToFrame(p) {
   return KEYPOINTS[KEYPOINTS.length - 1][1];
 }
 
-// Annotations : fenêtres différentes desktop/mobile
+// Fenêtres d'annotation desktop / mobile
 var zones = Array.from(annotCards).map(function(c) {
   return {
     show:       parseFloat(c.dataset.show),
     hide:       parseFloat(c.dataset.hide),
     showMobile: parseFloat(c.dataset.showMobile || c.dataset.show),
     hideMobile: parseFloat(c.dataset.hideMobile || c.dataset.hide),
+    snapped: false,
   };
 });
 
@@ -2137,59 +2121,40 @@ function updateAnnotations(progress) {
   });
 }
 
-// ── Desktop : bloquer la molette dans les zones plates ──
-// preventDefault() sur wheel empêche réellement le scroll.
-var wheelHoldActive = false;
-var wheelHoldTimer  = null;
-var WHEEL_HOLD_MS   = 900;
+// Desktop snap-stop : overflow hidden (fiable sur tous les navigateurs)
+var SNAP_HOLD_MS = 750;
+var isSnapping   = false;
 
-function isInFlatZone(p) {
-  for (var i = 0; i < KEYPOINTS_DESKTOP.length - 1; i++) {
-    if (KEYPOINTS_DESKTOP[i][1] === KEYPOINTS_DESKTOP[i+1][1]) {
-      var lo = KEYPOINTS_DESKTOP[i][0];
-      var hi = KEYPOINTS_DESKTOP[i+1][0];
-      if (p >= lo - 0.005 && p <= hi + 0.005) return true;
+function trySnapStop(progress) {
+  if (isMobile || useLiteMotion) return;
+  zones.forEach(function(z) {
+    if (!z.snapped && progress >= z.show && progress <= z.hide) {
+      z.snapped = true;
+      if (!isSnapping) {
+        isSnapping = true;
+        document.body.style.overflow = 'hidden';
+        setTimeout(function() {
+          document.body.style.overflow = '';
+          isSnapping = false;
+        }, SNAP_HOLD_MS);
+      }
     }
-  }
-  return false;
+    if (progress < z.show - 0.03) z.snapped = false;
+  });
 }
 
-if (!isMobile && !useLiteMotion) {
-  window.addEventListener('wheel', function(e) {
-    if (!scrollSec) return;
-    var rect = scrollSec.getBoundingClientRect();
-    // Seulement quand la section est visible
-    if (rect.top > window.innerHeight || rect.bottom < 0) return;
-    var scrollH  = scrollSec.offsetHeight - window.innerHeight;
-    var progress = Math.min(1, Math.max(0, -rect.top / scrollH));
-
-    if (wheelHoldActive) {
-      e.preventDefault();
-      return;
-    }
-    if (e.deltaY > 0 && isInFlatZone(progress)) {
-      e.preventDefault();
-      wheelHoldActive = true;
-      if (wheelHoldTimer) clearTimeout(wheelHoldTimer);
-      wheelHoldTimer = setTimeout(function() { wheelHoldActive = false; }, WHEEL_HOLD_MS);
-    }
-  }, { passive: false });
-}
-
-var prevProgress  = -1;
 var targetFrameF  = 0;
 var displayFrameF = 0;
-var LERP = useLiteMotion ? 1 : (isMobile ? 0.18 : 0.13);
+var LERP = useLiteMotion ? 1 : (isMobile ? 0.18 : 0.14);
 
 function computeScrollProgress() {
   if (!scrollSec) return;
   var rect     = scrollSec.getBoundingClientRect();
   var scrollH  = scrollSec.offsetHeight - window.innerHeight;
   var progress = Math.min(1, Math.max(0, -rect.top / scrollH));
-
   targetFrameF = useLiteMotion ? 0 : progressToFrame(progress);
   updateAnnotations(progress);
-  prevProgress = progress;
+  trySnapStop(progress);
 }
 
 var scrollTicking = false;
@@ -2210,20 +2175,17 @@ function requestScrollStateUpdate() {
 }
 
 window.addEventListener('scroll', requestScrollStateUpdate, { passive: true });
-
 window.addEventListener('touchmove', requestScrollStateUpdate, { passive: true });
 
-// RAF loop — lerp lisse, pas de snap timer sur mobile
+// RAF loop : LERP → drawFrameCanvas
 (function animLoop() {
-  if (useLiteMotion) {
-    return;
-  }
+  if (useLiteMotion) return;
   requestAnimationFrame(animLoop);
   displayFrameF += (targetFrameF - displayFrameF) * LERP;
   var fi = Math.round(displayFrameF);
-  if (fi !== curFrame) {
-    curFrame = fi;
-    seekScrollVideoFrame(fi, false);
+  if (fi !== currentFrame && framesReady) {
+    currentFrame = fi;
+    drawFrameCanvas(fi);
   }
 })();
 
