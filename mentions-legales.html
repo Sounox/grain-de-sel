@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0E2A5C">
+  <title>Mentions légales - Grain de Sel</title>
+  <link rel="canonical" href="https://legraindesel-lgm.com/mentions-legales.html">
+  <link rel="icon" type="image/png" href="assets/flavico-transparent.png?v=20260411-1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&display=swap" rel="stylesheet"></noscript>
+  <style>
+    :root {
+      --bg: #0E2A5C;
+      --bg-deep: #081A3C;
+      --ocean: #7BA7BC;
+      --text: rgba(255, 255, 255, 0.92);
+      --text-sec: rgba(255, 255, 255, 0.56);
+      --border: rgba(123, 167, 188, 0.13);
+      --font-disp: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Roboto', system-ui, sans-serif;
+      --font-num: 'Cinzel', 'Cormorant Garamond', Georgia, serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 74% 8%, rgba(123,167,188,0.18), transparent 48%),
+        linear-gradient(180deg, #0f3169 0%, var(--bg) 48%, var(--bg-deep) 100%);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    a:focus-visible {
+      outline: 2px solid rgba(200, 228, 240, 0.9);
+      outline-offset: 4px;
+    }
+
+    .page-shell {
+      width: min(1120px, calc(100% - 44px));
+      margin: 0 auto;
+    }
+    .legal-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding: 28px 0;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+    .brand img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+    }
+    .brand span {
+      font-family: var(--font-disp);
+      font-size: 1.06rem;
+      letter-spacing: 0.18em;
+    }
+    .back-link {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 11px 18px;
+      color: var(--text-sec);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: border-color 0.25s ease, color 0.25s ease;
+    }
+    .back-link:hover {
+      border-color: rgba(123,167,188,0.42);
+      color: var(--ocean);
+    }
+
+    main {
+      padding: 82px 0 96px;
+    }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      color: var(--ocean);
+      font-size: 0.64rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--ocean);
+      flex-shrink: 0;
+    }
+    h1 {
+      max-width: 760px;
+      font-family: var(--font-disp);
+      font-size: clamp(3rem, 8vw, 6.4rem);
+      font-weight: 300;
+      line-height: 0.95;
+      margin-bottom: 22px;
+    }
+    .intro {
+      max-width: 640px;
+      color: var(--text-sec);
+      font-size: 0.98rem;
+      font-weight: 300;
+      line-height: 1.8;
+    }
+    .legal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 54px;
+    }
+    .legal-card {
+      min-height: 100%;
+      padding: 30px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: rgba(8,26,60,0.34);
+      backdrop-filter: blur(16px);
+    }
+    .legal-card h2 {
+      margin-bottom: 16px;
+      font-family: var(--font-disp);
+      font-size: 1.42rem;
+      font-weight: 400;
+    }
+    .legal-card p {
+      color: var(--text-sec);
+      font-size: 0.85rem;
+      line-height: 1.82;
+    }
+    .legal-card a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.25s ease;
+    }
+    .legal-card a:hover { color: var(--ocean); }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0 32px;
+      color: var(--text-sec);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+    }
+
+    @media (max-width: 760px) {
+      .page-shell { width: min(100% - 36px, 1120px); }
+      .legal-nav { align-items: flex-start; flex-direction: column; }
+      main { padding: 52px 0 72px; }
+      .legal-grid { grid-template-columns: 1fr; margin-top: 38px; }
+      .legal-card { padding: 24px 20px; }
+      .brand span { letter-spacing: 0.13em; }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-shell legal-nav">
+    <a class="brand" href="index.html" aria-label="Retour à l'accueil Grain de Sel">
+      <img src="assets/flavico-transparent.png?v=20260411-1" alt="Grain de Sel" width="34" height="34">
+      <span>Grain de Sel</span>
+    </a>
+    <a class="back-link" href="index.html">Retour au site</a>
+  </header>
+
+  <main class="page-shell">
+    <div class="eyebrow">Informations légales</div>
+    <h1>Mentions légales</h1>
+    <p class="intro">
+      Cette page regroupe les informations légales relatives au site internet du restaurant Grain de Sel, situé à La Grande-Motte.
+    </p>
+
+    <div class="legal-grid">
+      <section class="legal-card">
+        <h2>Éditeur du site</h2>
+        <p>
+          MB PARTNERS, SARL au capital social de 1 000 €<br>
+          SIREN : 994 516 706 · SIRET : 994 516 706 00011<br>
+          RCS Montpellier · TVA intracommunautaire : FR74 994 516 706<br>
+          Gérance : Baptiste Alberola et Matthis Ducros<br>
+          Siège social : 7 allée des Flamants Roses, 34280 La Grande-Motte<br>
+          Établissement : 107 quai d’Honneur, 34280 La Grande-Motte
+        </p>
+      </section>
+
+      <section class="legal-card">
+        <h2>Contact et hébergement</h2>
+        <p>
+          Téléphone : <a href="tel:+33499533373">04 99 53 33 73</a><br>
+          Email : <a href="mailto:contact@legraindesel-lgm.fr">contact@legraindesel-lgm.fr</a><br>
+          Responsable de publication : MB PARTNERS<br>
+          Hébergement : Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, États-Unis<br>
+          Conception : <a href="https://astr.studio" target="_blank" rel="noopener noreferrer">ASTR.STUDIO</a>
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="page-shell">
+    © 2026 Grain de Sel - La Grande-Motte, Hérault
+  </footer>
+</body>
+</html>
