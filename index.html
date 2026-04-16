@@ -441,11 +441,12 @@
       height: 100vh; width: 100%;
       overflow: hidden;
     }
-    #frameCanvas {
-      position: absolute; top: 0; left: 0;
-      will-change: contents;
+    #scrollStopVideo {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      background: var(--bg-deep);
       transform: translateZ(0);
-      image-rendering: -webkit-optimize-contrast;
     }
     .frame-grad {
       position: absolute; inset: 0; pointer-events: none; z-index: 5;
@@ -1228,7 +1229,7 @@
 <!-- SCROLL VIDEO -->
 <section class="scroll-section">
   <div class="scroll-sticky">
-    <canvas id="frameCanvas" aria-hidden="true"></canvas>
+    <video id="scrollStopVideo" aria-hidden="true" muted playsinline preload="none" poster="assets/scroll-stop-poster.webp" width="1280" height="720" data-src-mobile="assets/scroll-stop-mobile.mp4" data-src-desktop="assets/scroll-stop-desktop.mp4"></video>
     <div class="frame-grad"></div>
 
     <div class="annot-card" data-show="0.07" data-hide="0.30">
@@ -1978,54 +1979,26 @@ function scheduleIdle(fn, timeout) {
 })();
 
 // ────────────────────────────────────────────────────────
-// SCROLL VIDEO — 120 FRAMES
+// SCROLL VIDEO - SCRUBBED MP4
 // ────────────────────────────────────────────────────────
-const FRAME_COUNT = 120;
-const FRAME_FOLDER = 'frames-webp';
-const FRAME_EXT = 'webp';
-const READY_FRAME_COUNT = 1;
-const FRAME_CONCURRENCY = useLiteMotion ? 1 : (isMobile ? 2 : 4);
-const PRIORITY_FRAME_INDEXES = useLiteMotion
-  ? [0]
-  : [0, 8, 24, 40, 54, 72, 95, 110, 119];
-const PRIORITY_FRAME_SET = new Set(PRIORITY_FRAME_INDEXES);
-const frames = new Array(FRAME_COUNT);
-let loadedCount = 0;
-let activeFrameLoads = 0;
+const SCROLL_FRAME_COUNT = 120;
+const SCROLL_VIDEO_FALLBACK_DURATION = 10.05;
 let siteReady = false;
-let frameLoadingStarted = false;
+let scrollVideoLoadingStarted = false;
+let scrollVideoReady = false;
+let scrollVideoDuration = SCROLL_VIDEO_FALLBACK_DURATION;
+let curFrame = -1;
 
 const loaderBar = document.getElementById('loaderBar');
 const loaderEl = document.getElementById('loader');
-const fCanvas = document.getElementById('frameCanvas');
-const fCtx = fCanvas.getContext('2d');
-let curFrame = -1;
-
-function getFrameUrl(index) {
-  return FRAME_FOLDER + '/frame_' + String(index + 1).padStart(4, '0') + '.' + FRAME_EXT;
-}
-
-function isFrameLoaded(index) {
-  var frame = frames[index];
-  return !!(frame && frame.complete && frame.naturalWidth);
-}
-
-function findClosestLoadedFrame(index) {
-  if (isFrameLoaded(index)) return index;
-  for (var offset = 1; offset < FRAME_COUNT; offset++) {
-    var prev = index - offset;
-    var next = index + offset;
-    if (prev >= 0 && isFrameLoaded(prev)) return prev;
-    if (next < FRAME_COUNT && isFrameLoaded(next)) return next;
-  }
-  return -1;
-}
+const scrollVideo = document.getElementById('scrollStopVideo');
 
 function revealSite() {
   if (siteReady) return;
   siteReady = true;
-  loaderBar.style.width = '100%';
+  if (loaderBar) loaderBar.style.width = '100%';
   setTimeout(function() {
+    if (!loaderEl) return;
     loaderEl.style.opacity = '0';
     loaderEl.style.pointerEvents = 'none';
     setTimeout(function() {
@@ -2034,146 +2007,72 @@ function revealSite() {
   }, 180);
 }
 
-function updateLoaderProgress() {
-  loaderBar.style.width = Math.min(92, loadedCount / READY_FRAME_COUNT * 92) + '%';
-  if (!siteReady && isFrameLoaded(0) && loadedCount >= READY_FRAME_COUNT) {
-    revealSite();
+function startScrollVideoLoading() {
+  if (scrollVideoLoadingStarted || !scrollVideo || useLiteMotion) return;
+  scrollVideoLoadingStarted = true;
+  var src = isMobile ? scrollVideo.dataset.srcMobile : scrollVideo.dataset.srcDesktop;
+  if (src && scrollVideo.getAttribute('src') !== src) {
+    scrollVideo.src = src;
   }
-  if (!siteReady && loadedCount === FRAME_COUNT) {
-    revealSite();
+  scrollVideo.preload = 'auto';
+  scrollVideo.load();
+}
+
+function setScrollVideoDuration() {
+  if (!scrollVideo) return;
+  if (Number.isFinite(scrollVideo.duration) && scrollVideo.duration > 0) {
+    scrollVideoDuration = scrollVideo.duration;
   }
 }
 
-function buildFrameQueue() {
-  var queue = [];
-  var seen = new Set();
-
-  function add(index) {
-    if (index >= 0 && index < FRAME_COUNT && !seen.has(index)) {
-      seen.add(index);
-      queue.push(index);
-    }
-  }
-
-  PRIORITY_FRAME_INDEXES.forEach(add);
-  for (var i = 0; i < FRAME_COUNT; i++) add(i);
-  return queue;
+function onScrollVideoReady() {
+  setScrollVideoDuration();
+  scrollVideoReady = true;
+  seekScrollVideoFrame(curFrame >= 0 ? curFrame : 0, true);
 }
 
-const frameQueue = buildFrameQueue();
-
-function startFrameLoading() {
-  if (frameLoadingStarted) return;
-  frameLoadingStarted = true;
-  pumpFrameQueue();
-}
-
-function pumpFrameQueue() {
-  while (activeFrameLoads < FRAME_CONCURRENCY && frameQueue.length) {
-    loadFrame(frameQueue.shift());
+function seekScrollVideoFrame(frameIndex, force) {
+  if (!scrollVideo || !scrollVideoReady || useLiteMotion) return;
+  var duration = Math.max(0.001, scrollVideoDuration);
+  var clampedFrame = Math.max(0, Math.min(SCROLL_FRAME_COUNT - 1, frameIndex));
+  var nextTime = (clampedFrame / (SCROLL_FRAME_COUNT - 1)) * duration;
+  nextTime = Math.min(Math.max(0.001, nextTime), Math.max(0.001, duration - 0.02));
+  if (force || Math.abs(scrollVideo.currentTime - nextTime) > 0.035) {
+    try {
+      scrollVideo.currentTime = nextTime;
+    } catch (err) {}
   }
 }
 
-function loadFrame(index) {
-  activeFrameLoads++;
-  var img = new Image();
-  img.decoding = 'async';
-  if ('fetchPriority' in img) {
-    img.fetchPriority = index < READY_FRAME_COUNT ? 'high' : 'low';
-  }
-
-  var finished = false;
-  function done() {
-    if (finished) return;
-    finished = true;
-    frames[index] = img;
-    loadedCount++;
-    activeFrameLoads--;
-    if (index === 0 && isFrameLoaded(0)) {
-      drawFrame(0);
-    }
-    updateLoaderProgress();
-    if (frameLoadingStarted) pumpFrameQueue();
-  }
-
-  img.onload = function() {
-    if (img.decode && PRIORITY_FRAME_SET.has(index)) {
-      img.decode().catch(function() {}).then(done);
-    } else {
-      done();
-    }
-  };
-  img.onerror = done;
-  img.src = getFrameUrl(index);
-}
-
-function resizeFCanvas() {
-  var dpr = useLiteMotion ? 1 : (isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5));
-  var vw = window.innerWidth;
-  var vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-  fCanvas.width = vw * dpr;
-  fCanvas.height = vh * dpr;
-  fCanvas.style.width = vw + 'px';
-  fCanvas.style.height = vh + 'px';
-  if (curFrame >= 0) drawFrame(curFrame);
-}
-
-function drawFrame(idx) {
-  var actualIndex = findClosestLoadedFrame(idx);
-  if (actualIndex < 0) return;
-  var img = frames[actualIndex];
-  var cw = fCanvas.width;
-  var ch = fCanvas.height;
-  fCtx.imageSmoothingEnabled = true;
-  fCtx.imageSmoothingQuality = isMobile ? 'medium' : 'high';
-  fCtx.clearRect(0, 0, cw, ch);
-  var ir = img.naturalWidth / img.naturalHeight;
-  var cr = cw / ch;
-  var dw;
-  var dh;
-  var dx;
-  var dy;
-  if (cr > ir) {
-    dw = cw;
-    dh = cw / ir;
-  } else {
-    dh = ch;
-    dw = ch * ir;
-  }
-  dx = (cw - dw) / 2;
-  dy = (ch - dh) / 2;
-  fCtx.drawImage(img, dx, dy, dw, dh);
+if (scrollVideo) {
+  scrollVideo.addEventListener('loadedmetadata', setScrollVideoDuration, { once: true });
+  scrollVideo.addEventListener('loadeddata', onScrollVideoReady, { once: true });
+  scrollVideo.addEventListener('error', revealSite, { once: true });
 }
 
 window.addEventListener('resize', function() {
   isMobile = window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  resizeFCanvas();
 });
 
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', resizeFCanvas);
-}
-
-resizeFCanvas();
 requestAnimationFrame(function() {
   setTimeout(revealSite, 260);
 });
 
-const scrollVideoSectionForFrames = document.querySelector('.scroll-section');
-if ('IntersectionObserver' in window && scrollVideoSectionForFrames) {
-  const frameObserver = new IntersectionObserver(function(entries) {
+const scrollVideoSectionForMedia = document.querySelector('.scroll-section');
+if ('IntersectionObserver' in window && scrollVideoSectionForMedia) {
+  const mediaObserver = new IntersectionObserver(function(entries) {
     if (entries[0].isIntersecting) {
-      startFrameLoading();
-      frameObserver.disconnect();
+      startScrollVideoLoading();
+      mediaObserver.disconnect();
     }
   }, { rootMargin: isMobile ? '900px 0px' : '1400px 0px' });
-  frameObserver.observe(scrollVideoSectionForFrames);
+  mediaObserver.observe(scrollVideoSectionForMedia);
 } else {
-  scheduleIdle(startFrameLoading, 2500);
+  scheduleIdle(startScrollVideoLoading, 2500);
 }
-window.addEventListener('scroll', startFrameLoading, { passive: true, once: true });
-window.addEventListener('touchstart', startFrameLoading, { passive: true, once: true });
-window.addEventListener('pointerdown', startFrameLoading, { passive: true, once: true });
+window.addEventListener('scroll', startScrollVideoLoading, { passive: true, once: true });
+window.addEventListener('touchstart', startScrollVideoLoading, { passive: true, once: true });
+window.addEventListener('pointerdown', startScrollVideoLoading, { passive: true, once: true });
 
 // ────────────────────────────────────────────────────────
 // SCROLL ENGINE
@@ -2290,16 +2189,15 @@ window.addEventListener('touchmove', requestScrollStateUpdate, { passive: true }
 // RAF loop — lerp lisse, pas de snap timer sur mobile
 (function animLoop() {
   if (useLiteMotion) {
-    if (curFrame !== 0) {
-      curFrame = 0;
-      drawFrame(0);
-    }
     return;
   }
   requestAnimationFrame(animLoop);
   displayFrameF += (targetFrameF - displayFrameF) * LERP;
   var fi = Math.round(displayFrameF);
-  if (fi !== curFrame) { curFrame = fi; drawFrame(fi); }
+  if (fi !== curFrame) {
+    curFrame = fi;
+    seekScrollVideoFrame(fi, false);
+  }
 })();
 
 computeScrollProgress();
