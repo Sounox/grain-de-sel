@@ -428,12 +428,17 @@
       letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--text-sec); margin-top: 5px;
     }
-    .hero-phone-badge .badge-date { font-size: 1.75rem; }
-    .hero-phone-badge .badge-month {
+    .hero-phone-badge {
+      min-width: 230px;
+    }
+    .badge-phone-number {
+      display: block;
       font-family: var(--font-num);
-      font-size: 1.35rem;
-      letter-spacing: 0.08em;
+      font-size: clamp(1.18rem, 1.45vw, 1.62rem);
+      letter-spacing: 0.055em;
       color: var(--text);
+      line-height: 1.12;
+      white-space: nowrap;
     }
     .btn-call {
       background: var(--ocean);
@@ -1240,8 +1245,7 @@
 
   <a class="hero-date-badge hero-phone-badge" href="tel:+33499533373" aria-label="Appeler Grain de Sel au 04 99 53 33 73">
     <span class="badge-label">Réservations</span>
-    <span class="badge-date">04 99</span>
-    <span class="badge-month">53 33 73</span>
+    <span class="badge-phone-number">04 99 53 33 73</span>
   </a>
 
   <div class="scroll-cue">
