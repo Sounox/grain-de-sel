@@ -1981,8 +1981,8 @@ function scheduleIdle(fn, timeout) {
 // ────────────────────────────────────────────────────────
 // SCROLL VIDEO - SCRUBBED MP4
 // ────────────────────────────────────────────────────────
-const SCROLL_FRAME_COUNT = 120;
-const SCROLL_VIDEO_FALLBACK_DURATION = 10.05;
+const SCROLL_FRAME_COUNT = 151;
+const SCROLL_VIDEO_FALLBACK_DURATION = 10.054;
 let siteReady = false;
 let scrollVideoLoadingStarted = false;
 let scrollVideoReady = false;
@@ -2090,15 +2090,15 @@ const annotCards   = document.querySelectorAll('.annot-card');
 // Les segments avec le même frameIndex de départ et d'arrivée sont des pauses.
 var KEYPOINTS = [
   [0.00,   0],
-  [0.05,   8],   // ← entrée zone plate 1
-  [0.22,   8],   // ← sortie  zone plate 1  (card 1: 0.07→0.30)
-  [0.37,  54],
-  [0.40,  54],   // ← entrée zone plate 2
-  [0.58,  54],   // ← sortie  zone plate 2  (card 2: 0.40→0.63)
-  [0.70,  95],
-  [0.72,  95],   // ← entrée zone plate 3
-  [0.90,  95],   // ← sortie  zone plate 3  (card 3: 0.72→0.95)
-  [1.00, 119],
+  [0.05,  10],   // ← entrée zone plate 1
+  [0.22,  10],   // ← sortie  zone plate 1  (card 1: 0.07→0.30)
+  [0.37,  68],
+  [0.40,  68],   // ← entrée zone plate 2
+  [0.58,  68],   // ← sortie  zone plate 2  (card 2: 0.40→0.63)
+  [0.70, 120],
+  [0.72, 120],   // ← entrée zone plate 3
+  [0.90, 120],   // ← sortie  zone plate 3  (card 3: 0.72→0.95)
+  [1.00, 150],
 ];
 
 function progressToFrame(p) {
