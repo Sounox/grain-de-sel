@@ -442,8 +442,7 @@
       overflow: hidden;
     }
     #frameCanvas {
-      position: absolute; top: 0; left: 0;
-      width: 100%; height: 100%;
+      position: absolute; inset: 0;
       background: var(--bg-deep);
       transform: translateZ(0);
     }
@@ -1231,19 +1230,19 @@
     <canvas id="frameCanvas" aria-hidden="true"></canvas>
     <div class="frame-grad"></div>
 
-    <div class="annot-card" data-show="0.07" data-hide="0.30" data-show-mobile="0.02" data-hide-mobile="0.38">
+    <div class="annot-card" data-show="0.03" data-hide="0.38" data-show-mobile="0.02" data-hide-mobile="0.38">
       <div class="annot-num">01 — L'Essence</div>
       <h3 class="annot-title">Le sel, âme de l'océan</h3>
       <p class="annot-desc">Chaque grain raconte une histoire. Celle d'une mer généreuse, d'un territoire unique. La matière première de notre cuisine.</p>
     </div>
 
-    <div class="annot-card" data-show="0.40" data-hide="0.63" data-show-mobile="0.33" data-hide-mobile="0.66">
+    <div class="annot-card" data-show="0.36" data-hide="0.66" data-show-mobile="0.33" data-hide-mobile="0.66">
       <div class="annot-num">02 — Le Lieu</div>
       <h3 class="annot-title">Port de La Grande Motte</h3>
       <p class="annot-desc">Entre les eaux turquoise de la Méditerranée et l'architecture singulière des années 70 — un écrin contemporain pour une cuisine authentique.</p>
     </div>
 
-    <div class="annot-card" data-show="0.72" data-hide="0.95" data-show-mobile="0.64" data-hide-mobile="0.98">
+    <div class="annot-card" data-show="0.67" data-hide="0.98" data-show-mobile="0.64" data-hide-mobile="0.98">
       <div class="annot-num">03 — L'Ouverture</div>
       <h3 class="annot-title">18 Avril 2026</h3>
       <p class="annot-desc">Le premier service approche. Réservez dès maintenant pour vivre l'expérience Grain de Sel dès l'ouverture officielle.</p>
@@ -2023,16 +2022,14 @@ for (var _i = 0; _i < FRAME_COUNT; _i++) {
   })(_i);
 }
 
-// Resize canvas (DPR-aware, visualViewport on mobile)
+// Resize canvas — lit offsetWidth/Height après layout CSS (inset:0)
 function resizeFCanvas() {
   if (!fCanvas) return;
   var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
-  var vw  = window.innerWidth;
-  var vh  = isMobile && window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  var vw  = fCanvas.offsetWidth  || window.innerWidth;
+  var vh  = fCanvas.offsetHeight || window.innerHeight;
   fCanvas.width  = vw * dpr;
   fCanvas.height = vh * dpr;
-  fCanvas.style.width  = vw + 'px';
-  fCanvas.style.height = vh + 'px';
   if (currentFrame >= 0) drawFrameCanvas(currentFrame);
 }
 window.addEventListener('resize', function() {
@@ -2041,28 +2038,19 @@ window.addEventListener('resize', function() {
 });
 resizeFCanvas();
 
-// Dessin cover-fit desktop / contain-zoom mobile
+// Dessin cover-fit (identique à object-fit:cover) — desktop ET mobile
 function drawFrameCanvas(index) {
   if (!fCtx) return;
   var img = scrollFrames[index];
   if (!img || !img.complete || !img.naturalWidth) return;
   var cw = fCanvas.width, ch = fCanvas.height;
-  var iw = img.naturalWidth, ih = img.naturalHeight;
-  var ir = iw / ih, cr = cw / ch;
-  var dw, dh, dx, dy;
-  if (!isMobile) {
-    // Cover-fit
-    if (cr > ir) { dw = cw; dh = cw / ir; }
-    else         { dh = ch; dw = ch * ir; }
-  } else {
-    // Contain zoomé ×1.1
-    var zoom = 1.1;
-    if (cr > ir) { dh = ch * zoom; dw = dh * ir; }
-    else         { dw = cw * zoom; dh = dw / ir; }
-  }
-  dx = (cw - dw) / 2; dy = (ch - dh) / 2;
+  var ir = img.naturalWidth / img.naturalHeight;
+  var cr = cw / ch;
+  var dw, dh;
+  if (cr > ir) { dw = cw; dh = cw / ir; }
+  else         { dh = ch; dw = ch * ir; }
   fCtx.clearRect(0, 0, cw, ch);
-  fCtx.drawImage(img, dx, dy, dw, dh);
+  fCtx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
 }
 
 // ────────────────────────────────────────────────────────
@@ -2073,42 +2061,20 @@ var navbar      = document.getElementById('navbar');
 var scrollSec   = document.querySelector('.scroll-section');
 var annotCards  = document.querySelectorAll('.annot-card');
 
-// Keypoints desktop (pauses) / mobile (linéaire)
-var KEYPOINTS_DESKTOP = [
-  [0.00,   0],
-  [0.05,  10],
-  [0.22,  10],
-  [0.37,  68],
-  [0.40,  68],
-  [0.58,  68],
-  [0.70, 120],
-  [0.72, 120],
-  [0.90, 120],
-  [1.00, 150],
-];
-var KEYPOINTS_MOBILE = [[0.00, 0], [1.00, 150]];
-var KEYPOINTS = isMobile ? KEYPOINTS_MOBILE : KEYPOINTS_DESKTOP;
+// Mapping linéaire scroll → frame (fluide, aucune pause)
+var KEYPOINTS = [[0.00, 0], [1.00, 150]];
 
 function progressToFrame(p) {
-  for (var i = 0; i < KEYPOINTS.length - 1; i++) {
-    var p0 = KEYPOINTS[i][0], f0 = KEYPOINTS[i][1];
-    var p1 = KEYPOINTS[i+1][0], f1 = KEYPOINTS[i+1][1];
-    if (p <= p1) {
-      var t = (p1 === p0) ? 0 : (p - p0) / (p1 - p0);
-      return f0 + t * (f1 - f0);
-    }
-  }
-  return KEYPOINTS[KEYPOINTS.length - 1][1];
+  return p * 150;
 }
 
-// Fenêtres d'annotation desktop / mobile
+// Fenêtres d'annotation — desktop plus larges, mobile déjà larges
 var zones = Array.from(annotCards).map(function(c) {
   return {
     show:       parseFloat(c.dataset.show),
     hide:       parseFloat(c.dataset.hide),
     showMobile: parseFloat(c.dataset.showMobile || c.dataset.show),
     hideMobile: parseFloat(c.dataset.hideMobile || c.dataset.hide),
-    snapped: false,
   };
 });
 
@@ -2118,28 +2084,6 @@ function updateAnnotations(progress) {
     var s = isMobile ? z.showMobile : z.show;
     var h = isMobile ? z.hideMobile : z.hide;
     card.classList.toggle('show', progress >= s && progress <= h);
-  });
-}
-
-// Desktop snap-stop : overflow hidden (fiable sur tous les navigateurs)
-var SNAP_HOLD_MS = 750;
-var isSnapping   = false;
-
-function trySnapStop(progress) {
-  if (isMobile || useLiteMotion) return;
-  zones.forEach(function(z) {
-    if (!z.snapped && progress >= z.show && progress <= z.hide) {
-      z.snapped = true;
-      if (!isSnapping) {
-        isSnapping = true;
-        document.body.style.overflow = 'hidden';
-        setTimeout(function() {
-          document.body.style.overflow = '';
-          isSnapping = false;
-        }, SNAP_HOLD_MS);
-      }
-    }
-    if (progress < z.show - 0.03) z.snapped = false;
   });
 }
 
@@ -2154,7 +2098,6 @@ function computeScrollProgress() {
   var progress = Math.min(1, Math.max(0, -rect.top / scrollH));
   targetFrameF = useLiteMotion ? 0 : progressToFrame(progress);
   updateAnnotations(progress);
-  trySnapStop(progress);
 }
 
 var scrollTicking = false;
