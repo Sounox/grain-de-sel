@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Grain de Sel, restaurant semi-gastronomique sur le port de La Grande Motte : cuisine méditerranéenne, produits de la mer et ouverture le 18 avril 2026.">
+  <meta name="description" content="Grain de Sel, restaurant semi-gastronomique sur le port de La Grande Motte : cuisine méditerranéenne, produits de la mer et réservations par téléphone.">
   <meta name="theme-color" content="#0E2A5C">
   <meta property="og:title" content="Grain de Sel — Restaurant, La Grande Motte">
   <meta property="og:description" content="Cuisine méditerranéenne semi-gastronomique sur le port de La Grande Motte.">
@@ -165,7 +165,7 @@
       transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
     #navbar.scrolled .nav-inner {
-      max-width: 860px; margin: 0 auto;
+      max-width: 1040px; margin: 0 auto;
       background: rgba(14, 42, 92, 0.72);
       border: 1px solid var(--border);
       backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
@@ -202,6 +202,20 @@
     .nav-cta:hover {
       background: var(--ocean) !important;
       color: var(--bg) !important;
+    }
+    .nav-phone-cta {
+      font-family: var(--font-num);
+      letter-spacing: 0.08em !important;
+      color: var(--text) !important;
+      white-space: nowrap;
+    }
+    .nav-phone-cta::before {
+      content: 'Appeler';
+      font-family: var(--font-body);
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+      color: var(--ocean);
+      margin-right: 8px;
     }
     /* Hamburger */
     .nav-hamburger {
@@ -245,6 +259,12 @@
       font-family: var(--font-body);
       font-size: 0.8rem !important; letter-spacing: 0.18em;
       padding: 16px 44px !important;
+    }
+    #mobileMenu .mobile-phone-cta {
+      font-family: var(--font-num);
+      font-size: 1.2rem !important;
+      letter-spacing: 0.08em;
+      color: var(--ocean);
     }
     #mobileMenu .mobile-divider {
       width: 40px; height: 1px;
@@ -377,6 +397,7 @@
       position: absolute; top: 50%; right: 9vw;
       transform: translateY(-50%);
       text-align: center; z-index: 2;
+      text-decoration: none;
     }
     .hero-date-badge::before {
       content: '';
@@ -406,6 +427,21 @@
       font-size: 0.95rem; font-weight: 300;
       letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--text-sec); margin-top: 5px;
+    }
+    .hero-phone-badge .badge-date { font-size: 1.75rem; }
+    .hero-phone-badge .badge-month {
+      font-family: var(--font-num);
+      font-size: 1.35rem;
+      letter-spacing: 0.08em;
+      color: var(--text);
+    }
+    .btn-call {
+      background: var(--ocean);
+      color: var(--bg);
+      box-shadow: 0 16px 42px rgba(123,167,188,0.25);
+    }
+    .btn-call:hover {
+      box-shadow: 0 18px 46px rgba(123,167,188,0.36);
     }
     @media (max-width: 860px) { .hero-date-badge { display: none; } }
 
@@ -558,9 +594,10 @@
       border-top: 1px solid var(--border);
       display: flex; align-items: center; gap: 22px;
     }
+    .about-opening a { text-decoration: none; }
     .opening-number {
       font-family: var(--font-num);
-      font-size: 2.8rem; font-weight: 400;
+      font-size: clamp(1.9rem, 3.2vw, 2.8rem); font-weight: 400;
       letter-spacing: 0.06em;
       color: var(--ocean); line-height: 1;
     }
@@ -571,6 +608,7 @@
     }
     .opening-copy .opening-line {
       font-size: 0.88rem; font-weight: 300;
+      color: var(--text);
     }
 
     /* About visual */
@@ -855,6 +893,30 @@
       transition: color 0.25s ease;
     }
     .resa-val a:hover { color: var(--ocean); }
+    .resa-info-item--phone {
+      align-items: center;
+      background: rgba(123,167,188,0.07);
+      border: 1px solid rgba(123,167,188,0.18);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+    .resa-phone-link {
+      display: inline-flex;
+      align-items: center;
+      color: var(--ocean) !important;
+      font-family: var(--font-num);
+      font-size: clamp(1.35rem, 2.4vw, 2rem);
+      letter-spacing: 0.06em;
+      line-height: 1.2;
+    }
+    .resa-phone-note {
+      display: block;
+      margin-top: 7px;
+      color: var(--text-sec);
+      font-size: 0.76rem;
+      line-height: 1.5;
+    }
 
     .resa-form {
       background: rgba(123,167,188,0.03);
@@ -1170,6 +1232,7 @@
       <a href="#about">Le Restaurant</a>
       <a href="#menu">La Carte</a>
       <a href="#reservation" class="nav-cta">Réserver</a>
+      <a href="tel:+33499533373" class="nav-phone-cta">04 99 53 33 73</a>
     </div>
     <button class="nav-hamburger" id="hamburger" aria-label="Menu" aria-controls="mobileMenu" aria-expanded="false" type="button">
       <span></span><span></span><span></span>
@@ -1184,6 +1247,8 @@
   <a href="#menu" class="mobile-link">La Carte</a>
   <div class="mobile-divider"></div>
   <a href="#reservation" class="mobile-link mobile-cta">Réserver</a>
+  <div class="mobile-divider"></div>
+  <a href="tel:+33499533373" class="mobile-link mobile-phone-cta">04 99 53 33 73</a>
 </div>
 
 <main id="main">
@@ -1209,16 +1274,17 @@
       Sur le port de La Grande Motte, Hérault.
     </p>
     <div class="hero-actions">
-      <a href="#reservation" class="btn-primary">Réserver une table</a>
+      <a href="tel:+33499533373" class="btn-primary btn-call">Appeler pour réserver</a>
+      <a href="#reservation" class="btn-ghost">Infos réservation</a>
       <a href="#about" class="btn-ghost">Découvrir</a>
     </div>
   </div>
 
-  <div class="hero-date-badge">
-    <span class="badge-label">Ouverture officielle</span>
-    <span class="badge-date">18</span>
-    <span class="badge-month">Avril 2026</span>
-  </div>
+  <a class="hero-date-badge hero-phone-badge" href="tel:+33499533373" aria-label="Appeler Grain de Sel au 04 99 53 33 73">
+    <span class="badge-label">Réservations</span>
+    <span class="badge-date">04 99</span>
+    <span class="badge-month">53 33 73</span>
+  </a>
 
   <div class="scroll-cue">
     <span>Défiler</span>
@@ -1245,9 +1311,9 @@
     </div>
 
     <div class="annot-card" data-show="0.67" data-hide="0.98" data-show-mobile="0.64" data-hide-mobile="0.98">
-      <div class="annot-num">03 — L'Ouverture</div>
-      <h3 class="annot-title">18 Avril 2026</h3>
-      <p class="annot-desc">Le premier service approche. Réservez dès maintenant pour vivre l'expérience Grain de Sel dès l'ouverture officielle.</p>
+      <div class="annot-num">03 — Réserver</div>
+      <h3 class="annot-title">Votre table au port</h3>
+      <p class="annot-desc">Pour une réservation simple et directe, appelez le restaurant. L'équipe vous confirme votre table selon le service souhaité.</p>
     </div>
   </div>
 </section>
@@ -1267,10 +1333,10 @@
         Installés sur le port de La Grande Motte, nous cultivons une cuisine semi-gastronomique accessible, généreuse, et résolument moderne — sans excès, sans compromis.
       </p>
       <div class="about-opening fi d4">
-        <div class="opening-number">18.04</div>
+        <a class="opening-number" href="tel:+33499533373">04 99</a>
         <div class="opening-copy">
-          <span class="opening-tag">Ouverture officielle</span>
-          <span class="opening-line">Premier service — Avril 2026</span>
+          <span class="opening-tag">Réservations par téléphone</span>
+          <a class="opening-line" href="tel:+33499533373">53 33 73</a>
         </div>
       </div>
     </div>
@@ -1362,10 +1428,9 @@
   <div class="specs-grid">
     <div class="spec-item">
       <div class="spec-row">
-        <span class="spec-number" data-target="18">0</span>
-        <span class="spec-suf">&nbsp;Avril</span>
+        <span class="spec-number" data-target="2">0</span>
       </div>
-      <span class="spec-label">Date d'ouverture</span>
+      <span class="spec-label">Services par jour</span>
     </div>
     <div class="spec-item">
       <div class="spec-row">
@@ -1394,7 +1459,7 @@
 <section id="menu">
   <div class="eyebrow fi">La Carte</div>
   <h2 class="section-heading fi d1">Menu du restaurant</h2>
-  <p class="menu-note fi d2">Carte transmise par le restaurant — avril 2026.</p>
+  <p class="menu-note fi d2">Carte transmise par le restaurant.</p>
   <div class="menu-grid">
     <div class="menu-cat fi">
       <div class="menu-cat-label">Apéritifs</div>
@@ -1605,16 +1670,18 @@
           <span class="resa-val">Mardi – Dimanche<br>Déjeuner 12h00 – 14h30<br>Dîner 19h30 – 22h00</span>
         </div>
       </div>
-      <div class="resa-info-item">
+      <div class="resa-info-item resa-info-item--phone">
         <div class="resa-icon">
           <svg viewBox="0 0 18 18" fill="none" stroke-width="1.2">
-            <rect x="2" y="3" width="14" height="13" rx="1.5"/>
-            <path d="M6 2v2M12 2v2M2 7h14"/>
+            <path d="M5 3.5h2l1 3-1.4.9a9 9 0 0 0 4 4L11.5 10l3 1v2a1.5 1.5 0 0 1-1.6 1.5C7.6 14.2 3.8 10.4 3.5 5.1A1.5 1.5 0 0 1 5 3.5z"/>
           </svg>
         </div>
         <div>
-          <span class="resa-tag">Ouverture</span>
-          <span class="resa-val">18 Avril 2026<br>Premier service midi</span>
+          <span class="resa-tag">Réservations par téléphone</span>
+          <span class="resa-val">
+            <a class="resa-phone-link" href="tel:+33499533373">04 99 53 33 73</a>
+            <span class="resa-phone-note">Le moyen le plus direct pour réserver ou modifier une table.</span>
+          </span>
         </div>
       </div>
       <div class="resa-info-item">
@@ -1624,17 +1691,17 @@
           </svg>
         </div>
         <div>
-          <span class="resa-tag">Contact</span>
-          <span class="resa-val"><a href="tel:+33499533373">04 99 53 33 73</a><br><a href="mailto:contact@legraindesel-lgm.fr">contact@legraindesel-lgm.fr</a></span>
+          <span class="resa-tag">Email</span>
+          <span class="resa-val"><a href="mailto:contact@legraindesel-lgm.fr">contact@legraindesel-lgm.fr</a></span>
         </div>
       </div>
     </div>
 
       <div class="resa-form fi d3">
-        <h3 class="form-heading">Votre réservation</h3>
-        <p class="form-subheading">Votre demande sera envoyée par email au restaurant.</p>
+        <h3 class="form-heading">Demande par email</h3>
+        <p class="form-subheading">Pour une réservation rapide, privilégiez le téléphone.</p>
       <div class="resa-notice" id="reservationNotice">
-        Réponse par email ou téléphone dès validation de la demande.
+        Les réservations sont confirmées plus simplement par téléphone : 04 99 53 33 73.
       </div>
 
       <div class="form-row">
@@ -1662,7 +1729,7 @@
       <div class="form-row">
         <div class="form-group">
           <label for="resa-date">Date souhaitée</label>
-          <input id="resa-date" name="date" type="date" min="2026-04-18">
+          <input id="resa-date" name="date" type="date">
         </div>
         <div class="form-group">
           <label for="resa-service">Service</label>
@@ -1692,7 +1759,7 @@
         <textarea id="resa-message" name="message" placeholder="Allergie, occasion spéciale, préférence de table..."></textarea>
       </div>
 
-      <button class="btn-primary form-submit" type="button" aria-describedby="reservationNotice">Envoyer la demande</button>
+      <button class="btn-primary form-submit" type="button" aria-describedby="reservationNotice">Envoyer une demande par email</button>
     </div>
 
   </div>
@@ -1742,6 +1809,7 @@
       <a href="#about">Le Restaurant</a>
       <a href="#menu">La Carte</a>
       <a href="#reservation">Réserver</a>
+      <a href="tel:+33499533373">Appeler</a>
       <a href="mailto:contact@legraindesel-lgm.fr">Email</a>
       <a href="https://www.instagram.com/grain.de.sel_" target="_blank" rel="noopener noreferrer">Instagram</a>
       <a href="#legal">Mentions légales</a>
@@ -1982,11 +2050,22 @@ function scheduleIdle(fn, timeout) {
 // CANVAS FRAME SCROLL STOP
 // ────────────────────────────────────────────────────────
 var FRAME_COUNT   = 151;
+var FRAME_EXT     = 'webp';
+var FRAME_FOLDER_DESKTOP = 'frames-desktop';
+var FRAME_FOLDER_MOBILE  = 'frames-mobile';
+var frameFolder   = isMobile ? FRAME_FOLDER_MOBILE : FRAME_FOLDER_DESKTOP;
 var scrollFrames  = new Array(FRAME_COUNT);
+var frameRequested = new Array(FRAME_COUNT);
+var frameQueue    = [];
 var framesLoaded  = 0;
 var framesReady   = false;
+var frameLoadingStarted = false;
+var activeFrameLoads = 0;
 var siteRevealed  = false;
 var currentFrame  = -1;
+var frameConcurrency = isMobile ? 3 : 5;
+var priorityFrames = [0, 12, 24, 36, 50, 64, 78, 92, 106, 122, 136, 150];
+var priorityFrameSet = new Set(priorityFrames);
 
 var loaderBar = document.getElementById('loaderBar');
 var loaderEl  = document.getElementById('loader');
@@ -2006,28 +2085,114 @@ function revealSite() {
 }
 setTimeout(revealSite, 3500); // fallback
 
-// Préchargement des frames JPEG
-for (var _i = 0; _i < FRAME_COUNT; _i++) {
-  (function(idx) {
-    var img = new Image();
-    img.onload = function() {
-      framesLoaded++;
-      if (loaderBar && !siteRevealed) {
-        loaderBar.style.width = Math.round(framesLoaded / FRAME_COUNT * 90) + '%';
-      }
-      if (idx === 0) { framesReady = true; revealSite(); drawFrameCanvas(0); }
-      else if (framesLoaded === FRAME_COUNT) { framesReady = true; }
-    };
-    img.onerror = function() { framesLoaded++; };
-    img.src = 'frames/frame_' + ('000' + (idx + 1)).slice(-4) + '.jpg';
-    scrollFrames[idx] = img;
-  })(_i);
+function getFrameUrl(index) {
+  return frameFolder + '/frame_' + ('000' + (index + 1)).slice(-4) + '.' + FRAME_EXT;
 }
+
+function isFrameLoaded(index) {
+  var frame = scrollFrames[index];
+  return !!(frame && frame.complete && frame.naturalWidth);
+}
+
+function findClosestLoadedFrame(index) {
+  if (isFrameLoaded(index)) return index;
+  for (var offset = 1; offset < FRAME_COUNT; offset++) {
+    var prev = index - offset;
+    var next = index + offset;
+    if (prev >= 0 && isFrameLoaded(prev)) return prev;
+    if (next < FRAME_COUNT && isFrameLoaded(next)) return next;
+  }
+  return -1;
+}
+
+function buildFrameQueue() {
+  var queue = [];
+  var seen = new Set();
+  function add(index) {
+    if (index >= 0 && index < FRAME_COUNT && !seen.has(index)) {
+      seen.add(index);
+      queue.push(index);
+    }
+  }
+  priorityFrames.forEach(add);
+  for (var i = 0; i < FRAME_COUNT; i++) add(i);
+  return queue;
+}
+
+function updateFrameLoaderProgress() {
+  if (!loaderBar || siteRevealed) return;
+  loaderBar.style.width = Math.min(92, Math.round(framesLoaded / FRAME_COUNT * 92)) + '%';
+}
+
+function finishFrameLoad(index, img) {
+  framesLoaded++;
+  if (img && img.naturalWidth) {
+    scrollFrames[index] = img;
+  }
+  if (index === 0 && isFrameLoaded(0)) {
+    framesReady = true;
+    revealSite();
+    drawFrameCanvas(0);
+  }
+  updateFrameLoaderProgress();
+  activeFrameLoads = Math.max(0, activeFrameLoads - 1);
+  if (frameLoadingStarted) pumpFrameQueue();
+}
+
+function loadFrame(index) {
+  if (frameRequested[index]) return;
+  frameRequested[index] = true;
+  activeFrameLoads++;
+  var img = new Image();
+  img.decoding = 'async';
+  if ('fetchPriority' in img) {
+    img.fetchPriority = priorityFrameSet.has(index) ? 'high' : 'low';
+  }
+  img.onload = function() {
+    if (img.decode && priorityFrameSet.has(index)) {
+      img.decode().catch(function() {}).then(function() { finishFrameLoad(index, img); });
+    } else {
+      finishFrameLoad(index, img);
+    }
+  };
+  img.onerror = function() { finishFrameLoad(index, null); };
+  img.src = getFrameUrl(index);
+}
+
+function pumpFrameQueue() {
+  while (activeFrameLoads < frameConcurrency && frameQueue.length) {
+    loadFrame(frameQueue.shift());
+  }
+}
+
+function startFrameLoading() {
+  if (frameLoadingStarted || useLiteMotion) return;
+  frameLoadingStarted = true;
+  pumpFrameQueue();
+}
+
+frameQueue = buildFrameQueue();
+loadFrame(0);
+scheduleIdle(startFrameLoading, 900);
+
+var scrollFrameSection = document.querySelector('.scroll-section');
+if ('IntersectionObserver' in window && scrollFrameSection) {
+  var frameObserver = new IntersectionObserver(function(entries) {
+    if (entries[0].isIntersecting) {
+      startFrameLoading();
+      frameObserver.disconnect();
+    }
+  }, { rootMargin: isMobile ? '900px 0px' : '1400px 0px' });
+  frameObserver.observe(scrollFrameSection);
+}
+window.addEventListener('scroll', startFrameLoading, { passive: true, once: true });
+window.addEventListener('touchstart', startFrameLoading, { passive: true, once: true });
+window.addEventListener('pointerdown', startFrameLoading, { passive: true, once: true });
 
 // Resize canvas — lit offsetWidth/Height après layout CSS (inset:0)
 function resizeFCanvas() {
   if (!fCanvas) return;
-  var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 2);
+  var dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.5);
   var vw  = fCanvas.offsetWidth  || window.innerWidth;
   var vh  = fCanvas.offsetHeight || window.innerHeight;
   fCanvas.width  = vw * dpr;
@@ -2043,8 +2208,9 @@ resizeFCanvas();
 // Dessin cover-fit (identique à object-fit:cover) — desktop ET mobile
 function drawFrameCanvas(index) {
   if (!fCtx) return;
-  var img = scrollFrames[index];
-  if (!img || !img.complete || !img.naturalWidth) return;
+  var actualIndex = findClosestLoadedFrame(index);
+  if (actualIndex < 0) return;
+  var img = scrollFrames[actualIndex];
   var cw = fCanvas.width, ch = fCanvas.height;
   var ir = img.naturalWidth / img.naturalHeight;
   var cr = cw / ch;
