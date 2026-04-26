@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Grain de Sel, restaurant semi-gastronomique sur le port de La Grande Motte : cuisine méditerranéenne, produits de la mer et réservations par téléphone.">
+  <meta name="description" content="Restaurant semi-gastronomique sur le port de La Grande Motte. Cuisine méditerranéenne, produits de la mer, carte de saison. Ouvert 7j/7.">
   <meta name="theme-color" content="#0E2A5C">
-  <meta property="og:title" content="Grain de Sel — Restaurant, La Grande Motte">
-  <meta property="og:description" content="Cuisine méditerranéenne semi-gastronomique sur le port de La Grande Motte.">
+  <meta property="og:title" content="Grain de Sel — Restaurant La Grande Motte | Port">
+  <meta property="og:description" content="Restaurant semi-gastronomique sur le port de La Grande Motte. Cuisine méditerranéenne, produits de la mer, carte de saison. Ouvert 7j/7.">
   <meta property="og:url" content="https://legraindesel-lgm.com/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <title>Grain de Sel — Restaurant, La Grande Motte</title>
+  <title>Grain de Sel — Restaurant La Grande Motte | Port</title>
   <link rel="canonical" href="https://legraindesel-lgm.com/">
-  <link rel="icon" type="image/png" href="assets/flavico-transparent.png?v=20260411-1">
+  <link rel="icon" type="image/png" href="assets/flavico-blue.png?v=20260426-1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cinzel:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -864,6 +864,27 @@
       letter-spacing: 0.06em;
       color: var(--ocean); white-space: nowrap; flex-shrink: 0;
     }
+    .menu-item--highlight .menu-item-name {
+      font-style: italic;
+      color: rgba(255,255,255,0.78);
+    }
+    .menu-cat-price {
+      font-family: var(--font-num);
+      font-size: 0.72rem; letter-spacing: 0.08em;
+      color: var(--ocean); font-weight: 400;
+      text-transform: none;
+    }
+    .menu-note--horaires {
+      max-width: 1100px;
+      margin: 40px auto 0;
+      font-family: var(--font-num);
+      font-size: 0.78rem;
+      font-style: normal;
+      letter-spacing: 0.22em;
+      text-align: center;
+      text-transform: uppercase;
+      color: var(--ocean);
+    }
     /* Menu mobile handled in main block below */
 
     /* ── RESERVATION ─────────────────────────────────────────── */
@@ -1437,26 +1458,27 @@
   <h2 class="section-heading fi d1">Menu du restaurant</h2>
   <p class="menu-note fi d2">Carte transmise par le restaurant.</p>
   <div class="menu-grid">
+
     <div class="menu-cat fi">
       <div class="menu-cat-label">Apéritifs</div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Tarama d’œuf de poisson fumé</div>
-          <div class="menu-item-desc">150 g</div>
+          <div class="menu-item-name">Tarama d’œufs de poisson fumé</div>
+          <div class="menu-item-desc">100 g</div>
         </div>
         <div class="menu-item-price">8 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Assiette de panisse et aïoli</div>
+          <div class="menu-item-name">Assiette de panisses et aïoli</div>
         </div>
         <div class="menu-item-price">8 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Moule à l’escabèche</div>
+          <div class="menu-item-name">Moules à l’escabèche</div>
         </div>
-        <div class="menu-item-price">6 €</div>
+        <div class="menu-item-price">8 €</div>
       </div>
     </div>
 
@@ -1465,33 +1487,44 @@
       <div class="menu-item">
         <div class="menu-item-info">
           <div class="menu-item-name">Bulots</div>
+          <div class="menu-item-desc">× 6</div>
         </div>
-        <div class="menu-item-price">6 / 12</div>
+        <div class="menu-item-price">6 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
           <div class="menu-item-name">Crevettes</div>
+          <div class="menu-item-desc">× 6</div>
         </div>
-        <div class="menu-item-price">6 / 12</div>
+        <div class="menu-item-price">8 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Gambas</div>
+          <div class="menu-item-name">Grosses crevettes</div>
+          <div class="menu-item-desc">× 6</div>
         </div>
-        <div class="menu-item-price">6 / 12</div>
+        <div class="menu-item-price">12 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Huîtres Gillardeau</div>
+          <div class="menu-item-name">Huîtres de Camargue n°3</div>
+          <div class="menu-item-desc">× 6</div>
         </div>
-        <div class="menu-item-price">6 / 12</div>
+        <div class="menu-item-price">15 €</div>
       </div>
       <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Huîtres Gillardeau n°3</div>
+          <div class="menu-item-desc">× 6</div>
+        </div>
+        <div class="menu-item-price">22 €</div>
+      </div>
+      <div class="menu-item menu-item--highlight">
         <div class="menu-item-info">
           <div class="menu-item-name">Plateau iodé</div>
-          <div class="menu-item-desc">12 huîtres, 12 crevettes, 6 gambas, 6 bulots</div>
+          <div class="menu-item-desc">12 huîtres de Camargue, 12 crevettes, 6 grosses crevettes, 6 bulots</div>
         </div>
-        <div class="menu-item-price">—</div>
+        <div class="menu-item-price">60 €</div>
       </div>
     </div>
 
@@ -1499,29 +1532,29 @@
       <div class="menu-cat-label">Entrées</div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Tartare de muge de la criée</div>
-          <div class="menu-item-desc">Pickles de concombres, salade d’herbes et mayonnaise fumée</div>
+          <div class="menu-item-name">Tartare de thuge de la criée</div>
+          <div class="menu-item-desc">Pickles de concombre, salade d’herbes et mayonnaise fumée</div>
         </div>
         <div class="menu-item-price">14 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
           <div class="menu-item-name">Saint-Jacques</div>
-          <div class="menu-item-desc">Asperges blanches et sauce XO</div>
+          <div class="menu-item-desc">Crème blanche et sauce XO</div>
         </div>
         <div class="menu-item-price">16 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
           <div class="menu-item-name">Ris de veau</div>
-          <div class="menu-item-desc">Jus de volaille à l’anguille fumée et sucrine braisée</div>
+          <div class="menu-item-desc">Jus de volaille à l’anguille fumée et saucisse braisée</div>
         </div>
         <div class="menu-item-price">16 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
           <div class="menu-item-name">Riz de Camargue servi froid</div>
-          <div class="menu-item-desc">Kimshi de fenouil et sauce rouille</div>
+          <div class="menu-item-desc">Kimchi de fenouil et sauce rouille</div>
         </div>
         <div class="menu-item-price">12 €</div>
       </div>
@@ -1532,47 +1565,59 @@
       <div class="menu-item">
         <div class="menu-item-info">
           <div class="menu-item-name">Selle d’agneau des Alpilles</div>
-          <div class="menu-item-desc">Basse température, jus de viande et betterave, siphon pomme de terre et céleris raves confits</div>
+          <div class="menu-item-desc">Basse température, jus de viande et blettes, écrasé pomme de terre et céleri-rave confit</div>
         </div>
         <div class="menu-item-price">32 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Choux raves farcis</div>
-          <div class="menu-item-desc">Farce fine d’asperges et purée de persil</div>
+          <div class="menu-item-name">Choux-raves farcis</div>
+          <div class="menu-item-desc">Sauce fine d’asperges et purée de panais</div>
         </div>
         <div class="menu-item-price">23 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Aïoli du Grain de Sel</div>
-          <div class="menu-item-desc">Maigre, jardinière de légumes printaniers</div>
+          <div class="menu-item-name">Rôti du Grain de Sel</div>
+          <div class="menu-item-desc">Figue, jardinière de légumes printaniers</div>
         </div>
         <div class="menu-item-price">28 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Blanc de turbot maturé</div>
-          <div class="menu-item-desc">Lard de Colonnata, sauce pil-pil, salicorne, poireaux confits et pommes de terre vapeur</div>
+          <div class="menu-item-name">Blanc de Saint-Jacques, entrecôte de cochon noir</div>
+          <div class="menu-item-desc">Sauce pil-pil, salicorne, poireaux confits et coquillages de Camargue</div>
         </div>
         <div class="menu-item-price">32 €</div>
       </div>
-      <div class="menu-item">
+      <div class="menu-item menu-item--highlight">
         <div class="menu-item-info">
-          <div class="menu-item-name">Pêche du jour</div>
+          <div class="menu-item-name">Loup en croûte de sel</div>
+          <div class="menu-item-desc">À partager, ou non…</div>
         </div>
-        <div class="menu-item-price">Prix au 100 g</div>
+        <div class="menu-item-price">12 € / 100 g</div>
       </div>
     </div>
 
     <div class="menu-cat fi d1">
-      <div class="menu-cat-label">Menu enfant</div>
+      <div class="menu-cat-label">Menu enfant <span class="menu-cat-price">— 15 €</span></div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Menu enfant</div>
-          <div class="menu-item-desc">Velouté de carottes · Pavé de poisson ou suprême de volaille, pomme purée · Mousse au chocolat</div>
+          <div class="menu-item-name">Entrée</div>
+          <div class="menu-item-desc">Velouté de carottes</div>
         </div>
-        <div class="menu-item-price">15 €</div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Plat</div>
+          <div class="menu-item-desc">Filet de poisson et écrasé de légumes / pomme purée</div>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-info">
+          <div class="menu-item-name">Dessert</div>
+          <div class="menu-item-desc">Mousse au chocolat</div>
+        </div>
       </div>
     </div>
 
@@ -1580,21 +1625,21 @@
       <div class="menu-cat-label">Desserts</div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Plateau de fromage</div>
+          <div class="menu-item-name">Plateau de fromages</div>
           <div class="menu-item-desc">Sélection Xavier Thuret</div>
         </div>
         <div class="menu-item-price">9 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Chocolat</div>
-          <div class="menu-item-desc">Fleur de sel, huile d’olive</div>
+          <div class="menu-item-name">Chocolat noir sauvage</div>
+          <div class="menu-item-desc">Graine de sel, huile d’olive</div>
         </div>
         <div class="menu-item-price">9 €</div>
       </div>
       <div class="menu-item">
         <div class="menu-item-info">
-          <div class="menu-item-name">Paris-Brest</div>
+          <div class="menu-item-name">Paris-Brest à la glace</div>
         </div>
         <div class="menu-item-price">9 €</div>
       </div>
@@ -1605,8 +1650,10 @@
         <div class="menu-item-price">9 €</div>
       </div>
     </div>
+
   </div>
-  <p class="menu-note menu-note--legal fi d3">Prix et service compris — hors boisson — carte des allergènes disponible à la demande.</p>
+  <p class="menu-note menu-note--horaires fi d2">Bar et restaurant — ouvert 7j/7</p>
+  <p class="menu-note menu-note--legal fi d3">Prix nets, service compris — hors boisson — carte des allergènes disponible à la demande.</p>
 </section>
 
 <!-- RESERVATION -->
