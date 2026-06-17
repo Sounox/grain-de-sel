@@ -802,7 +802,6 @@
     #menu {
       padding: 140px clamp(24px, 9vw, 160px);
     }
-    /* Center direct children in menu section */
     #menu > .eyebrow,
     #menu > .section-heading,
     #menu > .menu-note {
@@ -825,22 +824,27 @@
       text-align: center;
       text-transform: uppercase;
     }
-    .menu-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
+    .menu-note--horaires {
       max-width: 1100px;
-      margin: 0 auto;
+      margin: 40px auto 0;
+      font-family: var(--font-num);
+      font-size: 0.78rem;
+      font-style: normal;
+      letter-spacing: 0.22em;
+      text-align: center;
+      text-transform: uppercase;
+      color: var(--ocean);
     }
-    .menu-cat {
-      padding: 46px;
-      border: 1px solid var(--border);
-    }
-    .menu-cat:nth-child(even) { border-left: none; }
-    .menu-cat:nth-child(n+3) { border-top: none; }
-
     .menu-cat-label {
       font-size: 0.62rem; letter-spacing: 0.38em;
       text-transform: uppercase; color: var(--ocean);
       margin-bottom: 22px;
+    }
+    .menu-cat-price {
+      font-family: var(--font-num);
+      font-size: 0.72rem; letter-spacing: 0.08em;
+      color: var(--ocean); font-weight: 400;
+      text-transform: none;
     }
     .menu-item {
       display: flex; justify-content: space-between;
@@ -868,22 +872,164 @@
       font-style: italic;
       color: rgba(255,255,255,0.78);
     }
-    .menu-cat-price {
-      font-family: var(--font-num);
-      font-size: 0.72rem; letter-spacing: 0.08em;
-      color: var(--ocean); font-weight: 400;
-      text-transform: none;
+    .menu-item-mood {
+      font-family: var(--font-disp);
+      font-size: 0.72rem; font-style: italic;
+      letter-spacing: 0.04em;
+      color: var(--ocean); opacity: 0.7;
+      margin-top: 3px;
     }
-    .menu-note--horaires {
+
+    /* Cards grid */
+    .menu-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
       max-width: 1100px;
-      margin: 40px auto 0;
+      margin: 0 auto;
+    }
+    .menu-card {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: rgba(123,167,188,0.04);
+    }
+    .menu-card:not(.open):hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(123,167,188,0.12);
+      border-color: var(--ocean);
+    }
+    .menu-card__header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      width: 100%;
+      padding: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .menu-card.open .menu-card__header {
+      border-radius: 4px 4px 0 0;
+    }
+    .menu-card__bg-fallback {
+      position: absolute;
+      inset: 0;
+      background: var(--card-gradient);
+      z-index: 0;
+    }
+    .menu-card__bg-photo {
+      position: absolute;
+      inset: 0;
+      background-image: var(--card-img);
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.5s;
+      z-index: 1;
+    }
+    .menu-card__bg-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.5s;
+      background: linear-gradient(180deg, rgba(8,26,60,0.2), rgba(8,26,60,0.82));
+    }
+    .menu-card__header:hover .menu-card__bg-photo,
+    .menu-card:not(.open):hover .menu-card__bg-photo {
+      opacity: 1;
+    }
+    .menu-card__header:hover .menu-card__bg-overlay,
+    .menu-card:not(.open):hover .menu-card__bg-overlay {
+      opacity: 1;
+    }
+    .menu-card__header-body {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+    }
+    .menu-card__title {
+      font-family: var(--font-disp);
+      font-size: 1.35rem;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .menu-card__meta {
       font-family: var(--font-num);
-      font-size: 0.78rem;
-      font-style: normal;
-      letter-spacing: 0.22em;
-      text-align: center;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--ocean);
+    }
+    .menu-card__chevron {
+      position: relative;
+      z-index: 3;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      color: var(--ocean);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      line-height: 1;
+      transition: transform 0.3s;
+      flex-shrink: 0;
+    }
+    .menu-card.open .menu-card__chevron {
+      transform: rotate(45deg);
+    }
+    .menu-card__panel {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.38s cubic-bezier(0.4,0,0.2,1);
+    }
+    .menu-card.open .menu-card__panel {
+      grid-template-rows: 1fr;
+      border-top: 1px solid var(--border);
+    }
+    .menu-card__inner {
+      overflow: hidden;
+      min-height: 0;
+    }
+    .menu-card__inner-pad {
+      padding: 28px 32px 36px;
+    }
+    .menu-divider {
+      max-width: 1100px;
+      margin: 96px auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border) 18%, var(--border) 82%, transparent);
+    }
+    .menu-section-label {
+      max-width: 1100px;
+      margin: 40px auto 48px;
+      font-family: var(--font-disp);
+      font-size: 1.05rem;
+      letter-spacing: 0.18em;
+      font-style: italic;
+      color: var(--text-sec);
+      display: flex;
+      justify-content: center;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .menu-card,
+      .menu-card__bg-photo,
+      .menu-card__bg-overlay,
+      .menu-card__chevron,
+      .menu-card__panel {
+        transition: none;
+      }
+    }
+    @media (max-width: 1024px) {
+      .menu-cards-grid { grid-template-columns: repeat(2, 1fr); }
     }
     /* Menu mobile handled in main block below */
 
@@ -1161,10 +1307,11 @@
       /* ── MENU ── */
       #menu { padding: 72px 22px; }
       #menu > .eyebrow, #menu > .section-heading, #menu > .menu-note { max-width: 100%; }
-      .menu-grid { grid-template-columns: 1fr; }
-      .menu-cat { padding: 24px 20px; border: none; border-bottom: 1px solid var(--border); }
-      .menu-cat:last-child { border-bottom: none; }
-      .menu-cat:nth-child(n) { border-left: none; border-right: none; }
+      .menu-cards-grid { grid-template-columns: 1fr; }
+      .menu-divider { margin: 56px auto 0; }
+      .menu-section-label { margin: 28px auto 36px; font-size: 0.95rem; }
+      .menu-card__header { padding: 24px 20px; }
+      .menu-card__inner-pad { padding: 20px 20px 28px; }
       .menu-item-name { font-size: 1rem; }
       .menu-note { font-size: 0.88rem; }
       /* ── RESERVATION ── */
@@ -1457,204 +1604,911 @@
   <div class="eyebrow fi">La Carte</div>
   <h2 class="section-heading fi d1">Menu du restaurant</h2>
   <p class="menu-note fi d2">Carte transmise par le restaurant.</p>
-  <div class="menu-grid">
 
-    <div class="menu-cat fi">
-      <div class="menu-cat-label">Apéritifs</div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Tarama d’œufs de poisson fumé</div>
-          <div class="menu-item-desc">100 g</div>
-        </div>
-        <div class="menu-item-price">8 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Assiette de panisses et aïoli</div>
-        </div>
-        <div class="menu-item-price">8 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Moules à l’escabèche</div>
-        </div>
-        <div class="menu-item-price">8 €</div>
-      </div>
-    </div>
+  <!-- FAMILLE CUISINE -->
+  <div class="menu-section-label fi d2">La Table</div>
+  <div class="menu-cards-grid fi d3">
 
-    <div class="menu-cat fi d1">
-      <div class="menu-cat-label">Coquillages</div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Bulots</div>
-          <div class="menu-item-desc">× 6</div>
-        </div>
-        <div class="menu-item-price">6 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Crevettes</div>
-          <div class="menu-item-desc">× 6</div>
-        </div>
-        <div class="menu-item-price">8 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Grosses crevettes</div>
-          <div class="menu-item-desc">× 6</div>
-        </div>
-        <div class="menu-item-price">12 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Huîtres de Camargue n°3</div>
-          <div class="menu-item-desc">× 6</div>
-        </div>
-        <div class="menu-item-price">15 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Huîtres Gillardeau n°3</div>
-          <div class="menu-item-desc">× 6</div>
-        </div>
-        <div class="menu-item-price">22 €</div>
-      </div>
-      <div class="menu-item menu-item--highlight">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Plateau iodé</div>
-          <div class="menu-item-desc">12 huîtres de Camargue, 12 crevettes, 6 grosses crevettes, 6 bulots</div>
-        </div>
-        <div class="menu-item-price">60 €</div>
-      </div>
-    </div>
-
-    <div class="menu-cat fi d2">
-      <div class="menu-cat-label">Entrées</div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Tartare de thuge de la criée</div>
-          <div class="menu-item-desc">Pickles de concombre, salade d’herbes et mayonnaise fumée</div>
-        </div>
-        <div class="menu-item-price">14 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Saint-Jacques</div>
-          <div class="menu-item-desc">Crème blanche et sauce XO</div>
-        </div>
-        <div class="menu-item-price">16 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Ris de veau</div>
-          <div class="menu-item-desc">Jus de volaille à l’anguille fumée et saucisse braisée</div>
-        </div>
-        <div class="menu-item-price">16 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Riz de Camargue servi froid</div>
-          <div class="menu-item-desc">Kimchi de fenouil et sauce rouille</div>
-        </div>
-        <div class="menu-item-price">12 €</div>
-      </div>
-    </div>
-
-    <div class="menu-cat fi d3">
-      <div class="menu-cat-label">Plats</div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Selle d’agneau des Alpilles</div>
-          <div class="menu-item-desc">Basse température, jus de viande et blettes, écrasé pomme de terre et céleri-rave confit</div>
-        </div>
-        <div class="menu-item-price">32 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Choux-raves farcis</div>
-          <div class="menu-item-desc">Sauce fine d’asperges et purée de panais</div>
-        </div>
-        <div class="menu-item-price">23 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Rôti du Grain de Sel</div>
-          <div class="menu-item-desc">Figue, jardinière de légumes printaniers</div>
-        </div>
-        <div class="menu-item-price">28 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Blanc de Saint-Jacques, entrecôte de cochon noir</div>
-          <div class="menu-item-desc">Sauce pil-pil, salicorne, poireaux confits et coquillages de Camargue</div>
-        </div>
-        <div class="menu-item-price">32 €</div>
-      </div>
-      <div class="menu-item menu-item--highlight">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Loup en croûte de sel</div>
-          <div class="menu-item-desc">À partager, ou non…</div>
-        </div>
-        <div class="menu-item-price">12 € / 100 g</div>
-      </div>
-    </div>
-
-    <div class="menu-cat fi d1">
-      <div class="menu-cat-label">Menu enfant <span class="menu-cat-price">— 15 €</span></div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Entrée</div>
-          <div class="menu-item-desc">Velouté de carottes</div>
-        </div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Plat</div>
-          <div class="menu-item-desc">Filet de poisson et écrasé de légumes / pomme purée</div>
-        </div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Dessert</div>
-          <div class="menu-item-desc">Mousse au chocolat</div>
+    <!-- CARD 1 : Apéritifs & Coquillages -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.97) 0%,rgba(20,48,88,0.9) 60%,rgba(30,58,96,0.95) 100%);--card-img:url(‘assets/menu/aperitifs.jpg’)">
+      <button class="menu-card__header" id="mc-btn-1" aria-expanded="false" aria-controls="mc-panel-1">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Ap&#233;ritifs &amp; Coquillages</span>
+          <span class="menu-card__meta">10 r&#233;f&#233;rences</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-1" role="region" aria-labelledby="mc-btn-1">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-cat-label">Ap&#233;ritifs</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Tarama d&#8217;&#339;ufs de poisson fum&#233;s</div>
+                <div class="menu-item-desc">100 g</div>
+              </div>
+              <div class="menu-item-price">8 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Assiette de panisses et a&#239;oli</div>
+              </div>
+              <div class="menu-item-price">8 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Moules &#224; l&#8217;escab&#232;che</div>
+              </div>
+              <div class="menu-item-price">6 &#8364;</div>
+            </div>
+            <div class="menu-cat-label" style="margin-top:28px;">Coquillages</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Bulots</div>
+                <div class="menu-item-desc">&#215; 6</div>
+              </div>
+              <div class="menu-item-price">6 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Crevettes</div>
+                <div class="menu-item-desc">&#215; 6</div>
+              </div>
+              <div class="menu-item-price">9 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Grosses crevettes</div>
+                <div class="menu-item-desc">&#215; 6</div>
+              </div>
+              <div class="menu-item-price">12 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Hu&#238;tres de Camargue n&#176;3</div>
+                <div class="menu-item-desc">&#215; 6</div>
+              </div>
+              <div class="menu-item-price">18 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Hu&#238;tres Gillardeau n&#176;3</div>
+                <div class="menu-item-desc">&#215; 6</div>
+              </div>
+              <div class="menu-item-price">25 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Caviar Sturia Oscietra</div>
+                <div class="menu-item-desc">30 g</div>
+              </div>
+              <div class="menu-item-price">90 &#8364;</div>
+            </div>
+            <div class="menu-item menu-item--highlight">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Plateau iod&#233;</div>
+                <div class="menu-item-desc">12 hu&#238;tres de Camargue, 12 crevettes, 6 grosses crevettes, 6 bulots</div>
+              </div>
+              <div class="menu-item-price">70 &#8364;</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="menu-cat fi d2">
-      <div class="menu-cat-label">Desserts</div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Plateau de fromages</div>
-          <div class="menu-item-desc">Sélection Xavier Thuret</div>
+    <!-- CARD 2 : Entrées -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,70,0.97) 0%,rgba(22,52,92,0.9) 55%,rgba(16,46,84,0.95) 100%);--card-img:url(‘assets/menu/entrees.jpg’)">
+      <button class="menu-card__header" id="mc-btn-2" aria-expanded="false" aria-controls="mc-panel-2">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Entr&#233;es</span>
+          <span class="menu-card__meta">4 plats</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-2" role="region" aria-labelledby="mc-btn-2">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Crudo de muge de la cri&#233;e</div>
+                <div class="menu-item-desc">Supr&#234;me d&#8217;agrumes, concombres et vinaigre tosazu</div>
+              </div>
+              <div class="menu-item-price">15 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Sardines grill&#233;es</div>
+                <div class="menu-item-desc">Vinaigrette &#224; l&#8217;eau de tomate et harissa douce</div>
+              </div>
+              <div class="menu-item-price">14 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Tartare de taureau des manades</div>
+                <div class="menu-item-desc">Sauce Gillardeau et huile d&#8217;olive des Baux de Provence</div>
+              </div>
+              <div class="menu-item-price">18 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Tartelette froide de l&#233;gumes et jeunes pousses</div>
+                <div class="menu-item-desc">Comme un jardin estival</div>
+              </div>
+              <div class="menu-item-price">13 &#8364;</div>
+            </div>
+          </div>
         </div>
-        <div class="menu-item-price">9 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Chocolat noir sauvage</div>
-          <div class="menu-item-desc">Graine de sel, huile d’olive</div>
-        </div>
-        <div class="menu-item-price">9 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Paris-Brest à la glace</div>
-        </div>
-        <div class="menu-item-price">9 €</div>
-      </div>
-      <div class="menu-item">
-        <div class="menu-item-info">
-          <div class="menu-item-name">Gros macaron fraise et rhubarbe</div>
-        </div>
-        <div class="menu-item-price">9 €</div>
       </div>
     </div>
 
-  </div>
+    <!-- CARD 3 : Plats -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.98) 0%,rgba(18,44,80,0.92) 50%,rgba(24,50,88,0.96) 100%);--card-img:url(‘assets/menu/plats.jpg’)">
+      <button class="menu-card__header" id="mc-btn-3" aria-expanded="false" aria-controls="mc-panel-3">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Plats</span>
+          <span class="menu-card__meta">6 plats</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-3" role="region" aria-labelledby="mc-btn-3">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Rouget grondin cuit au court-bouillon</div>
+                <div class="menu-item-desc">R&#233;duction de bouillabaisse safran&#233;e, salade de courgettes jaunes et vertes, vinaigrette au jus d&#8217;agneau et citron</div>
+              </div>
+              <div class="menu-item-price">31 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Pav&#233; de maigre sauvage grill&#233; sur peau</div>
+                <div class="menu-item-desc">Petits pois &#224; la fran&#231;aise et sauce au pastis</div>
+              </div>
+              <div class="menu-item-price">28 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Cochon de la Crau au barbecue</div>
+                <div class="menu-item-desc">R&#233;duction porcine au foin AOP, pomme pur&#233;e, laitue bras&#233;e et siphon estragon</div>
+              </div>
+              <div class="menu-item-price">31 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Effil&#233; de courgettes grill&#233;es</div>
+                <div class="menu-item-desc">&#201;mulsion de sarriette, condiment cajou et pignons de pin</div>
+              </div>
+              <div class="menu-item-price">24 &#8364;</div>
+            </div>
+            <div class="menu-item menu-item--highlight">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Loup en cro&#251;te de sel</div>
+                <div class="menu-item-desc">&#192; partager, ou non&#8230;</div>
+              </div>
+              <div class="menu-item-price">12 &#8364;&nbsp;/&nbsp;100 g</div>
+            </div>
+            <div class="menu-item menu-item--highlight">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Bouillabaisse traditionnelle</div>
+                <div class="menu-item-desc">P&#234;che de la cri&#233;e — sur commande 72 h &#224; l&#8217;avance, minimum 6 personnes</div>
+              </div>
+              <div class="menu-item-price">70 &#8364;&nbsp;/&nbsp;pers.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4 : Menu enfant -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(130deg,rgba(12,34,78,0.95) 0%,rgba(24,50,88,0.88) 100%);--card-img:url(‘assets/menu/enfant.jpg’)">
+      <button class="menu-card__header" id="mc-btn-4" aria-expanded="false" aria-controls="mc-panel-4">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Menu enfant</span>
+          <span class="menu-card__meta">15 &#8364; &middot; menu en 3 temps</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-4" role="region" aria-labelledby="mc-btn-4">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Sirop au choix</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Entr&#233;e</div>
+                <div class="menu-item-desc">Velout&#233; de carottes</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Plat</div>
+                <div class="menu-item-desc">Pav&#233; de poisson ou supr&#234;me de volaille, pomme pur&#233;e</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Dessert</div>
+                <div class="menu-item-desc">Mousse au chocolat</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5 : Desserts -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(150deg,rgba(8,26,60,0.97) 0%,rgba(20,44,84,0.9) 50%,rgba(16,40,80,0.94) 100%);--card-img:url(‘assets/menu/desserts.jpg’)">
+      <button class="menu-card__header" id="mc-btn-5" aria-expanded="false" aria-controls="mc-panel-5">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Desserts</span>
+          <span class="menu-card__meta">4 douceurs</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-5" role="region" aria-labelledby="mc-btn-5">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Plateau de fromages</div>
+                <div class="menu-item-desc">S&#233;lection Xavier Thuret</div>
+              </div>
+              <div class="menu-item-price">11 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">C&#339;ur coulant au chocolat et fleur de sel</div>
+              </div>
+              <div class="menu-item-price">10 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Macaron citron meringu&#233;</div>
+              </div>
+              <div class="menu-item-price">10 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">La cerise</div>
+              </div>
+              <div class="menu-item-price">10 &#8364;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.menu-cards-grid cuisine -->
+
+  <!-- Séparateur familles -->
+  <div class="menu-divider fi d1"></div>
+  <div class="menu-section-label fi d2">La Cave &amp; le Bar</div>
+
+  <!-- FAMILLE BOISSONS -->
+  <div class="menu-cards-grid fi d3">
+
+    <!-- CARD 6 : Cocktails & Mocktails -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(10,32,72,0.95) 0%,rgba(35,72,102,0.87) 50%,rgba(22,60,90,0.92) 100%);--card-img:url(‘assets/menu/cocktails.jpg’)">
+      <button class="menu-card__header" id="mc-btn-6" aria-expanded="false" aria-controls="mc-panel-6">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Cocktails &amp; Mocktails</span>
+          <span class="menu-card__meta">10 cr&#233;ations</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-6" role="region" aria-labelledby="mc-btn-6">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-cat-label">Cr&#233;ations</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Le Cherry Ch&#233;rie</div>
+                <div class="menu-item-mood">Floral &middot; Gourmand &middot; Fruit&#233;</div>
+                <div class="menu-item-desc">Cerise, p&#234;che, amaretto, marjolaine, citron vert, vodka Eristoff</div>
+              </div>
+              <div class="menu-item-price">12 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Le Coco Verde</div>
+                <div class="menu-item-mood">Frais &middot; Herba&#233; &middot; Solaire</div>
+                <div class="menu-item-desc">Eau de coco, basilic, citron vert</div>
+              </div>
+              <div class="menu-item-price">8 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Le Lua</div>
+                <div class="menu-item-mood">Fruit&#233; &middot; Solaire &middot; Rafra&#238;chissant</div>
+                <div class="menu-item-desc">Past&#232;que, melon, menthe, Schweppes tonic, Saint-Germain, citron vert, rhum blanc Bacardi</div>
+              </div>
+              <div class="menu-item-price">13 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">L&#8217;After</div>
+                <div class="menu-item-mood">Frais &middot; Gourmand &middot; Herba&#233;</div>
+                <div class="menu-item-desc">Pandan, passion, ananas, citron vert, tequila Cazadores</div>
+              </div>
+              <div class="menu-item-price">12 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Le Tropic Spice</div>
+                <div class="menu-item-mood">Exotique &middot; Piment&#233; &middot; Sucr&#233;</div>
+                <div class="menu-item-desc">Passion, vanille-agave, piment habanero, rhum blanc Bacardi</div>
+              </div>
+              <div class="menu-item-price">13 &#8364;</div>
+            </div>
+            <div class="menu-cat-label" style="margin-top:28px;">Mocktails &amp; Classiques</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">L&#8217;Aliz&#233;e Tropic</div>
+                <div class="menu-item-mood">Rafra&#238;chissant &middot; P&#233;tillant &middot; &#201;pic&#233;</div>
+                <div class="menu-item-desc">Passion, vanille-agave, citron vert, ginger beer</div>
+              </div>
+              <div class="menu-item-price">8 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Le Proven&#231;al</div>
+                <div class="menu-item-mood">Frais &middot; L&#233;ger &middot; P&#233;tillant</div>
+                <div class="menu-item-desc">Abricot, lavande, eau p&#233;tillante, vanille-agave</div>
+              </div>
+              <div class="menu-item-price">11 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Cocktails classiques</div>
+                <div class="menu-item-desc">Mojito, Moscow Mule, Daiquiri, Negroni, Cuba Libre, Caipirinha, Margarita, Americano, Mai-Ta&#239;, Old Fashioned, Bloody Mary&#8230;</div>
+              </div>
+              <div class="menu-item-price">10 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Pornstar Martini, Espresso Martini, Long Island, Saint-Germain Spritz</div>
+              </div>
+              <div class="menu-item-price">12 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Spritz</div>
+                <div class="menu-item-desc">Aperol, Campari, Limoncello, Suze</div>
+              </div>
+              <div class="menu-item-price">10 &#8364;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 7 : Vins blancs -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(8,26,60,0.93) 0%,rgba(45,85,112,0.85) 50%,rgba(28,66,96,0.9) 100%);--card-img:url(‘assets/menu/vins-blancs.jpg’)">
+      <button class="menu-card__header" id="mc-btn-7" aria-expanded="false" aria-controls="mc-panel-7">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Vins blancs</span>
+          <span class="menu-card__meta">11 r&#233;f&#233;rences &middot; 12 cl / 75 cl</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-7" role="region" aria-labelledby="mc-btn-7">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">L&#8217;Alternative des Potes</div>
+                <div class="menu-item-desc">AOP Pays d&#8217;Oc 2025 &mdash; Vermentino, Grenache blanc</div>
+              </div>
+              <div class="menu-item-price">5 / 21 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Domaine Gayda, Sph&#232;re Chardonnay</div>
+                <div class="menu-item-desc">IGP Pays d&#8217;Oc 2025 &mdash; 100 % Chardonnay</div>
+              </div>
+              <div class="menu-item-price">6 / 24 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Ch&#226;teau de Valcombe, Folle &amp; Douce</div>
+                <div class="menu-item-desc">Vin de France 2025 &mdash; Muscat, Viognier, Roussanne, Grenache blanc</div>
+              </div>
+              <div class="menu-item-price">6 / 25 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Domaine La Grangette, Poule de Pic</div>
+                <div class="menu-item-desc">AOP Picpoul de Pinet 2025 &mdash; 100 % Piquepoul blanc</div>
+              </div>
+              <div class="menu-item-price">5 / 26 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, La Grande Bleue</div>
+                <div class="menu-item-desc">IGP M&#233;diterran&#233;e 2025 &mdash; Rolle, Grenache blanc, Viognier, Chardonnay, Sauvignon blanc</div>
+              </div>
+              <div class="menu-item-price">7 / 27 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Domaine Pastor, 1961</div>
+                <div class="menu-item-desc">Vin de France 2022 &mdash; 100 % Carignan blanc</div>
+              </div>
+              <div class="menu-item-price">30 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Domaine La Grangette, &#171;&nbsp;L&#8217;Hu&#238;tre&nbsp;&#187;</div>
+                <div class="menu-item-desc">IGP C&#244;tes de Thau 2024 &mdash; 100 % Carignan blanc</div>
+              </div>
+              <div class="menu-item-price">37 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Domaine La Croix Belle, N&#176;7</div>
+                <div class="menu-item-desc">IGP C&#244;tes de Thongues 2023 &mdash; Chardonnay, Grenache blanc, Viognier&#8230;</div>
+              </div>
+              <div class="menu-item-price">44 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Ch&#226;teau Sainte Marguerite, Fantasique</div>
+                <div class="menu-item-desc">AOC C&#244;tes de Provence 2024 &mdash; 100 % Rolle</div>
+              </div>
+              <div class="menu-item-price">46 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, Cigalus</div>
+                <div class="menu-item-desc">IGP Pays d&#8217;Oc 2024 &mdash; Chardonnay, Viognier, Sauvignon blanc</div>
+              </div>
+              <div class="menu-item-price">53 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, Aigle Royal</div>
+                <div class="menu-item-desc">AOP Limoux 2023 &mdash; 100 % Chardonnay</div>
+              </div>
+              <div class="menu-item-price">70 &#8364;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 8 : Vins rosés -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(12,30,68,0.95) 0%,rgba(42,72,98,0.87) 50%,rgba(32,62,90,0.92) 100%);--card-img:url(‘assets/menu/vins-roses.jpg’)">
+      <button class="menu-card__header" id="mc-btn-8" aria-expanded="false" aria-controls="mc-panel-8">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Vins ros&#233;s</span>
+          <span class="menu-card__meta">4 r&#233;f&#233;rences &middot; 12 cl / 75 cl</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-8" role="region" aria-labelledby="mc-btn-8">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Caveau des Sablons, Dune Gris</div>
+                <div class="menu-item-desc">AOP Sable de Camargue 2025 &mdash; Grenache, Carignan</div>
+              </div>
+              <div class="menu-item-price">5 / 21 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, Gris Blanc</div>
+                <div class="menu-item-desc">IGP Pays d&#8217;Oc 2025 &mdash; Grenache noir, Grenache gris</div>
+              </div>
+              <div class="menu-item-price">6 / 28 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Ch&#226;teau Sainte Marguerite, Symphonie</div>
+                <div class="menu-item-desc">AOC C&#244;tes de Provence 2025 &mdash; Grenache, Cinsault, Rolle</div>
+              </div>
+              <div class="menu-item-price">37 &#8364;</div>
+            </div>
+            <div class="menu-item menu-item--highlight">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, Clos du Temple</div>
+                <div class="menu-item-desc">AOP Languedoc Cabri&#232;res 2023 &mdash; Cinsault, Grenache noir, Syrah, Mourv&#232;dre, Viognier</div>
+              </div>
+              <div class="menu-item-price">195 &#8364;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 9 : Vins rouges -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.97) 0%,rgba(22,46,82,0.9) 50%,rgba(18,40,74,0.95) 100%);--card-img:url(‘assets/menu/vins-rouges.jpg’)">
+      <button class="menu-card__header" id="mc-btn-9" aria-expanded="false" aria-controls="mc-panel-9">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Vins rouges</span>
+          <span class="menu-card__meta">9 r&#233;f&#233;rences &middot; 12 cl / 75 cl</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-9" role="region" aria-labelledby="mc-btn-9">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">L&#8217;Alternative des Potes</div>
+                <div class="menu-item-desc">AOP Pays d&#8217;Oc 2024 &mdash; Carignan, Merlot, Syrah</div>
+              </div>
+              <div class="menu-item-price">5 / 21 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Domaine de l&#8217;&#201;glisette, Terre Astrale</div>
+                <div class="menu-item-desc">AOP Terrasses du Larzac 2024 &mdash; Syrah, Grenache noir, Cinsault</div>
+              </div>
+              <div class="menu-item-price">6 / 25 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Mas de Jon, Intonation</div>
+                <div class="menu-item-desc">AOP Pays d&#8217;Oc 2024 &mdash; 100 % Cinsault</div>
+              </div>
+              <div class="menu-item-price">28 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Cave de Roquebrun, Absolu de Schiste</div>
+                <div class="menu-item-desc">AOP Saint-Chinian 2020 &mdash; Syrah, Grenache, Carignan</div>
+              </div>
+              <div class="menu-item-price">34 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Ch&#226;teau de Cazeneuve, Cynarah</div>
+                <div class="menu-item-desc">AOP Pic Saint-Loup 2024 &mdash; Syrah, Cinsault, Grenache</div>
+              </div>
+              <div class="menu-item-price">36 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Domaine Gayda, Chemin de Moscou</div>
+                <div class="menu-item-desc">IGP Pays d&#8217;Oc 2023 &mdash; Syrah, Grenache, Cinsault</div>
+              </div>
+              <div class="menu-item-price">44 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, Aigle Royal</div>
+                <div class="menu-item-desc">IGP Haute Vall&#233;e de l&#8217;Aude 2021 &mdash; 100 % Pinot noir</div>
+              </div>
+              <div class="menu-item-price">70 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, Plantabelle</div>
+                <div class="menu-item-desc">AOP Languedoc Cabri&#232;res 2021 &mdash; Grenache noir, Syrah</div>
+              </div>
+              <div class="menu-item-price">80 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">G&#233;rard Bertrand, La Forge</div>
+                <div class="menu-item-desc">AOP Corbi&#232;res-Boutenac 2023 &mdash; Carignan, Syrah</div>
+              </div>
+              <div class="menu-item-price">80 &#8364;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 10 : Champagnes -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.95) 0%,rgba(50,90,115,0.85) 50%,rgba(36,76,104,0.9) 100%);--card-img:url(‘assets/menu/champagnes.jpg’)">
+      <button class="menu-card__header" id="mc-btn-10" aria-expanded="false" aria-controls="mc-panel-10">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Champagnes</span>
+          <span class="menu-card__meta">4 cuv&#233;es &middot; 75 cl</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-10" role="region" aria-labelledby="mc-btn-10">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Axelle de Vallon</div>
+              </div>
+              <div class="menu-item-price">60 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Joseph Perrier, Brut Nature</div>
+              </div>
+              <div class="menu-item-price">85 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Joseph Perrier, Ros&#233;</div>
+              </div>
+              <div class="menu-item-price">115 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Joseph Perrier, Blanc de Blanc</div>
+              </div>
+              <div class="menu-item-price">115 &#8364;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 11 : Bières, Apéritifs & Spiritueux -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,68,0.96) 0%,rgba(32,66,96,0.88) 50%,rgba(22,54,84,0.93) 100%);--card-img:url(‘assets/menu/spiritueux.jpg’)">
+      <button class="menu-card__header" id="mc-btn-11" aria-expanded="false" aria-controls="mc-panel-11">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Bi&#232;res, Ap&#233;ritifs &amp; Spiritueux</span>
+          <span class="menu-card__meta">au verre</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-11" role="region" aria-labelledby="mc-btn-11">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-cat-label">Bi&#232;res pression &mdash; 25 cl / 50 cl</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Millenari Blonde</div>
+                <div class="menu-item-desc">4,8&#176;</div>
+              </div>
+              <div class="menu-item-price">4 / 6 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Millenari Citron</div>
+                <div class="menu-item-desc">4,8&#176;</div>
+              </div>
+              <div class="menu-item-price">5 / 7 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Millenari IPA</div>
+                <div class="menu-item-desc">5,5&#176;</div>
+              </div>
+              <div class="menu-item-price">5 / 7 &#8364;</div>
+            </div>
+            <div class="menu-cat-label" style="margin-top:28px;">Ap&#233;ritifs</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Ricard</div>
+                <div class="menu-item-desc">3 cl</div>
+              </div>
+              <div class="menu-item-price">3 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Suze, Martini, Porto, Muscat</div>
+                <div class="menu-item-desc">5 cl</div>
+              </div>
+              <div class="menu-item-price">5 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Kir</div>
+                <div class="menu-item-desc">12 cl</div>
+              </div>
+              <div class="menu-item-price">6 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Kir Royal</div>
+                <div class="menu-item-desc">12 cl</div>
+              </div>
+              <div class="menu-item-price">11 &#8364;</div>
+            </div>
+            <div class="menu-cat-label" style="margin-top:28px;">Spiritueux &mdash; 4 cl</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Rhums</div>
+                <div class="menu-item-desc">Bacardi Carta Blanca / Carta Oro 9 &#8364; &middot; Mount Gay Black 11 &#8364; &middot; Millonario 15 ans 13 &#8364; &middot; Santa Teresa 1796 14 &#8364; &middot; Isautier 12 ans 17 &#8364;</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Gins</div>
+                <div class="menu-item-desc">Bombay Sapphire 9 &#8364; &middot; Hendrick&#8217;s 12 &#8364; &middot; Hendrick&#8217;s Flora 14 &#8364; &middot; Monkey 47 15 &#8364; &middot; supp. perfect serve +2 &#8364;</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Whiskys</div>
+                <div class="menu-item-desc">William Lawson&#8217;s 9 &#8364; &middot; Bulleit Bourbon 10 &#8364; &middot; Chivas Regal 12 ans 12 &#8364; &middot; Bellevoye Noir 14 &#8364; &middot; Angel&#8217;s Envy 17 &#8364;</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Vodkas</div>
+                <div class="menu-item-desc">Eristoff 9 &#8364; &middot; Grey Goose 11 &#8364; &middot; supp. Hexis +2 &#8364;</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Mezcals / Tequilas</div>
+                <div class="menu-item-desc">Cazadores 10 &#8364; &middot; Patr&#243;n Reposado 15 &#8364; &middot; Patr&#243;n A&#241;ejo 16 &#8364; &middot; Rosaluna 11 &#8364;</div>
+              </div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Digestifs</div>
+                <div class="menu-item-desc">Get 27, Limoncello, Amaretto, Cognac Meukow VS, Armagnac Tariquet VS, Grappa 7 &#8364; &middot; Poire Williams, Calvados 10 &#8364; &middot; Fontbonne 12 &#8364;</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 12 : Softs & Boissons chaudes -->
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.94) 0%,rgba(40,80,108,0.86) 50%,rgba(28,68,96,0.9) 100%);--card-img:url(‘assets/menu/softs.jpg’)">
+      <button class="menu-card__header" id="mc-btn-12" aria-expanded="false" aria-controls="mc-panel-12">
+        <span class="menu-card__bg-fallback" aria-hidden="true"></span>
+        <span class="menu-card__bg-photo" aria-hidden="true"></span>
+        <span class="menu-card__bg-overlay" aria-hidden="true"></span>
+        <span class="menu-card__header-body">
+          <span class="menu-card__title">Softs &amp; Boissons chaudes</span>
+          <span class="menu-card__meta">au verre</span>
+        </span>
+        <span class="menu-card__chevron" aria-hidden="true">+</span>
+      </button>
+      <div class="menu-card__panel" id="mc-panel-12" role="region" aria-labelledby="mc-btn-12">
+        <div class="menu-card__inner">
+          <div class="menu-card__inner-pad">
+            <div class="menu-cat-label">Softs</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Sirop &#224; l&#8217;eau</div>
+              </div>
+              <div class="menu-item-price">2 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Pepsi, Pepsi Max, Limonade</div>
+                <div class="menu-item-desc">33 cl</div>
+              </div>
+              <div class="menu-item-price">4 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Orangina, Ice Tea, Schweppes</div>
+                <div class="menu-item-desc">25 cl</div>
+              </div>
+              <div class="menu-item-price">4 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Jus de fruits Granini</div>
+                <div class="menu-item-desc">25 cl &mdash; pomme, orange, ananas, abricot, tomate</div>
+              </div>
+              <div class="menu-item-price">4 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Oranges press&#233;es, citrons press&#233;s</div>
+              </div>
+              <div class="menu-item-price">5 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Semillante plate / gazeuse</div>
+                <div class="menu-item-desc">33 cl / 75 cl</div>
+              </div>
+              <div class="menu-item-price">4 / 6 &#8364;</div>
+            </div>
+            <div class="menu-cat-label" style="margin-top:28px;">Boissons chaudes</div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Expresso, allong&#233;, noisette</div>
+              </div>
+              <div class="menu-item-price">3,5 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Double expresso</div>
+              </div>
+              <div class="menu-item-price">5 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Caf&#233; cr&#232;me</div>
+              </div>
+              <div class="menu-item-price">5 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Cappuccino</div>
+              </div>
+              <div class="menu-item-price">5 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Th&#233; / infusion</div>
+                <div class="menu-item-desc">Earl Grey, Darjeeling, menthe, verveine</div>
+              </div>
+              <div class="menu-item-price">6 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Th&#233; glac&#233; maison</div>
+              </div>
+              <div class="menu-item-price">4 &#8364;</div>
+            </div>
+            <div class="menu-item">
+              <div class="menu-item-info">
+                <div class="menu-item-name">Caf&#233; glac&#233;</div>
+              </div>
+              <div class="menu-item-price">5 &#8364;</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.menu-cards-grid boissons -->
+
   <p class="menu-note menu-note--horaires fi d2">Bar et restaurant — ouvert 7j/7</p>
   <p class="menu-note menu-note--legal fi d3">Prix nets, service compris — hors boisson — carte des allergènes disponible à la demande.</p>
 </section>
+<script>
+(function() {
+  var cards = document.querySelectorAll(‘.menu-card’);
+  var reducedMotion = window.matchMedia(‘(prefers-reduced-motion: reduce)’).matches;
+  cards.forEach(function(card) {
+    var btn = card.querySelector(‘.menu-card__header’);
+    if (!btn) return;
+    btn.addEventListener(‘click’, function() {
+      var isOpen = card.classList.contains(‘open’);
+      card.classList.toggle(‘open’, !isOpen);
+      btn.setAttribute(‘aria-expanded’, String(!isOpen));
+    });
+  });
+})();
+</script>
 
 <!-- RESERVATION -->
 <section id="reservation">
