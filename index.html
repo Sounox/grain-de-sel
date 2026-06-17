@@ -882,21 +882,24 @@
 
     /* Cards grid */
     .menu-cards-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 16px;
       max-width: 1100px;
       margin: 0 auto;
     }
     .menu-card {
+      flex: 0 0 calc((100% - 32px) / 3);
       border: 1px solid var(--border);
       border-radius: 4px;
       background: rgba(123,167,188,0.04);
+      transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
     }
     .menu-card:not(.open):hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 32px rgba(123,167,188,0.12);
-      border-color: var(--ocean);
+      transform: translateY(-7px) scale(1.015);
+      box-shadow: 0 18px 52px rgba(123,167,188,0.2);
+      border-color: rgba(123,167,188,0.42);
     }
     .menu-card__header {
       display: grid;
@@ -929,7 +932,8 @@
       background-size: cover;
       background-position: center;
       opacity: 0;
-      transition: opacity 0.5s;
+      transform: scale(1);
+      transition: opacity 0.5s ease, transform 0.55s ease;
       z-index: 1;
     }
     .menu-card__bg-overlay {
@@ -937,15 +941,14 @@
       inset: 0;
       z-index: 2;
       opacity: 0;
-      transition: opacity 0.5s;
-      background: linear-gradient(180deg, rgba(8,26,60,0.2), rgba(8,26,60,0.82));
+      transition: opacity 0.5s ease;
+      background: linear-gradient(180deg, rgba(8,26,60,0.15), rgba(8,26,60,0.78));
     }
-    .menu-card__header:hover .menu-card__bg-photo,
-    .menu-card:not(.open):hover .menu-card__bg-photo {
+    .menu-card__header:hover .menu-card__bg-photo {
       opacity: 1;
+      transform: scale(1.08);
     }
-    .menu-card__header:hover .menu-card__bg-overlay,
-    .menu-card:not(.open):hover .menu-card__bg-overlay {
+    .menu-card__header:hover .menu-card__bg-overlay {
       opacity: 1;
     }
     .menu-card__header-body {
@@ -959,6 +962,10 @@
       font-size: 1.35rem;
       color: var(--text);
       margin-bottom: 6px;
+      transition: color 0.3s ease;
+    }
+    .menu-card__header:hover .menu-card__title {
+      color: #fff;
     }
     .menu-card__meta {
       font-family: var(--font-num);
@@ -966,6 +973,10 @@
       letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--ocean);
+      transition: color 0.3s ease;
+    }
+    .menu-card__header:hover .menu-card__meta {
+      color: rgba(255,255,255,0.65);
     }
     .menu-card__chevron {
       position: relative;
@@ -980,24 +991,24 @@
       justify-content: center;
       font-size: 1.2rem;
       line-height: 1;
-      transition: transform 0.3s;
+      transition: transform 0.35s ease, border-color 0.3s ease, background 0.3s ease;
       flex-shrink: 0;
+    }
+    .menu-card__header:hover .menu-card__chevron {
+      border-color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.1);
     }
     .menu-card.open .menu-card__chevron {
       transform: rotate(45deg);
     }
     .menu-card__panel {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.38s cubic-bezier(0.4,0,0.2,1);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
     }
     .menu-card.open .menu-card__panel {
-      grid-template-rows: 1fr;
+      max-height: 1600px;
       border-top: 1px solid var(--border);
-    }
-    .menu-card__inner {
-      overflow: hidden;
-      min-height: 0;
     }
     .menu-card__inner-pad {
       padding: 28px 32px 36px;
@@ -1024,12 +1035,15 @@
       .menu-card__bg-photo,
       .menu-card__bg-overlay,
       .menu-card__chevron,
+      .menu-card__title,
+      .menu-card__meta,
       .menu-card__panel {
         transition: none;
       }
     }
     @media (max-width: 1024px) {
-      .menu-cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .menu-cards-grid { gap: 12px; }
+      .menu-card { flex: 0 0 calc((100% - 12px) / 2); }
     }
     /* Menu mobile handled in main block below */
 
@@ -1307,7 +1321,8 @@
       /* ── MENU ── */
       #menu { padding: 72px 22px; }
       #menu > .eyebrow, #menu > .section-heading, #menu > .menu-note { max-width: 100%; }
-      .menu-cards-grid { grid-template-columns: 1fr; }
+      .menu-cards-grid { gap: 10px; }
+      .menu-card { flex: 0 0 100%; }
       .menu-divider { margin: 56px auto 0; }
       .menu-section-label { margin: 28px auto 36px; font-size: 0.95rem; }
       .menu-card__header { padding: 24px 20px; }
@@ -1611,7 +1626,7 @@
 
     <!-- CARD 1 : Apéritifs & Coquillages -->
     <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.97) 0%,rgba(20,48,88,0.9) 60%,rgba(30,58,96,0.95) 100%);--card-img:url(‘assets/menu/aperitifs.jpg’)">
-      <button class="menu-card__header" id="mc-btn-1" aria-expanded="false" aria-controls="mc-panel-1">
+      <button type="button" class="menu-card__header" id="mc-btn-1" aria-expanded="false" aria-controls="mc-panel-1">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -1701,7 +1716,7 @@
 
     <!-- CARD 2 : Entrées -->
     <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,70,0.97) 0%,rgba(22,52,92,0.9) 55%,rgba(16,46,84,0.95) 100%);--card-img:url(‘assets/menu/entrees.jpg’)">
-      <button class="menu-card__header" id="mc-btn-2" aria-expanded="false" aria-controls="mc-panel-2">
+      <button type="button" class="menu-card__header" id="mc-btn-2" aria-expanded="false" aria-controls="mc-panel-2">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -1749,7 +1764,7 @@
 
     <!-- CARD 3 : Plats -->
     <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.98) 0%,rgba(18,44,80,0.92) 50%,rgba(24,50,88,0.96) 100%);--card-img:url(‘assets/menu/plats.jpg’)">
-      <button class="menu-card__header" id="mc-btn-3" aria-expanded="false" aria-controls="mc-panel-3">
+      <button type="button" class="menu-card__header" id="mc-btn-3" aria-expanded="false" aria-controls="mc-panel-3">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -1811,7 +1826,7 @@
 
     <!-- CARD 4 : Menu enfant -->
     <div class="menu-card" style="--card-gradient:linear-gradient(130deg,rgba(12,34,78,0.95) 0%,rgba(24,50,88,0.88) 100%);--card-img:url(‘assets/menu/enfant.jpg’)">
-      <button class="menu-card__header" id="mc-btn-4" aria-expanded="false" aria-controls="mc-panel-4">
+      <button type="button" class="menu-card__header" id="mc-btn-4" aria-expanded="false" aria-controls="mc-panel-4">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -1854,7 +1869,7 @@
 
     <!-- CARD 5 : Desserts -->
     <div class="menu-card" style="--card-gradient:linear-gradient(150deg,rgba(8,26,60,0.97) 0%,rgba(20,44,84,0.9) 50%,rgba(16,40,80,0.94) 100%);--card-img:url(‘assets/menu/desserts.jpg’)">
-      <button class="menu-card__header" id="mc-btn-5" aria-expanded="false" aria-controls="mc-panel-5">
+      <button type="button" class="menu-card__header" id="mc-btn-5" aria-expanded="false" aria-controls="mc-panel-5">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -1908,7 +1923,7 @@
 
     <!-- CARD 6 : Cocktails & Mocktails -->
     <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(10,32,72,0.95) 0%,rgba(35,72,102,0.87) 50%,rgba(22,60,90,0.92) 100%);--card-img:url(‘assets/menu/cocktails.jpg’)">
-      <button class="menu-card__header" id="mc-btn-6" aria-expanded="false" aria-controls="mc-panel-6">
+      <button type="button" class="menu-card__header" id="mc-btn-6" aria-expanded="false" aria-controls="mc-panel-6">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -2006,7 +2021,7 @@
 
     <!-- CARD 7 : Vins blancs -->
     <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(8,26,60,0.93) 0%,rgba(45,85,112,0.85) 50%,rgba(28,66,96,0.9) 100%);--card-img:url(‘assets/menu/vins-blancs.jpg’)">
-      <button class="menu-card__header" id="mc-btn-7" aria-expanded="false" aria-controls="mc-panel-7">
+      <button type="button" class="menu-card__header" id="mc-btn-7" aria-expanded="false" aria-controls="mc-panel-7">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -2103,7 +2118,7 @@
 
     <!-- CARD 8 : Vins rosés -->
     <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(12,30,68,0.95) 0%,rgba(42,72,98,0.87) 50%,rgba(32,62,90,0.92) 100%);--card-img:url(‘assets/menu/vins-roses.jpg’)">
-      <button class="menu-card__header" id="mc-btn-8" aria-expanded="false" aria-controls="mc-panel-8">
+      <button type="button" class="menu-card__header" id="mc-btn-8" aria-expanded="false" aria-controls="mc-panel-8">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -2151,7 +2166,7 @@
 
     <!-- CARD 9 : Vins rouges -->
     <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.97) 0%,rgba(22,46,82,0.9) 50%,rgba(18,40,74,0.95) 100%);--card-img:url(‘assets/menu/vins-rouges.jpg’)">
-      <button class="menu-card__header" id="mc-btn-9" aria-expanded="false" aria-controls="mc-panel-9">
+      <button type="button" class="menu-card__header" id="mc-btn-9" aria-expanded="false" aria-controls="mc-panel-9">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -2234,7 +2249,7 @@
 
     <!-- CARD 10 : Champagnes -->
     <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.95) 0%,rgba(50,90,115,0.85) 50%,rgba(36,76,104,0.9) 100%);--card-img:url(‘assets/menu/champagnes.jpg’)">
-      <button class="menu-card__header" id="mc-btn-10" aria-expanded="false" aria-controls="mc-panel-10">
+      <button type="button" class="menu-card__header" id="mc-btn-10" aria-expanded="false" aria-controls="mc-panel-10">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -2278,7 +2293,7 @@
 
     <!-- CARD 11 : Bières, Apéritifs & Spiritueux -->
     <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,68,0.96) 0%,rgba(32,66,96,0.88) 50%,rgba(22,54,84,0.93) 100%);--card-img:url(‘assets/menu/spiritueux.jpg’)">
-      <button class="menu-card__header" id="mc-btn-11" aria-expanded="false" aria-controls="mc-panel-11">
+      <button type="button" class="menu-card__header" id="mc-btn-11" aria-expanded="false" aria-controls="mc-panel-11">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
@@ -2386,7 +2401,7 @@
 
     <!-- CARD 12 : Softs & Boissons chaudes -->
     <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.94) 0%,rgba(40,80,108,0.86) 50%,rgba(28,68,96,0.9) 100%);--card-img:url(‘assets/menu/softs.jpg’)">
-      <button class="menu-card__header" id="mc-btn-12" aria-expanded="false" aria-controls="mc-panel-12">
+      <button type="button" class="menu-card__header" id="mc-btn-12" aria-expanded="false" aria-controls="mc-panel-12">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
         <span class="menu-card__bg-overlay" aria-hidden="true"></span>
