@@ -3260,7 +3260,7 @@ document.querySelectorAll('.fi').forEach(function(el) {
       'Merci de confirmer la réservation directement au client.'
     ].join('\n');
 
-    notice.textContent = 'Votre application email va s'ouvrir pour envoyer la demande au restaurant.';
+    notice.textContent = "Votre application email va s'ouvrir pour envoyer la demande au restaurant.";
     window.location.href = 'mailto:' + destinationEmail +
       '?subject=' + encodeURIComponent(subject) +
       '&body=' + encodeURIComponent(body);
