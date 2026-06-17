@@ -925,7 +925,7 @@
     .menu-card__bg-photo {
       position: absolute; inset: 0;
       background-image: var(--card-img);
-      background-size: cover; background-position: center;
+      background-size: cover; background-position: var(--card-pos, center);
       opacity: 0; transform: scale(1);
       transition: opacity 0.65s ease, transform 1.2s cubic-bezier(0.22,0.61,0.36,1);
       z-index: 1;
@@ -989,7 +989,7 @@
       content: '';
       position: absolute; inset: 0;
       background-image: var(--card-img);
-      background-size: cover; background-position: center;
+      background-size: cover; background-position: var(--card-pos, center);
       z-index: 0; opacity: 0;
       transition: opacity 0.4s ease;
       pointer-events: none;
@@ -1636,7 +1636,7 @@
   <div class="menu-cards-grid fi d3">
 
     <!-- CARD 1 : Apéritifs & Coquillages -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.97) 0%,rgba(20,48,88,0.9) 60%,rgba(30,58,96,0.95) 100%);--card-img:url('assets/menu/aperitifs.jpg');--card-img-w:url('assets/menu/aperitifs.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.97) 0%,rgba(20,48,88,0.9) 60%,rgba(30,58,96,0.95) 100%);--card-img:url('assets/menu/aperitifs.jpg');--card-img-w:url('assets/menu/aperitifs.webp');--card-pos:50% 22%">
       <button type="button" class="menu-card__header" id="mc-btn-1" aria-expanded="false" aria-controls="mc-panel-1">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -1726,7 +1726,7 @@
     </div>
 
     <!-- CARD 2 : Entrées -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,70,0.97) 0%,rgba(22,52,92,0.9) 55%,rgba(16,46,84,0.95) 100%);--card-img:url('assets/menu/entrees.jpg');--card-img-w:url('assets/menu/entrees.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,70,0.97) 0%,rgba(22,52,92,0.9) 55%,rgba(16,46,84,0.95) 100%);--card-img:url('assets/menu/entrees.jpg');--card-img-w:url('assets/menu/entrees.webp');--card-pos:45% 40%">
       <button type="button" class="menu-card__header" id="mc-btn-2" aria-expanded="false" aria-controls="mc-panel-2">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -1774,7 +1774,7 @@
     </div>
 
     <!-- CARD 3 : Plats -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.98) 0%,rgba(18,44,80,0.92) 50%,rgba(24,50,88,0.96) 100%);--card-img:url('assets/menu/plats.jpg');--card-img-w:url('assets/menu/plats.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.98) 0%,rgba(18,44,80,0.92) 50%,rgba(24,50,88,0.96) 100%);--card-img:url('assets/menu/plats.jpg');--card-img-w:url('assets/menu/plats.webp');--card-pos:50% 35%">
       <button type="button" class="menu-card__header" id="mc-btn-3" aria-expanded="false" aria-controls="mc-panel-3">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -1836,7 +1836,7 @@
     </div>
 
     <!-- CARD 4 : Menu enfant -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(130deg,rgba(12,34,78,0.95) 0%,rgba(24,50,88,0.88) 100%);--card-img:url('assets/menu/enfant.jpg');--card-img-w:url('assets/menu/enfant.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(130deg,rgba(12,34,78,0.95) 0%,rgba(24,50,88,0.88) 100%);--card-img:url('assets/menu/enfant.jpg');--card-img-w:url('assets/menu/enfant.webp');--card-pos:55% 48%">
       <button type="button" class="menu-card__header" id="mc-btn-4" aria-expanded="false" aria-controls="mc-panel-4">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -1879,7 +1879,7 @@
     </div>
 
     <!-- CARD 5 : Desserts -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(150deg,rgba(8,26,60,0.97) 0%,rgba(20,44,84,0.9) 50%,rgba(16,40,80,0.94) 100%);--card-img:url('assets/menu/desserts.jpg');--card-img-w:url('assets/menu/desserts.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(150deg,rgba(8,26,60,0.97) 0%,rgba(20,44,84,0.9) 50%,rgba(16,40,80,0.94) 100%);--card-img:url('assets/menu/desserts.jpg');--card-img-w:url('assets/menu/desserts.webp');--card-pos:50% 32%">
       <button type="button" class="menu-card__header" id="mc-btn-5" aria-expanded="false" aria-controls="mc-panel-5">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -1933,7 +1933,7 @@
   <div class="menu-cards-grid fi d3">
 
     <!-- CARD 6 : Cocktails & Mocktails -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(10,32,72,0.95) 0%,rgba(35,72,102,0.87) 50%,rgba(22,60,90,0.92) 100%);--card-img:url('assets/menu/cocktails.jpg');--card-img-w:url('assets/menu/cocktails.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(10,32,72,0.95) 0%,rgba(35,72,102,0.87) 50%,rgba(22,60,90,0.92) 100%);--card-img:url('assets/menu/cocktails.jpg');--card-img-w:url('assets/menu/cocktails.webp');--card-pos:64% 50%">
       <button type="button" class="menu-card__header" id="mc-btn-6" aria-expanded="false" aria-controls="mc-panel-6">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -2031,7 +2031,7 @@
     </div>
 
     <!-- CARD 7 : Vins blancs -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(8,26,60,0.93) 0%,rgba(45,85,112,0.85) 50%,rgba(28,66,96,0.9) 100%);--card-img:url('assets/menu/vins-blancs.jpg');--card-img-w:url('assets/menu/vins-blancs.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(8,26,60,0.93) 0%,rgba(45,85,112,0.85) 50%,rgba(28,66,96,0.9) 100%);--card-img:url('assets/menu/vins-blancs.jpg');--card-img-w:url('assets/menu/vins-blancs.webp');--card-pos:62% 42%">
       <button type="button" class="menu-card__header" id="mc-btn-7" aria-expanded="false" aria-controls="mc-panel-7">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -2128,7 +2128,7 @@
     </div>
 
     <!-- CARD 8 : Vins rosés -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(12,30,68,0.95) 0%,rgba(42,72,98,0.87) 50%,rgba(32,62,90,0.92) 100%);--card-img:url('assets/menu/vins-roses.jpg');--card-img-w:url('assets/menu/vins-roses.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(12,30,68,0.95) 0%,rgba(42,72,98,0.87) 50%,rgba(32,62,90,0.92) 100%);--card-img:url('assets/menu/vins-roses.jpg');--card-img-w:url('assets/menu/vins-roses.webp');--card-pos:65% 40%">
       <button type="button" class="menu-card__header" id="mc-btn-8" aria-expanded="false" aria-controls="mc-panel-8">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -2176,7 +2176,7 @@
     </div>
 
     <!-- CARD 9 : Vins rouges -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.97) 0%,rgba(22,46,82,0.9) 50%,rgba(18,40,74,0.95) 100%);--card-img:url('assets/menu/vins-rouges.jpg');--card-img-w:url('assets/menu/vins-rouges.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(145deg,rgba(8,26,60,0.97) 0%,rgba(22,46,82,0.9) 50%,rgba(18,40,74,0.95) 100%);--card-img:url('assets/menu/vins-rouges.jpg');--card-img-w:url('assets/menu/vins-rouges.webp');--card-pos:42% 36%">
       <button type="button" class="menu-card__header" id="mc-btn-9" aria-expanded="false" aria-controls="mc-panel-9">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -2259,7 +2259,7 @@
     </div>
 
     <!-- CARD 10 : Champagnes -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.95) 0%,rgba(50,90,115,0.85) 50%,rgba(36,76,104,0.9) 100%);--card-img:url('assets/menu/champagnes.jpg');--card-img-w:url('assets/menu/champagnes.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.95) 0%,rgba(50,90,115,0.85) 50%,rgba(36,76,104,0.9) 100%);--card-img:url('assets/menu/champagnes.jpg');--card-img-w:url('assets/menu/champagnes.webp');--card-pos:68% 42%">
       <button type="button" class="menu-card__header" id="mc-btn-10" aria-expanded="false" aria-controls="mc-panel-10">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -2303,7 +2303,7 @@
     </div>
 
     <!-- CARD 11 : Bières, Apéritifs & Spiritueux -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,68,0.96) 0%,rgba(32,66,96,0.88) 50%,rgba(22,54,84,0.93) 100%);--card-img:url('assets/menu/spiritueux.jpg');--card-img-w:url('assets/menu/spiritueux.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(140deg,rgba(10,30,68,0.96) 0%,rgba(32,66,96,0.88) 50%,rgba(22,54,84,0.93) 100%);--card-img:url('assets/menu/spiritueux.jpg');--card-img-w:url('assets/menu/spiritueux.webp');--card-pos:62% 50%">
       <button type="button" class="menu-card__header" id="mc-btn-11" aria-expanded="false" aria-controls="mc-panel-11">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
@@ -2411,7 +2411,7 @@
     </div>
 
     <!-- CARD 12 : Softs & Boissons chaudes -->
-    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.94) 0%,rgba(40,80,108,0.86) 50%,rgba(28,68,96,0.9) 100%);--card-img:url('assets/menu/softs.jpg');--card-img-w:url('assets/menu/softs.webp')">
+    <div class="menu-card" style="--card-gradient:linear-gradient(135deg,rgba(8,26,60,0.94) 0%,rgba(40,80,108,0.86) 50%,rgba(28,68,96,0.9) 100%);--card-img:url('assets/menu/softs.jpg');--card-img-w:url('assets/menu/softs.webp');--card-pos:55% 36%">
       <button type="button" class="menu-card__header" id="mc-btn-12" aria-expanded="false" aria-controls="mc-panel-12">
         <span class="menu-card__bg-fallback" aria-hidden="true"></span>
         <span class="menu-card__bg-photo" aria-hidden="true"></span>
