@@ -2511,15 +2511,21 @@
 </section>
 <script>
 (function() {
-  var cards = document.querySelectorAll(‘.menu-card’);
-  var reducedMotion = window.matchMedia(‘(prefers-reduced-motion: reduce)’).matches;
-  cards.forEach(function(card) {
-    var btn = card.querySelector(‘.menu-card__header’);
-    if (!btn) return;
+  document.querySelectorAll(‘.menu-card__header’).forEach(function(btn) {
+    var panel = document.getElementById(btn.getAttribute(‘aria-controls’));
+    var card  = btn.parentElement;
+    if (!panel || !card) return;
     btn.addEventListener(‘click’, function() {
       var isOpen = card.classList.contains(‘open’);
-      card.classList.toggle(‘open’, !isOpen);
-      btn.setAttribute(‘aria-expanded’, String(!isOpen));
+      if (isOpen) {
+        panel.style.maxHeight = ‘0’;
+        card.classList.remove(‘open’);
+        btn.setAttribute(‘aria-expanded’, ‘false’);
+      } else {
+        panel.style.maxHeight = panel.scrollHeight + ‘px’;
+        card.classList.add(‘open’);
+        btn.setAttribute(‘aria-expanded’, ‘true’);
+      }
     });
   });
 })();
