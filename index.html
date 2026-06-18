@@ -291,7 +291,7 @@
     #about,
     #menu,
     #reservation {
-      scroll-margin-top: 110px;
+      scroll-margin-top: 130px;
     }
     #oceanCanvas {
       position: absolute; inset: 0;
@@ -884,7 +884,8 @@
     .menu-cards-grid {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
+      align-items: stretch;
       gap: 16px;
       max-width: 1100px;
       margin: 0 auto;
@@ -960,7 +961,7 @@
     .menu-card__meta {
       font-family: var(--font-num);
       font-size: 0.6rem; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--ocean);
+      text-transform: uppercase; color: rgba(169,203,219,0.9);
       transition: color 0.3s ease;
     }
     .menu-card__chevron {
@@ -1002,7 +1003,7 @@
     .menu-card__panel::after {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(180deg, rgba(8,26,60,0.82), rgba(8,26,60,0.92));
+      background: linear-gradient(180deg, rgba(8,26,60,0.30), rgba(8,26,60,0.55));
       z-index: 1;
       pointer-events: none;
     }
@@ -1010,9 +1011,9 @@
     .menu-card__inner-pad {
       padding: 28px 32px 36px;
       position: relative; z-index: 2;
-      background: rgba(14,42,92,0.45);
-      backdrop-filter: blur(16px) saturate(120%);
-      -webkit-backdrop-filter: blur(16px) saturate(120%);
+      background: rgba(11,32,68,0.55);
+      backdrop-filter: blur(20px) saturate(125%);
+      -webkit-backdrop-filter: blur(20px) saturate(125%);
       border-radius: 0 0 4px 4px;
       border-top: 1px solid rgba(255,255,255,0.12);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
@@ -1054,6 +1055,16 @@
     /* Menu mobile handled in main block below */
 
     /* ── RESERVATION ─────────────────────────────────────────── */
+    /* 2-column panel layout on desktop */
+    @media (min-width: 900px) {
+      .menu-card.open .menu-card__inner-pad {
+        column-count: 2;
+        column-gap: 24px;
+      }
+      .menu-item { break-inside: avoid; }
+      .menu-cat-label { break-inside: avoid; break-after: avoid; }
+    }
+
     #reservation {
       padding: 140px clamp(24px, 9vw, 160px);
       position: relative;
@@ -1331,7 +1342,7 @@
       .menu-card { flex: 0 0 100%; }
       .menu-divider { margin: 56px auto 0; }
       .menu-section-label { margin: 28px auto 36px; font-size: 0.95rem; }
-      .menu-card__header { padding: 24px 20px; }
+      .menu-card__header { padding: 24px 20px; min-height: 44px; }
       .menu-card__inner-pad {
         padding: 20px 20px 28px;
         backdrop-filter: none;
