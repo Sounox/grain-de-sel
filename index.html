@@ -882,21 +882,20 @@
 
     /* Cards grid */
     .menu-cards-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      align-items: stretch;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       max-width: 1100px;
       margin: 0 auto;
+      align-items: start;
     }
     .menu-card {
-      flex: 0 0 calc((100% - 32px) / 3);
       border: 1px solid var(--border);
       border-radius: 4px;
       background: rgba(123,167,188,0.04);
       transition: transform 0.32s ease, box-shadow 0.32s ease, border-color 0.32s ease;
     }
+    .menu-card.open { grid-column: 1 / -1; }
     .menu-card:not(.open):hover {
       transform: translateY(-7px) scale(1.015);
       box-shadow: 0 18px 52px rgba(123,167,188,0.2);
@@ -982,8 +981,21 @@
       isolation: isolate;
     }
     .menu-card.open .menu-card__panel {
-      max-height: 1600px;
+      max-height: 3000px;
       border-top: 1px solid var(--border);
+    }
+    @supports (grid-template-rows: 0fr) {
+      .menu-card__panel {
+        display: grid;
+        grid-template-rows: 0fr;
+        max-height: none;
+        transition: grid-template-rows 0.45s cubic-bezier(0.4,0,0.2,1);
+      }
+      .menu-card.open .menu-card__panel {
+        grid-template-rows: 1fr;
+        max-height: none;
+      }
+      .menu-card__inner { min-height: 0; overflow: hidden; }
     }
     /* image de fond (z-index 0) */
     .menu-card__panel::before {
@@ -1046,11 +1058,11 @@
       .menu-card,
       .menu-card__bg-photo, .menu-card__bg-overlay,
       .menu-card__chevron, .menu-card__title, .menu-card__meta,
-      .menu-card__panel, .menu-card__panel::before { transition: none; }
+      .menu-card__panel, .menu-card__panel::before,
+      .menu-card__inner { transition: none; }
     }
     @media (max-width: 1024px) {
-      .menu-cards-grid { gap: 12px; }
-      .menu-card { flex: 0 0 calc((100% - 12px) / 2); }
+      .menu-cards-grid { gap: 12px; grid-template-columns: repeat(2, 1fr); }
     }
     /* Menu mobile handled in main block below */
 
@@ -1338,8 +1350,7 @@
       /* ── MENU ── */
       #menu { padding: 72px 22px; }
       #menu > .eyebrow, #menu > .section-heading, #menu > .menu-note { max-width: 100%; }
-      .menu-cards-grid { gap: 10px; }
-      .menu-card { flex: 0 0 100%; }
+      .menu-cards-grid { gap: 10px; grid-template-columns: 1fr; }
       .menu-divider { margin: 56px auto 0; }
       .menu-section-label { margin: 28px auto 36px; font-size: 0.95rem; }
       .menu-card__header { padding: 24px 20px; min-height: 44px; }
@@ -2533,22 +2544,26 @@
 </section>
 <script>
 (function() {
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('.menu-card__header').forEach(function(btn) {
-    var panel = document.getElementById(btn.getAttribute('aria-controls'));
-    var card  = btn.parentElement;
-    if (!panel || !card) return;
+    var card = btn.closest('.menu-card');
     btn.addEventListener('click', function() {
-      var isOpen = card.classList.contains('open');
-      if (isOpen) {
-        panel.style.maxHeight = '0';
-        card.classList.remove('open');
-        btn.setAttribute('aria-expanded', 'false');
-      } else {
-        panel.style.maxHeight = panel.scrollHeight + 'px';
-        card.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
+      var open = card.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      if (open && !reduced) {
+        setTimeout(function() {
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 60);
       }
     });
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.menu-card.open').forEach(function(c) {
+        c.classList.remove('open');
+        c.querySelector('.menu-card__header').setAttribute('aria-expanded', 'false');
+      });
+    }
   });
 })();
 </script>
